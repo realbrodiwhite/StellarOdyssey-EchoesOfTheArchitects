@@ -8,24 +8,16 @@ interface PanDownProps {
 
 const PanDown = ({ title, onComplete, skipEnabled = true }: PanDownProps) => {
   const [isActive, setIsActive] = useState(true);
-  const [phase, setPhase] = useState<'stars' | 'transition' | 'complete'>('stars');
   
   useEffect(() => {
-    // First display the stars for 2 seconds
-    const starsTimer = setTimeout(() => {
-      setPhase('transition');
-      
-      // Then do the pan down animation for 5 seconds
-      const transitionTimer = setTimeout(() => {
-        setPhase('complete');
-        setIsActive(false);
-        onComplete();
-      }, 5000);
-      
-      return () => clearTimeout(transitionTimer);
-    }, 2000);
+    // Set timeout to match the total animation duration
+    // Our animations take about 5 seconds total
+    const animationTimer = setTimeout(() => {
+      setIsActive(false);
+      onComplete();
+    }, 6000);
     
-    return () => clearTimeout(starsTimer);
+    return () => clearTimeout(animationTimer);
   }, [onComplete]);
   
   const handleSkip = () => {
@@ -39,32 +31,27 @@ const PanDown = ({ title, onComplete, skipEnabled = true }: PanDownProps) => {
   
   return (
     <div className="space-scene-container" onClick={handleSkip}>
-      {/* Stars in space */}
-      <div className="stars-layer">
-        {[...Array(200)].map((_, i) => (
-          <div
-            key={i}
-            className="star"
-            style={{
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.8 + 0.2,
-            }}
-          />
-        ))}
+      {/* Stars background with CSS-generated stars */}
+      <div className="stars-background"></div>
+      
+      {/* Planet scene that pans down */}
+      <div className="planet-scene">
+        <div className="planet-gradient"></div>
+        
+        {/* Planet */}
+        <div className="planet"></div>
+        
+        {/* Orbital ring */}
+        <div className="orbit"></div>
       </div>
       
-      {/* Galaxy or planet that comes into view */}
-      <div className={`space-scene ${phase === 'transition' ? 'animate-pan' : ''}`}>
-        {/* Galaxy image */}
-        <div className="galaxy">
-          <h1 className="galaxy-title">{title}</h1>
-        </div>
-        
-        {/* Spaceship that appears after the pan */}
-        <div className={`spaceship ${phase === 'transition' ? 'animate-ship' : ''}`}></div>
+      {/* Spaceship that flies across */}
+      <div className="spaceship"></div>
+      
+      {/* Title overlay that fades in */}
+      <div className="title-overlay">
+        <h1>{title}</h1>
+        <p>A space adventure awaits...</p>
       </div>
       
       {skipEnabled && (
