@@ -21,12 +21,13 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
   }, [selectedCharacter]);
   
   const handleNewGame = () => {
+    console.log("New Game button clicked");
     resetCharacter(); // Reset any existing character
-    start(); // Start a new game
     onStart(); // Navigate to character selection
   };
   
   const handleContinue = () => {
+    console.log("Continue button clicked");
     start(); // Resume the game
     onStart(); // Skip character selection if we already have a character
   };

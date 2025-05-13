@@ -24,9 +24,16 @@ const keyboardControls = [
 ];
 
 const Game = () => {
-  const { phase } = useGame();
+  // Game state management
   const [gameState, setGameState] = useState<"menu" | "character" | "exploration" | "combat" | "puzzle">("menu");
   const { backgroundMusic, isMuted, toggleMute } = useAudio();
+  const { phase, start } = useGame();
+  
+  // Debug the game state
+  useEffect(() => {
+    console.log("Current game state:", gameState);
+    console.log("Current game phase:", phase);
+  }, [gameState, phase]);
   
   // Handle music playback
   useEffect(() => {
@@ -50,17 +57,32 @@ const Game = () => {
     if (phase === "ready") {
       setGameState("menu");
     } else if (phase === "playing") {
-      setGameState("exploration");
+      // Only change to exploration if not in character selection
+      if (gameState !== "character") {
+        setGameState("exploration");
+      }
     }
-  }, [phase]);
+  }, [phase, gameState]);
+
+  // Handlers for state transitions
+  const handleStartGame = () => {
+    console.log("Starting new game, transitioning to character selection");
+    setGameState("character");
+  };
+
+  const handleCharacterSelected = () => {
+    console.log("Character selected, starting game");
+    start(); // This will set phase to "playing"
+    setGameState("exploration");
+  };
 
   // Game component rendering based on game state
   const renderGameComponent = () => {
     switch (gameState) {
       case "menu":
-        return <MainMenu onStart={() => setGameState("character")} />;
+        return <MainMenu onStart={handleStartGame} />;
       case "character":
-        return <CharacterSelection onSelect={() => setGameState("exploration")} />;
+        return <CharacterSelection onSelect={handleCharacterSelected} />;
       case "exploration":
         return (
           <KeyboardControls map={keyboardControls}>
