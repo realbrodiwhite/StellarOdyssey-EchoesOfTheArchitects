@@ -9,6 +9,7 @@ import SpaceEnvironment from "../components/game/SpaceEnvironment";
 import GameUI from "../components/game/GameUI";
 import Combat from "../components/game/Combat";
 import Puzzle from "../components/game/Puzzle";
+import TextCrawl from "../components/game/TextCrawl";
 import { Controls } from "../lib/types";
 
 // Define controls for keyboard input
@@ -23,9 +24,21 @@ const keyboardControls = [
   { name: Controls.hint, keys: ["KeyH"] },
 ];
 
+// Text crawl content
+const storyIntro = {
+  title: "Cosmic Odyssey",
+  content: [
+    "In the distant future, humanity has expanded throughout the stars, establishing colonies on countless worlds.",
+    "You are a crew member aboard the starship Odyssey, embarking on a critical mission to explore uncharted regions of space.",
+    "As you venture deeper into the unknown, you discover ancient mysteries and face challenges that will test your skills and resolve.",
+    "Your decisions will shape the fate of your crew and possibly the future of humanity. Choose your character wisely and prepare for an adventure among the stars...",
+  ]
+};
+
 const Game = () => {
   // Game state management
   const [gameState, setGameState] = useState<"menu" | "character" | "exploration" | "combat" | "puzzle">("menu");
+  const [showIntro, setShowIntro] = useState(false);
   const { backgroundMusic, isMuted, toggleMute } = useAudio();
   const { phase, start } = useGame();
   
@@ -66,7 +79,13 @@ const Game = () => {
 
   // Handlers for state transitions
   const handleStartGame = () => {
-    console.log("Starting new game, transitioning to character selection");
+    console.log("Starting new game, showing intro crawl");
+    setShowIntro(true);
+  };
+
+  const handleIntroCrawlComplete = () => {
+    console.log("Intro crawl completed, transitioning to character selection");
+    setShowIntro(false);
     setGameState("character");
   };
 
@@ -78,6 +97,15 @@ const Game = () => {
 
   // Game component rendering based on game state
   const renderGameComponent = () => {
+    // Show intro crawl if triggered
+    if (showIntro) {
+      return <TextCrawl 
+        title={storyIntro.title} 
+        content={storyIntro.content} 
+        onComplete={handleIntroCrawlComplete} 
+      />;
+    }
+    
     switch (gameState) {
       case "menu":
         return <MainMenu onStart={handleStartGame} />;
