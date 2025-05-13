@@ -46,7 +46,10 @@ export enum LocationType {
   Planet = 'Planet',
   Space = 'Space',
   Station = 'Station',
-  Derelict = 'Derelict'
+  Derelict = 'Derelict',
+  Settlement = 'Settlement',
+  Ruins = 'Ruins',
+  Anomaly = 'Anomaly'
 }
 
 // Game Interfaces
@@ -122,20 +125,62 @@ export interface Enemy {
   reward: { experience: number, items?: Item[] };
 }
 
+export enum Faction {
+  Alliance = 'Alliance',
+  Syndicate = 'Syndicate',
+  Settlers = 'Settlers',
+  Mystics = 'Mystics',
+  Independent = 'Independent',
+  VoidEntity = 'Void Entities'
+}
+
 export interface Location {
   id: string;
   name: string;
   type: LocationType;
   description: string;
-  encounters: { enemies?: Enemy[], puzzles?: Puzzle[] };
-  items?: Item[];
+  encounters: { 
+    enemies?: string[]; 
+    puzzles?: string[];
+    npcs?: string[];
+  };
+  items?: string[]; // IDs of items that can be found
   connections: string[]; // IDs of connected locations
+  region?: string;
+  controlledBy?: Faction;
+  dangerLevel?: number; // 1-10
+  environmentEffects?: {
+    type: 'radiation' | 'lowGravity' | 'highGravity' | 'extremeTemperature' | 'toxicAtmosphere' | 'voidEnergy';
+    severity: number; // 1-5
+    effect: string;
+  }[];
+  requiresItem?: string; // ID of item needed to safely visit
+  unlockRequirement?: {
+    quest?: string;
+    reputation?: { faction: Faction, level: number };
+    item?: string;
+  };
+  image?: string;
+  ambientSound?: string;
+  discovered?: boolean;
 }
 
 export interface GameState {
   currentLocation: string;
   completedPuzzles: string[];
   defeatedEnemies: string[];
+  visitedLocations: string[];
+  discoveredLocations: string[];
   questProgress: Record<string, any>;
   storyFlags: Record<string, boolean>;
+  worldState: Record<string, any>;
+  currentGameTime: number; // In-game time in minutes
+  gameStartTime: number; // Real-world timestamp when game started
+  totalPlayTime: number; // In minutes
+  decisions: {
+    id: string;
+    choice: string;
+    timestamp: number;
+    consequences: string[];
+  }[];
 }
