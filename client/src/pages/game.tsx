@@ -9,7 +9,7 @@ import SpaceEnvironment from "../components/game/SpaceEnvironment";
 import GameUI from "../components/game/GameUI";
 import Combat from "../components/game/Combat";
 import Puzzle from "../components/game/Puzzle";
-import PanDown from "../components/game/TextCrawl";
+import SpaceTransition from "../components/game/SpaceTransition";
 import { Controls } from "../lib/types";
 
 // Define controls for keyboard input
@@ -26,10 +26,19 @@ const keyboardControls = [
 
 const Game = () => {
   // Game state management
-  const [gameState, setGameState] = useState<"menu" | "character" | "exploration" | "combat" | "puzzle">("menu");
-  const [showIntro, setShowIntro] = useState(false);
+  const [gameState, setGameState] = useState<"loading" | "menu" | "transition" | "character" | "exploration" | "combat" | "puzzle">("loading");
+  const [transitionType, setTransitionType] = useState<"intro" | "selection">("intro");
   const { backgroundMusic, isMuted, toggleMute } = useAudio();
   const { phase, start } = useGame();
+  
+  // Initial animation to show title screen
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setGameState("menu");
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   // Debug the game state
   useEffect(() => {
@@ -57,10 +66,12 @@ const Game = () => {
   // Update game state based on game phase
   useEffect(() => {
     if (phase === "ready") {
-      setGameState("menu");
+      if (gameState !== "loading" && gameState !== "transition") {
+        setGameState("menu");
+      }
     } else if (phase === "playing") {
-      // Only change to exploration if not in character selection
-      if (gameState !== "character") {
+      // Only change to exploration if not in character selection or transition
+      if (gameState !== "character" && gameState !== "transition") {
         setGameState("exploration");
       }
     }
@@ -68,14 +79,19 @@ const Game = () => {
 
   // Handlers for state transitions
   const handleStartGame = () => {
-    console.log("Starting new game, showing starfield pan down");
-    setShowIntro(true);
+    console.log("Starting new game, showing warp transition");
+    setTransitionType("selection");
+    setGameState("transition");
   };
 
-  const handleIntroPanComplete = () => {
-    console.log("Intro pan completed, transitioning to character selection");
-    setShowIntro(false);
-    setGameState("character");
+  const handleTransitionComplete = () => {
+    console.log("Transition completed");
+    if (transitionType === "intro") {
+      setGameState("menu");
+    } else {
+      console.log("Transitioning to character selection");
+      setGameState("character");
+    }
   };
 
   const handleCharacterSelected = () => {
@@ -86,19 +102,25 @@ const Game = () => {
 
   // Game component rendering based on game state
   const renderGameComponent = () => {
-    // Show intro pan if triggered
-    if (showIntro) {
-      return <PanDown 
-        title="Cosmic Odyssey"
-        onComplete={handleIntroPanComplete} 
-      />;
-    }
-    
     switch (gameState) {
+      case "loading":
+        return <div className="w-full h-full bg-black flex items-center justify-center text-white font-bold text-2xl">
+          Initializing Game...
+        </div>;
+      
+      case "transition":
+        return <SpaceTransition 
+          type={transitionType}
+          title="Cosmic Odyssey"
+          onComplete={handleTransitionComplete} 
+        />;
+        
       case "menu":
         return <MainMenu onStart={handleStartGame} />;
+        
       case "character":
         return <CharacterSelection onSelect={handleCharacterSelected} />;
+        
       case "exploration":
         return (
           <KeyboardControls map={keyboardControls}>
@@ -124,10 +146,13 @@ const Game = () => {
             />
           </KeyboardControls>
         );
+        
       case "combat":
         return <Combat onCombatEnd={() => setGameState("exploration")} />;
+        
       case "puzzle":
         return <Puzzle onPuzzleSolved={() => setGameState("exploration")} />;
+        
       default:
         return <div>Loading...</div>;
     }
