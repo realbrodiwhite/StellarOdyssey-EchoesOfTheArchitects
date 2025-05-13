@@ -1,24 +1,31 @@
 import { useEffect, useState } from 'react';
 
-interface TextCrawlProps {
+interface PanDownProps {
   title: string;
-  content: string[];
   onComplete: () => void;
   skipEnabled?: boolean;
 }
 
-const TextCrawl = ({ title, content, onComplete, skipEnabled = true }: TextCrawlProps) => {
+const PanDown = ({ title, onComplete, skipEnabled = true }: PanDownProps) => {
   const [isActive, setIsActive] = useState(true);
+  const [phase, setPhase] = useState<'stars' | 'transition' | 'complete'>('stars');
   
   useEffect(() => {
-    // Set a timer to automatically dismiss the crawl after animation completes
-    // Animation duration is 60s as defined in CSS
-    const timer = setTimeout(() => {
-      setIsActive(false);
-      onComplete();
-    }, 60000);
+    // First display the stars for 2 seconds
+    const starsTimer = setTimeout(() => {
+      setPhase('transition');
+      
+      // Then do the pan down animation for 5 seconds
+      const transitionTimer = setTimeout(() => {
+        setPhase('complete');
+        setIsActive(false);
+        onComplete();
+      }, 5000);
+      
+      return () => clearTimeout(transitionTimer);
+    }, 2000);
     
-    return () => clearTimeout(timer);
+    return () => clearTimeout(starsTimer);
   }, [onComplete]);
   
   const handleSkip = () => {
@@ -31,16 +38,37 @@ const TextCrawl = ({ title, content, onComplete, skipEnabled = true }: TextCrawl
   if (!isActive) return null;
   
   return (
-    <div className="crawl-container" onClick={handleSkip}>
-      <div className="crawl-content">
-        <h1 className="crawl-title">{title}</h1>
-        {content.map((paragraph, index) => (
-          <p key={index} className="mb-12">{paragraph}</p>
+    <div className="space-scene-container" onClick={handleSkip}>
+      {/* Stars in space */}
+      <div className="stars-layer">
+        {[...Array(200)].map((_, i) => (
+          <div
+            key={i}
+            className="star"
+            style={{
+              width: `${Math.random() * 3 + 1}px`,
+              height: `${Math.random() * 3 + 1}px`,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              opacity: Math.random() * 0.8 + 0.2,
+            }}
+          />
         ))}
       </div>
       
+      {/* Galaxy or planet that comes into view */}
+      <div className={`space-scene ${phase === 'transition' ? 'animate-pan' : ''}`}>
+        {/* Galaxy image */}
+        <div className="galaxy">
+          <h1 className="galaxy-title">{title}</h1>
+        </div>
+        
+        {/* Spaceship that appears after the pan */}
+        <div className={`spaceship ${phase === 'transition' ? 'animate-ship' : ''}`}></div>
+      </div>
+      
       {skipEnabled && (
-        <div className="absolute bottom-6 right-6 text-white text-sm opacity-70 z-50">
+        <div className="skip-message">
           Click anywhere to skip
         </div>
       )}
@@ -48,4 +76,4 @@ const TextCrawl = ({ title, content, onComplete, skipEnabled = true }: TextCrawl
   );
 };
 
-export default TextCrawl;
+export default PanDown;
