@@ -5,90 +5,216 @@ import { v4 as uuidv4 } from "uuid";
 // Actual enemies and puzzles would be referenced from their respective data files
 
 export const gameLocations: Location[] = [
+  // CHAPTER 1 - THE NEW FRONTIER
   {
     id: "ship",
-    name: "The Celestial Pioneer",
+    name: "The Odyssey",
     type: LocationType.Ship,
-    description: "Your reliable spacecraft, equipped with basic necessities for space exploration.",
+    description: "Your advanced spacecraft, equipped with state-of-the-art technology. It serves as your mobile home and base of operations.",
     encounters: {
-      puzzles: ["power_distribution"]
+      puzzles: ["system_diagnosis"]
     },
-    connections: ["orbit_station"]
+    connections: ["frontier_outpost"],
+    items: ["basic_repair_kit", "emergency_rations"],
+    region: "Alliance Territory"
   },
   {
-    id: "orbit_station",
-    name: "Orbital Research Station",
+    id: "frontier_outpost",
+    name: "Proxima Outpost",
     type: LocationType.Station,
-    description: "A research station orbiting a mysterious planet. Signs of recent abandonment are evident.",
+    description: "The Alliance's furthest frontier outpost, a hub for explorers and traders. The station shows signs of recent conflict.",
     encounters: {
-      enemies: ["security_drone", "malfunctioning_robot"],
-      puzzles: ["security_bypass"]
+      enemies: ["rogue_drone", "syndicate_spy"],
+      puzzles: ["communications_repair"]
     },
-    connections: ["ship", "alien_planet", "derelict_ship"]
+    connections: ["ship", "mining_colony", "debris_field"],
+    items: ["frontier_map", "basic_medkit"],
+    region: "Frontier Space"
   },
   {
-    id: "alien_planet",
-    name: "Xenoforma Prime",
+    id: "mining_colony",
+    name: "New Titan",
     type: LocationType.Planet,
-    description: "A lush alien world with strange flora and fauna. The atmosphere is breathable but unusual.",
+    description: "A struggling mining colony plagued by Syndicate raids. The settlers eye newcomers with suspicion and hope.",
     encounters: {
-      enemies: ["native_predator", "hostile_plant"],
-      puzzles: ["alien_sequence"]
+      enemies: ["syndicate_marauder", "security_mech"],
+      puzzles: ["resource_allocation"]
     },
-    connections: ["orbit_station", "ancient_ruins"]
+    connections: ["frontier_outpost", "ancient_ruins", "smuggler_haven"],
+    items: ["mining_equipment", "rare_mineral_sample"],
+    region: "Frontier Space"
   },
+  {
+    id: "debris_field",
+    name: "Proxima Graveyard",
+    type: LocationType.Space,
+    description: "A vast field of shipwrecks and debris from an ancient space battle. Scavengers search for valuable technology among the dangers.",
+    encounters: {
+      enemies: ["scavenger_drone", "void_lurker"],
+      puzzles: ["salvage_operation"]
+    },
+    connections: ["frontier_outpost", "derelict_station"],
+    items: ["salvaged_tech", "navigation_data"],
+    region: "Frontier Space"
+  },
+
+  // CHAPTER 2 - ANCIENT SECRETS
   {
     id: "ancient_ruins",
-    name: "Ancient Alien Ruins",
+    name: "Voidtouched Remnants",
     type: LocationType.Planet,
-    description: "The remnants of an advanced alien civilization. Strange technology still functions here.",
+    description: "Mysterious ruins of an ancient civilization. Strange energy signatures emanate from deep within the structure.",
     encounters: {
       enemies: ["guardian_construct", "energy_entity"],
-      puzzles: ["alien_encryption"]
+      puzzles: ["relic_activation"]
     },
-    connections: ["alien_planet", "inner_sanctum"]
+    connections: ["mining_colony", "temple_entrance"],
+    items: ["ancient_tablet", "energy_crystal"],
+    region: "Uncharted Territory"
+  },
+  {
+    id: "temple_entrance",
+    name: "Celestial Gateway",
+    type: LocationType.Planet,
+    description: "A massive stone doorway carved into a mountain. Intricate symbols glow with pulsating energy.",
+    encounters: {
+      enemies: ["temple_guardian", "mystic_zealot"],
+      puzzles: ["doorway_cipher"]
+    },
+    connections: ["ancient_ruins", "inner_sanctum"],
+    region: "Uncharted Territory"
   },
   {
     id: "inner_sanctum",
-    name: "Inner Sanctum",
+    name: "Chamber of Ascension",
     type: LocationType.Planet,
-    description: "The heart of the alien ruins, containing their most sacred and advanced technology.",
+    description: "The heart of the ancient temple, containing the civilization's most advanced technology and darkest secrets.",
     encounters: {
-      enemies: ["ancient_guardian"],
-      puzzles: ["stellar_key"]
+      enemies: ["ascended_guardian"],
+      puzzles: ["stellar_key", "consciousness_transfer"]
     },
-    connections: ["ancient_ruins"]
+    connections: ["temple_entrance"],
+    items: ["artifact_shard"],
+    region: "Uncharted Territory"
   },
+
+  // CHAPTER 3 - POWER PLAY
   {
-    id: "derelict_ship",
-    name: "Abandoned Vessel",
+    id: "derelict_station",
+    name: "Abandoned Research Facility",
     type: LocationType.Derelict,
-    description: "A drifting spacecraft of unknown origin. Life support is minimal and danger lurks in the shadows.",
+    description: "An Alliance research station showing signs of a violent struggle. The facility's logs speak of a breakthrough discovery.",
     encounters: {
-      enemies: ["space_parasite", "rogue_android"],
-      puzzles: ["power_restoration"]
+      enemies: ["mutated_researcher", "security_system"],
+      puzzles: ["data_recovery"]
     },
-    connections: ["orbit_station", "void_anomaly"]
+    connections: ["debris_field", "syndicate_base"],
+    items: ["research_logs", "experimental_weapon"],
+    region: "Contested Space"
   },
   {
-    id: "void_anomaly",
-    name: "Void Anomaly",
-    type: LocationType.Space,
-    description: "A strange spatial phenomenon that defies the laws of physics. Reality seems distorted here.",
-    encounters: {
-      enemies: ["void_entity"],
-      puzzles: ["stellar_navigation", "reality_anchor"]
-    },
-    connections: ["derelict_ship", "alien_outpost"]
-  },
-  {
-    id: "alien_outpost",
-    name: "Alien Trading Outpost",
+    id: "syndicate_base",
+    name: "Eclipse Point",
     type: LocationType.Station,
-    description: "A bustling hub of alien commerce and diplomacy. Various species coexist here.",
+    description: "A heavily fortified Syndicate stronghold disguised as a trading post. Only the trusted are allowed in the inner chambers.",
     encounters: {
-      puzzles: ["diplomatic_negotiation"]
+      enemies: ["syndicate_enforcer", "elite_guard"],
+      puzzles: ["security_bypass"]
     },
-    connections: ["void_anomaly", "ship"]
+    connections: ["derelict_station", "void_tear"],
+    items: ["syndicate_insignia", "contraband"],
+    region: "Syndicate Territory"
+  },
+  {
+    id: "smuggler_haven",
+    name: "Freeport",
+    type: LocationType.Station,
+    description: "A lawless space station where adventurers, criminals, and exiles gather. Information and illicit goods flow freely.",
+    encounters: {
+      enemies: ["bounty_hunter", "rival_smuggler"],
+      puzzles: ["contraband_negotiation"]
+    },
+    connections: ["mining_colony", "mystic_enclave"],
+    items: ["black_market_goods", "forged_credentials"],
+    region: "Neutral Zone"
+  },
+
+  // CHAPTER 4 - POINT OF NO RETURN
+  {
+    id: "mystic_enclave",
+    name: "Eternity's Cradle",
+    type: LocationType.Derelict,
+    description: "A hidden sanctuary for those seeking to understand the ancient civilization's power. The air vibrates with energy.",
+    encounters: {
+      enemies: ["rogue_mystic", "void_experiment"],
+      puzzles: ["mind_trial"]
+    },
+    connections: ["smuggler_haven", "alliance_headquarters"],
+    items: ["mystic_teachings", "void_essence"],
+    region: "Mystical Sanctuary"
+  },
+  {
+    id: "void_tear",
+    name: "The Breach",
+    type: LocationType.Space,
+    description: "A fracture in spacetime revealing glimpses of another dimension. Reality itself seems unstable near the tear.",
+    encounters: {
+      enemies: ["void_entity", "dimensional_horror"],
+      puzzles: ["reality_anchor", "dimensional_stabilization"]
+    },
+    connections: ["syndicate_base", "void_nexus"],
+    region: "Void Space"
+  },
+  {
+    id: "alliance_headquarters",
+    name: "Harmony Central",
+    type: LocationType.Station,
+    description: "The heart of Alliance operations in this sector. High-ranking officials and military personnel coordinate efforts from here.",
+    encounters: {
+      enemies: ["corrupted_official", "alliance_elite"],
+      puzzles: ["political_maneuvering"]
+    },
+    connections: ["mystic_enclave", "orbital_defense"],
+    items: ["alliance_credentials", "classified_reports"],
+    region: "Alliance Territory"
+  },
+
+  // CHAPTER 5 - NEW DAWN
+  {
+    id: "orbital_defense",
+    name: "Guardian Array",
+    type: LocationType.Space,
+    description: "A massive orbital weapons platform designed to protect Alliance space. It's currently targeting the ancient temple.",
+    encounters: {
+      enemies: ["automated_defense", "alliance_commander"],
+      puzzles: ["targeting_override"]
+    },
+    connections: ["alliance_headquarters", "final_confrontation"],
+    region: "Alliance Territory"
+  },
+  {
+    id: "void_nexus",
+    name: "The Convergence",
+    type: LocationType.Space,
+    description: "The epicenter of the void anomalies. Multiple realities seem to overlap in this location.",
+    encounters: {
+      enemies: ["void_amalgamation"],
+      puzzles: ["reality_navigation"]
+    },
+    connections: ["void_tear", "final_confrontation"],
+    items: ["void_key"],
+    region: "Void Space"
+  },
+  {
+    id: "final_confrontation",
+    name: "Ascension Point",
+    type: LocationType.Planet,
+    description: "The place where all paths converge. The fate of the galaxy will be decided here.",
+    encounters: {
+      enemies: ["final_adversary", "shadow_self"],
+      puzzles: ["ultimate_choice"]
+    },
+    connections: ["orbital_defense", "void_nexus"],
+    region: "Convergence Point"
   }
 ];

@@ -1,19 +1,17 @@
-import { useRef, useState, useEffect } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useState, useEffect } from "react";
 import { 
   Environment, 
-  OrbitControls, 
   Stars,
   useKeyboardControls
 } from "@react-three/drei";
-import * as THREE from "three";
 import { useCharacter } from "@/lib/stores/useCharacter";
 import { useStory } from "@/lib/stores/useStory";
 import { usePuzzle } from "@/lib/stores/usePuzzle";
 import { useCombat } from "@/lib/stores/useCombat";
 import { Controls } from "@/lib/types";
-import Player from "./Player";
-import Scene from "./Scene";
+import { Html } from "@react-three/drei";
+import SpaceExploration from "./SpaceExploration";
+import SpaceNavigation from "./SpaceNavigation";
 
 interface SpaceEnvironmentProps {
   onEnterCombat: () => void;
@@ -26,84 +24,78 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const { startCombat } = useCombat();
   const [, getKeys] = useKeyboardControls<Controls>();
   
-  // Scene references
-  const floorRef = useRef<THREE.Mesh>(null);
-  const lightsRef = useRef<THREE.Group>(null);
+  // UI States
+  const [showNavigationConsole, setShowNavigationConsole] = useState(false);
+  const [showPlanetaryView, setShowPlanetaryView] = useState(false);
+  const [targetLocationId, setTargetLocationId] = useState<string | null>(null);
   
   // Get the current location data
   const currentLocation = getCurrentLocation();
   
-  // Handle interactions when close to interactables
-  const [nearbyInteractable, setNearbyInteractable] = useState<
-    { type: "puzzle" | "enemy", id: string } | null
-  >(null);
-  
+  // Handle keyboard input for opening navigation console
   useEffect(() => {
-    // Check for nearby interactions every 100ms
-    const interval = setInterval(() => {
-      const keys = getKeys();
-      
-      // Process interaction key press
-      if (keys.interact && nearbyInteractable) {
-        if (nearbyInteractable.type === "puzzle") {
-          // Start puzzle and transition to puzzle screen
-          const puzzleStarted = startPuzzle(nearbyInteractable.id);
-          if (puzzleStarted) {
-            onEnterPuzzle();
-          }
-        } else if (nearbyInteractable.type === "enemy") {
-          // Find enemy data and start combat
-          // This would connect to the actual enemy data
-          const mockEnemy = {
-            id: nearbyInteractable.id,
-            name: "Space Drone",
-            health: 50,
-            maxHealth: 50,
-            damage: 8,
-            abilities: [],
-            description: "A hostile security drone.",
-            reward: { experience: 50 }
-          };
-          
-          startCombat(mockEnemy);
-          onEnterCombat();
-        }
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "n" || e.key === "N") {
+        toggleNavigationConsole();
       }
-    }, 100);
+      
+      if (e.key === "Escape") {
+        setShowNavigationConsole(false);
+      }
+    };
     
-    return () => clearInterval(interval);
-  }, [
-    nearbyInteractable, 
-    startPuzzle, 
-    startCombat, 
-    onEnterPuzzle, 
-    onEnterCombat, 
-    getKeys
-  ]);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, []);
   
-  useFrame((state, delta) => {
-    // Rotate lights for dynamic lighting effect
-    if (lightsRef.current) {
-      lightsRef.current.rotation.y += delta * 0.1;
+  const toggleNavigationConsole = () => {
+    setShowNavigationConsole(prev => !prev);
+  };
+  
+  const handleSelectLocation = (locationId: string) => {
+    console.log(`Traveling to ${locationId}`);
+    setTargetLocationId(locationId);
+    // Actual travel logic is handled in the Story store
+  };
+  
+  const handleLandAtPoint = (pointId: string) => {
+    console.log(`Landing at point: ${pointId}`);
+    
+    // Example of puzzle at location
+    const puzzleId = currentLocation?.encounters.puzzles?.[0];
+    if (puzzleId) {
+      const puzzleStarted = startPuzzle(puzzleId);
+      if (puzzleStarted) {
+        onEnterPuzzle();
+      }
     }
-  });
+    
+    // Example of enemy at location
+    if (pointId.includes("hostile") || Math.random() < 0.3) {
+      const enemyId = currentLocation?.encounters.enemies?.[0];
+      if (enemyId) {
+        // In a real implementation, fetch enemy data from a proper source
+        const mockEnemy = {
+          id: enemyId,
+          name: "Space Drone",
+          health: 50,
+          maxHealth: 50,
+          damage: 8,
+          abilities: [],
+          description: "A hostile security drone.",
+          reward: { experience: 50 }
+        };
+        
+        startCombat(mockEnemy);
+        onEnterCombat();
+      }
+    }
+  };
   
   return (
     <>
       {/* Environment lighting */}
       <Environment preset="night" />
-      
-      {/* Dynamic lighting group */}
-      <group ref={lightsRef}>
-        <directionalLight 
-          position={[10, 15, 5]} 
-          intensity={0.5} 
-          castShadow 
-          shadow-mapSize={[2048, 2048]}
-        />
-        <pointLight position={[-5, 8, -10]} intensity={0.5} color="#3366ff" />
-        <pointLight position={[5, 2, 0]} intensity={0.3} color="#ff3366" />
-      </group>
       
       {/* Ambient lighting */}
       <ambientLight intensity={0.3} />
@@ -120,23 +112,39 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         speed={0.5}
       />
       
-      {/* Scene content based on current location */}
-      <Scene 
-        locationType={currentLocation?.type} 
-        onDetectInteractable={setNearbyInteractable}
+      {/* Main space flying component */}
+      <SpaceExploration 
+        onNavigate={toggleNavigationConsole}
+        onLand={handleLandAtPoint}
       />
       
-      {/* Player character */}
-      <Player />
+      {/* Navigation console UI overlay */}
+      {showNavigationConsole && (
+        <Html fullscreen>
+          <SpaceNavigation 
+            onClose={() => setShowNavigationConsole(false)}
+            onSelectLocation={handleSelectLocation}
+          />
+        </Html>
+      )}
       
-      {/* Camera controls */}
-      <OrbitControls 
-        enablePan={false}
-        maxPolarAngle={Math.PI / 2 - 0.1}
-        minDistance={3}
-        maxDistance={15}
-        target={[0, 1, 0]}
-      />
+      {/* Instructions overlay */}
+      <Html fullscreen>
+        <div className="fixed top-4 right-4 bg-black bg-opacity-70 text-white p-3 rounded-md max-w-xs text-sm z-50">
+          <h3 className="font-bold mb-2">Controls</h3>
+          <ul className="space-y-1 text-xs">
+            <li>• WASD/Arrows: Fly spacecraft</li>
+            <li>• E: Interact with objects</li>
+            <li>• N: Open navigation console</li>
+            <li>• ESC: Close menus</li>
+          </ul>
+          
+          <div className="mt-4 pt-2 border-t border-gray-700">
+            <div className="text-xs text-blue-300">Current Location:</div>
+            <div className="font-medium">{currentLocation?.name || "Unknown"}</div>
+          </div>
+        </div>
+      </Html>
     </>
   );
 };
