@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Button } from "../ui/button";
 import { useAudio } from "@/lib/stores/useAudio";
 import { useGame } from "@/lib/stores/useGame";
 import { useCharacter } from "@/lib/stores/useCharacter";
@@ -20,9 +19,30 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
     setShowContinue(selectedCharacter !== null);
   }, [selectedCharacter]);
   
+  useEffect(() => {
+    // Load audio on component mount
+    const backgroundMusic = new Audio('/sounds/background.mp3');
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = 0.5;
+    
+    const hitSound = new Audio('/sounds/hit.mp3');
+    const successSound = new Audio('/sounds/success.mp3');
+    
+    // Store audio in state management
+    const { setBackgroundMusic, setHitSound, setSuccessSound } = useAudio.getState();
+    setBackgroundMusic(backgroundMusic);
+    setHitSound(hitSound);
+    setSuccessSound(successSound);
+    
+    console.log("Audio files loaded");
+  }, []);
+  
   const handleNewGame = () => {
     console.log("New Game button clicked");
     resetCharacter(); // Reset any existing character
+    // Play success sound for feedback
+    const { playSuccess } = useAudio.getState();
+    playSuccess();
     onStart(); // Navigate to character selection
   };
   
@@ -78,35 +98,26 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
       >
-        <Button 
-          variant="default" 
-          size="lg" 
-          className="w-64 text-lg"
-          onClick={handleNewGame}
-        >
+        <div className="game-button" onClick={handleNewGame}>
           New Game
-        </Button>
+        </div>
         
         {showContinue && (
-          <Button 
-            variant="outline" 
-            size="lg" 
-            className="w-64 text-lg"
-            onClick={handleContinue}
-          >
+          <div className="game-button outline" onClick={handleContinue}>
             Continue
-          </Button>
+          </div>
         )}
         
-        <Button 
-          variant="ghost" 
-          size="lg" 
-          className="w-64 text-lg"
-          onClick={toggleMute}
-        >
+        <div className="game-button ghost" onClick={toggleMute}>
           {isMuted ? "Sound: Off" : "Sound: On"}
-        </Button>
+        </div>
       </motion.div>
+      
+      {/* Debug buttons */}
+      <div className="absolute top-4 right-4 text-xs text-gray-500 z-10">
+        <div>Game Phase: {useGame.getState().phase}</div>
+        {selectedCharacter && <div>Character: {selectedCharacter.name}</div>}
+      </div>
       
       {/* Credits */}
       <motion.div
