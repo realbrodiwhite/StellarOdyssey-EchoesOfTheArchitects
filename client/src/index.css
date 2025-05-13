@@ -28,3 +28,16 @@ canvas {
   height: 100% !important;
   touch-action: none;
 }
+
+/* Add animation for stars */
+@keyframes twinkle {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface AudioState {
   backgroundMusic: HTMLAudioElement | null;
@@ -17,58 +18,77 @@ interface AudioState {
   playSuccess: () => void;
 }
 
-export const useAudio = create<AudioState>((set, get) => ({
-  backgroundMusic: null,
-  hitSound: null,
-  successSound: null,
-  isMuted: true, // Start muted by default
-  
-  setBackgroundMusic: (music) => set({ backgroundMusic: music }),
-  setHitSound: (sound) => set({ hitSound: sound }),
-  setSuccessSound: (sound) => set({ successSound: sound }),
-  
-  toggleMute: () => {
-    const { isMuted } = get();
-    const newMutedState = !isMuted;
-    
-    // Just update the muted state
-    set({ isMuted: newMutedState });
-    
-    // Log the change
-    console.log(`Sound ${newMutedState ? 'muted' : 'unmuted'}`);
-  },
-  
-  playHit: () => {
-    const { hitSound, isMuted } = get();
-    if (hitSound) {
-      // If sound is muted, don't play anything
-      if (isMuted) {
-        console.log("Hit sound skipped (muted)");
-        return;
-      }
+export const useAudio = create<AudioState>()(
+  persist(
+    (set, get) => ({
+      backgroundMusic: null,
+      hitSound: null,
+      successSound: null,
+      isMuted: false, // Start unmuted by default
       
-      // Clone the sound to allow overlapping playback
-      const soundClone = hitSound.cloneNode() as HTMLAudioElement;
-      soundClone.volume = 0.3;
-      soundClone.play().catch(error => {
-        console.log("Hit sound play prevented:", error);
-      });
-    }
-  },
-  
-  playSuccess: () => {
-    const { successSound, isMuted } = get();
-    if (successSound) {
-      // If sound is muted, don't play anything
-      if (isMuted) {
-        console.log("Success sound skipped (muted)");
-        return;
-      }
+      setBackgroundMusic: (music) => set({ backgroundMusic: music }),
+      setHitSound: (sound) => set({ hitSound: sound }),
+      setSuccessSound: (sound) => set({ successSound: sound }),
       
-      successSound.currentTime = 0;
-      successSound.play().catch(error => {
-        console.log("Success sound play prevented:", error);
-      });
+      toggleMute: () => {
+        const { isMuted, backgroundMusic } = get();
+        const newMutedState = !isMuted;
+        
+        // Update the muted state
+        set({ isMuted: newMutedState });
+        
+        // Log the change
+        console.log(`Sound ${newMutedState ? 'muted' : 'unmuted'}`);
+        
+        // Update background music playback if it exists
+        if (backgroundMusic) {
+          if (newMutedState) {
+            backgroundMusic.pause();
+          } else {
+            backgroundMusic.play().catch(error => {
+              console.log("Background music autoplay prevented:", error);
+            });
+          }
+        }
+      },
+      
+      playHit: () => {
+        const { hitSound, isMuted } = get();
+        if (hitSound) {
+          // If sound is muted, don't play anything
+          if (isMuted) {
+            console.log("Hit sound skipped (muted)");
+            return;
+          }
+          
+          // Clone the sound to allow overlapping playback
+          const soundClone = hitSound.cloneNode() as HTMLAudioElement;
+          soundClone.volume = 0.3;
+          soundClone.play().catch(error => {
+            console.log("Hit sound play prevented:", error);
+          });
+        }
+      },
+      
+      playSuccess: () => {
+        const { successSound, isMuted } = get();
+        if (successSound) {
+          // If sound is muted, don't play anything
+          if (isMuted) {
+            console.log("Success sound skipped (muted)");
+            return;
+          }
+          
+          successSound.currentTime = 0;
+          successSound.play().catch(error => {
+            console.log("Success sound play prevented:", error);
+          });
+        }
+      }
+    }),
+    {
+      name: "audio-settings", // localStorage key
+      partialize: (state) => ({ isMuted: state.isMuted }), // only persist the muted state
     }
-  }
-}));
+  )
+);
