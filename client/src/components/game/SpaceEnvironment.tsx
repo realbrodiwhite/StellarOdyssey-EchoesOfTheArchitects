@@ -40,13 +40,16 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const [showStarMap, setShowStarMap] = useState(false);
   const [showCompanionSelect, setShowCompanionSelect] = useState(false);
   const [showCompanionChat, setShowCompanionChat] = useState(false);
+  const [showForearmPad, setShowForearmPad] = useState(false);
+  const [showTechnicalPuzzle, setShowTechnicalPuzzle] = useState(false);
   const [companionChatMinimized, setCompanionChatMinimized] = useState(false);
   const [targetLocationId, setTargetLocationId] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentObjective, setCurrentObjective] = useState("Explore the current location");
   
-  // Companion system
+  // Companion and achievement systems
   const { activeCompanion, getRandomDialogue, addDialogue } = useCompanion();
+  const { hasUnlockedCompanionAI } = useAchievements();
   
   // Get the current location data
   const currentLocation = getCurrentLocation();

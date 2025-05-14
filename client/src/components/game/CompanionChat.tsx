@@ -8,12 +8,14 @@ interface CompanionChatProps {
   minimized?: boolean;
   onToggleMinimize?: () => void;
   onClose?: () => void;
+  inForearmPad?: boolean;
 }
 
 const CompanionChat: React.FC<CompanionChatProps> = ({
   minimized = false,
   onToggleMinimize,
-  onClose
+  onClose,
+  inForearmPad = false
 }) => {
   const [inputText, setInputText] = useState('');
   const [chatExpanded, setChatExpanded] = useState(false);
@@ -132,12 +134,12 @@ const CompanionChat: React.FC<CompanionChatProps> = ({
     <AnimatePresence>
       {!minimized ? (
         <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 20, opacity: 0 }}
+          initial={!inForearmPad ? { y: 20, opacity: 0 } : { opacity: 1 }}
+          animate={!inForearmPad ? { y: 0, opacity: 1 } : { opacity: 1 }}
+          exit={!inForearmPad ? { y: 20, opacity: 0 } : { opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className={`fixed ${chatExpanded ? 'bottom-0 right-0 w-1/3 h-screen' : 'bottom-4 right-4 w-80 h-96'} 
-            bg-gray-900 border border-blue-500 rounded-lg shadow-lg overflow-hidden transition-all duration-300 ease-in-out z-30`}
+          className={`${!inForearmPad ? `fixed ${chatExpanded ? 'bottom-0 right-0 w-1/3 h-screen' : 'bottom-4 right-4 w-80 h-96'}` : 'h-full w-full'} 
+            bg-gray-900 border ${!inForearmPad ? 'border-blue-500' : ''} rounded-lg shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${!inForearmPad ? 'z-30' : ''}`}
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-900 to-purple-900 p-2 flex justify-between items-center">
