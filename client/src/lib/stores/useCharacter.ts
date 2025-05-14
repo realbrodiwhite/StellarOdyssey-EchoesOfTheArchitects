@@ -8,7 +8,7 @@ interface CharacterState {
   selectedCharacter: Character | null;
   
   // Character selection and management
-  selectCharacter: (characterClass: string) => void;
+  selectCharacter: (characterClass: string | any) => void;
   resetCharacter: () => void;
   
   // Stats and progression
@@ -41,7 +41,19 @@ export const useCharacter = create<CharacterState>()(
       selectedCharacter: null,
       
       selectCharacter: (characterClass) => {
-        const template = characterTemplates.find(c => c.class.toString() === characterClass);
+        console.log("Selecting character with class:", characterClass);
+        
+        // Check if characterClass is an enum value or a string
+        let template;
+        if (typeof characterClass === 'string') {
+          template = characterTemplates.find(c => c.class.toString() === characterClass);
+        } else {
+          // If it's an enum value, compare directly
+          template = characterTemplates.find(c => c.class === characterClass);
+        }
+        
+        console.log("Found template:", template);
+        
         if (template) {
           // Generate the common core skills every character should have
           const coreSkills = generateCoreSkills();
@@ -62,12 +74,14 @@ export const useCharacter = create<CharacterState>()(
           // Combine character-specific skills with filtered core skills
           const combinedSkills = [...template.skills, ...filteredCoreSkills];
           
-          set({ 
-            selectedCharacter: { 
-              ...template,
-              skills: combinedSkills
-            } 
-          });
+          const selectedCharacter = { 
+            ...template,
+            skills: combinedSkills
+          };
+          
+          console.log("Setting selected character:", selectedCharacter);
+          
+          set({ selectedCharacter });
         }
       },
       

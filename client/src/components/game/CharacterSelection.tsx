@@ -20,7 +20,9 @@ const CharacterSelection = ({ onSelect }: CharacterSelectionProps) => {
   
   const handleConfirmSelection = () => {
     if (selectedIndex !== null) {
+      // Pass the actual CharacterClass enum value, not a string
       selectCharacter(characterTemplates[selectedIndex].class);
+      console.log("Selected character class:", characterTemplates[selectedIndex].class);
       onSelect();
     }
   };
