@@ -8,10 +8,12 @@ import { useCharacter } from "@/lib/stores/useCharacter";
 import { useStory } from "@/lib/stores/useStory";
 import { usePuzzle } from "@/lib/stores/usePuzzle";
 import { useCombat } from "@/lib/stores/useCombat";
+import { useGame } from "@/lib/stores/useGame";
 import { Controls } from "@/lib/types";
 import { Html } from "@react-three/drei";
 import SpaceExploration from "./SpaceExploration";
 import SpaceNavigation from "./SpaceNavigation";
+import StarMap from "./StarMap";
 
 interface SpaceEnvironmentProps {
   onEnterCombat: () => void;
@@ -19,60 +21,127 @@ interface SpaceEnvironmentProps {
 }
 
 const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProps) => {
-  const { getCurrentLocation } = useStory();
+  const { getCurrentLocation, moveToLocation } = useStory();
   const { startPuzzle } = usePuzzle();
   const { startCombat } = useCombat();
+  const { 
+    mode, 
+    setMode,
+    showNavigationConsole, 
+    toggleNavigationConsole 
+  } = useGame();
+  
   const [, getKeys] = useKeyboardControls<Controls>();
   
   // UI States
-  const [showNavigationConsole, setShowNavigationConsole] = useState(false);
-  const [showPlanetaryView, setShowPlanetaryView] = useState(false);
+  const [showStarMap, setShowStarMap] = useState(false);
   const [targetLocationId, setTargetLocationId] = useState<string | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [currentObjective, setCurrentObjective] = useState("Explore the current location");
   
   // Get the current location data
   const currentLocation = getCurrentLocation();
   
-  // Handle keyboard input for opening navigation console
+  // Handle keyboard input for opening navigation console and star map
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      // Don't handle keypresses during transitions
+      if (isTransitioning) return;
+      
       if (e.key === "n" || e.key === "N") {
         toggleNavigationConsole();
       }
       
+      if (e.key === "m" || e.key === "M") {
+        toggleStarMap();
+      }
+      
       if (e.key === "Escape") {
-        setShowNavigationConsole(false);
+        if (showStarMap) {
+          setShowStarMap(false);
+        } else if (showNavigationConsole) {
+          toggleNavigationConsole();
+        }
       }
     };
     
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, []);
+  }, [isTransitioning, showStarMap, showNavigationConsole, toggleNavigationConsole]);
   
-  const toggleNavigationConsole = () => {
-    setShowNavigationConsole(prev => !prev);
+  const toggleStarMap = () => {
+    setShowStarMap(prev => !prev);
   };
   
+  // Handle selecting a location from either map view
   const handleSelectLocation = (locationId: string) => {
     console.log(`Traveling to ${locationId}`);
     setTargetLocationId(locationId);
-    // Actual travel logic is handled in the Story store
+    setIsTransitioning(true);
+    
+    // Get the location details
+    const targetLocation = getCurrentLocation();
+    if (targetLocation) {
+      setCurrentObjective(`Traveling to ${targetLocation.name}`);
+    }
+    
+    // Simulate a travel delay and then move
+    setTimeout(() => {
+      setMode("flying");
+      // Perform the actual movement
+      const success = moveToLocation(locationId);
+      
+      if (success) {
+        console.log(`Successfully traveled to ${locationId}`);
+      } else {
+        console.error(`Failed to travel to ${locationId}`);
+      }
+      
+      setIsTransitioning(false);
+      setTargetLocationId(null);
+    }, 800); // Short delay to simulate travel
   };
   
+  // Handle interaction with a point of interest
   const handleLandAtPoint = (pointId: string) => {
-    console.log(`Landing at point: ${pointId}`);
+    console.log(`Interacting with: ${pointId}`);
     
-    // Example of puzzle at location
-    const puzzleId = currentLocation?.encounters.puzzles?.[0];
-    if (puzzleId) {
-      console.log(`Starting puzzle: ${puzzleId}`);
-      const puzzleStarted = startPuzzle(puzzleId);
-      if (puzzleStarted) {
-        onEnterPuzzle();
+    // Based on point ID, decide what kind of interaction this is
+    if (pointId.includes("landing") || pointId.includes("docking")) {
+      // Change to landed mode for planets or stations
+      setMode("landed");
+      setCurrentObjective(`Landed on surface of ${currentLocation?.name}`);
+      return;
+    }
+    
+    // Determine if this is a puzzle or combat encounter based on the point ID
+    const isPuzzleEncounter = pointId.includes("puzzle") || 
+                             pointId.includes("ancient") || 
+                             pointId.includes("terminal") ||
+                             pointId.includes("breach") ||
+                             pointId.includes("power") ||
+                             pointId.includes("anomaly");
+    
+    const isCombatEncounter = pointId.includes("hostile") || 
+                             pointId.includes("enemy") ||
+                             pointId.includes("security") ||
+                             Math.random() < 0.3; // 30% chance of random encounter
+    
+    // Handle puzzle encounters
+    if (isPuzzleEncounter) {
+      // Get a puzzle from the current location (first one for demo)
+      const puzzleId = currentLocation?.encounters.puzzles?.[0];
+      if (puzzleId) {
+        console.log(`Starting puzzle: ${puzzleId}`);
+        const puzzleStarted = startPuzzle(puzzleId);
+        if (puzzleStarted) {
+          onEnterPuzzle();
+        }
       }
     }
     
-    // Example of enemy at location
-    if (pointId.includes("hostile") || Math.random() < 0.3) {
+    // Handle combat encounters
+    if (isCombatEncounter) {
       const enemyId = currentLocation?.encounters.enemies?.[0];
       if (enemyId) {
         console.log(`Engaging enemy: ${enemyId}`);
@@ -133,30 +202,75 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         onLand={handleLandAtPoint}
       />
       
-      {/* Navigation console UI overlay */}
+      {/* Navigation console UI overlay (smaller version) */}
       {showNavigationConsole && (
         <Html fullscreen>
           <SpaceNavigation 
-            onClose={() => setShowNavigationConsole(false)}
+            onClose={() => toggleNavigationConsole()}
             onSelectLocation={handleSelectLocation}
           />
         </Html>
       )}
       
-      {/* Instructions overlay */}
+      {/* Star Map - more detailed galactic navigation */}
+      {showStarMap && (
+        <Html fullscreen>
+          <StarMap 
+            onClose={() => setShowStarMap(false)}
+            onSelectLocation={handleSelectLocation}
+          />
+        </Html>
+      )}
+      
+      {/* Transition overlay when traveling */}
+      {isTransitioning && (
+        <Html fullscreen>
+          <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+            <div className="text-center">
+              <div className="text-3xl text-blue-300 mb-4">
+                Engaging FTL Drive
+              </div>
+              <div className="text-xl text-white mb-8">
+                Destination: {targetLocationId}
+              </div>
+              <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden mx-auto">
+                <div className="h-full bg-blue-500 animate-[pulse_1s_ease-in-out_infinite]"></div>
+              </div>
+            </div>
+          </div>
+        </Html>
+      )}
+      
+      {/* HUD overlay with controls and current location */}
       <Html fullscreen>
-        <div className="fixed top-4 right-4 bg-black bg-opacity-70 text-white p-3 rounded-md max-w-xs text-sm z-50">
-          <h3 className="font-bold mb-2">Controls</h3>
+        <div className="fixed top-4 right-4 bg-black bg-opacity-70 text-white p-3 rounded-md max-w-xs text-sm z-40">
+          <h3 className="font-bold mb-2">Ship Controls</h3>
           <ul className="space-y-1 text-xs">
-            <li>• WASD/Arrows: Fly spacecraft</li>
+            <li>• WASD/Arrows: Pilot spacecraft</li>
             <li>• E: Interact with objects</li>
-            <li>• N: Open navigation console</li>
+            <li>• N: Navigation console</li>
+            <li>• M: Star map</li>
             <li>• ESC: Close menus</li>
           </ul>
           
           <div className="mt-4 pt-2 border-t border-gray-700">
             <div className="text-xs text-blue-300">Current Location:</div>
             <div className="font-medium">{currentLocation?.name || "Unknown"}</div>
+            <div className="text-xs text-gray-400">{currentLocation?.type} - {currentLocation?.region || "Unknown Region"}</div>
+          </div>
+          
+          <div className="mt-2 pt-2 border-t border-gray-700">
+            <div className="text-xs text-green-300">Current Objective:</div>
+            <div className="text-sm">{currentObjective}</div>
+          </div>
+          
+          <div className="mt-4">
+            <button
+              onClick={toggleStarMap}
+              className="bg-blue-700 hover:bg-blue-600 text-white text-xs py-1 px-3 rounded-md w-full"
+            >
+              Open Star Map
+            </button>
           </div>
         </div>
       </Html>
