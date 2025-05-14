@@ -20,6 +20,7 @@ import CompanionChat from "./CompanionChat";
 import CompanionSelection from "./CompanionSelection";
 import ForearmPad from "./ForearmPad";
 import TechnicalPuzzle from "./TechnicalPuzzle";
+import SaveLoadMenu from "./SaveLoadMenu";
 
 interface SpaceEnvironmentProps {
   onEnterCombat: () => void;
