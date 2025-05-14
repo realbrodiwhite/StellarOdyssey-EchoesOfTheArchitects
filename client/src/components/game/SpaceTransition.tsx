@@ -74,7 +74,11 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
       {/* For transition to character selection, do a different animation */}
       <div className="warp-scene">
         <div className="warp-effect"></div>
-        <div className="warp-ship"></div>
+        <div className="warp-ship-container">
+          <div className="warp-ship"></div>
+          <div className="warp-ship-cockpit"></div>
+          <div className="warp-ship-engine"></div>
+        </div>
       </div>
       
       {skipEnabled && (
