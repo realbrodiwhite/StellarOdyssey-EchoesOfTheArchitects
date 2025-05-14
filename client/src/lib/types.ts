@@ -14,7 +14,10 @@ export enum CharacterClass {
   Engineer = 'Engineer',
   Scientist = 'Scientist',
   Diplomat = 'Diplomat',
-  Pilot = 'Pilot'
+  Pilot = 'Pilot',
+  Soldier = 'Soldier',
+  Mercenary = 'Mercenary',
+  Explorer = 'Explorer'
 }
 
 export enum SkillType {
@@ -67,6 +70,15 @@ export interface Character {
   experience: number;
   inventory: Item[];
   abilities: Ability[];
+  // New fields
+  shield?: number;
+  maxShield?: number;
+  credits?: number;
+  faction?: Faction;
+  statusEffects?: string[];
+  backstory?: string;
+  appearance?: string;
+  personality?: string;
 }
 
 export interface Skill {
@@ -99,6 +111,7 @@ export interface Ability {
   cooldown: number;
   currentCooldown: number;
   requiredSkill?: { type: SkillType, level: number };
+  areaEffect?: boolean;
 }
 
 export interface Puzzle {

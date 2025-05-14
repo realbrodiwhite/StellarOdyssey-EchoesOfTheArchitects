@@ -9,11 +9,14 @@ import { useStory } from "@/lib/stores/useStory";
 import { usePuzzle } from "@/lib/stores/usePuzzle";
 import { useCombat } from "@/lib/stores/useCombat";
 import { useGame } from "@/lib/stores/useGame";
+import { useCompanion, DialogueType } from "@/lib/stores/useCompanion";
 import { Controls } from "@/lib/types";
 import { Html } from "@react-three/drei";
 import SpaceExploration from "./SpaceExploration";
 import SpaceNavigation from "./SpaceNavigation";
 import StarMap from "./StarMap";
+import CompanionChat from "./CompanionChat";
+import CompanionSelection from "./CompanionSelection";
 
 interface SpaceEnvironmentProps {
   onEnterCombat: () => void;
@@ -35,9 +38,15 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   
   // UI States
   const [showStarMap, setShowStarMap] = useState(false);
+  const [showCompanionSelect, setShowCompanionSelect] = useState(false);
+  const [showCompanionChat, setShowCompanionChat] = useState(false);
+  const [companionChatMinimized, setCompanionChatMinimized] = useState(false);
   const [targetLocationId, setTargetLocationId] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentObjective, setCurrentObjective] = useState("Explore the current location");
+  
+  // Companion system
+  const { activeCompanion, getRandomDialogue, addDialogue } = useCompanion();
   
   // Get the current location data
   const currentLocation = getCurrentLocation();
@@ -264,15 +273,47 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
             <div className="text-sm">{currentObjective}</div>
           </div>
           
-          <div className="mt-4">
+          <div className="mt-4 space-y-2">
             <button
               onClick={toggleStarMap}
               className="bg-blue-700 hover:bg-blue-600 text-white text-xs py-1 px-3 rounded-md w-full"
             >
               Open Star Map
             </button>
+            
+            {activeCompanion ? (
+              <button
+                onClick={() => setShowCompanionChat(prev => !prev)}
+                className="bg-indigo-700 hover:bg-indigo-600 text-white text-xs py-1 px-3 rounded-md w-full"
+              >
+                Chat with {activeCompanion.name}
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowCompanionSelect(true)}
+                className="bg-purple-700 hover:bg-purple-600 text-white text-xs py-1 px-3 rounded-md w-full"
+              >
+                Activate AI Companion
+              </button>
+            )}
           </div>
         </div>
+        
+        {/* Companion chat window */}
+        {showCompanionChat && activeCompanion && (
+          <CompanionChat 
+            minimized={companionChatMinimized}
+            onToggleMinimize={() => setCompanionChatMinimized(prev => !prev)}
+            onClose={() => setShowCompanionChat(false)}
+          />
+        )}
+        
+        {/* Companion selection modal */}
+        {showCompanionSelect && (
+          <CompanionSelection 
+            onClose={() => setShowCompanionSelect(false)} 
+          />
+        )}
       </Html>
     </>
   );

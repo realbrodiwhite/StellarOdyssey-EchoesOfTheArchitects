@@ -8,13 +8,16 @@ import {
   HelpCircle, 
   Volume2, 
   VolumeX,
-  Menu
+  Menu,
+  Save,
+  Upload
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { useCharacter } from "@/lib/stores/useCharacter";
 import { Controls } from "@/lib/types";
 import Inventory from "./Inventory";
+import SaveLoadMenu from "./SaveLoadMenu";
 
 interface GameUIProps {
   onOpenInventory: () => void;
@@ -33,6 +36,8 @@ const GameUI = ({
   const { selectedCharacter } = useCharacter();
   const [showInventory, setShowInventory] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showSaveMenu, setShowSaveMenu] = useState(false);
+  const [showLoadMenu, setShowLoadMenu] = useState(false);
   
   // Keyboard controls subscription
   const inventoryPressed = useKeyboardControls<Controls>(state => state.inventory);
@@ -176,6 +181,26 @@ const GameUI = ({
                 <Button 
                   variant="outline" 
                   className="w-full"
+                  onClick={() => {
+                    setShowSaveMenu(true);
+                    setShowMenu(false);
+                  }}
+                >
+                  Save Game
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => {
+                    setShowLoadMenu(true);
+                    setShowMenu(false);
+                  }}
+                >
+                  Load Game
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
                   onClick={onToggleSound}
                 >
                   {isSoundOn ? "Mute Sound" : "Enable Sound"}
@@ -193,6 +218,27 @@ const GameUI = ({
       <AnimatePresence>
         {showInventory && (
           <Inventory onClose={() => setShowInventory(false)} />
+        )}
+      </AnimatePresence>
+      
+      {/* Save/Load menus */}
+      <AnimatePresence>
+        {showSaveMenu && (
+          <SaveLoadMenu 
+            isOpen={showSaveMenu} 
+            onClose={() => setShowSaveMenu(false)} 
+            mode="save" 
+          />
+        )}
+      </AnimatePresence>
+      
+      <AnimatePresence>
+        {showLoadMenu && (
+          <SaveLoadMenu 
+            isOpen={showLoadMenu} 
+            onClose={() => setShowLoadMenu(false)} 
+            mode="load" 
+          />
         )}
       </AnimatePresence>
     </>
