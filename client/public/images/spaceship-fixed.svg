@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240px" height="120px" viewBox="0 0 240 120" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Engine Glow Effect -->
+        <radialGradient id="engineGlow" cx="0.8" cy="0.5" r="0.5" fx="0.8" fy="0.5">
+            <stop offset="0%" stop-color="#FFFF00" stop-opacity="1"/>
+            <stop offset="20%" stop-color="#FF9900" stop-opacity="0.9"/>
+            <stop offset="40%" stop-color="#FF6600" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#FF3300" stop-opacity="0"/>
+        </radialGradient>
+        
+        <!-- Cockpit Glass Gradient -->
+        <linearGradient id="cockpitGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#AADDFF" stop-opacity="0.9"/>
+            <stop offset="50%" stop-color="#77AAFF" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#5577FF" stop-opacity="0.9"/>
+        </linearGradient>
+        
+        <!-- Metal Texture -->
+        <linearGradient id="metalGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#DDDDDD"/>
+            <stop offset="50%" stop-color="#AAAAAA"/>
+            <stop offset="100%" stop-color="#888888"/>
+        </linearGradient>
+        
+        <!-- Highlight Effect -->
+        <linearGradient id="highlight" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.7"/>
+            <stop offset="15%" stop-color="#FFFFFF" stop-opacity="0.1"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+        </linearGradient>
+    </defs>
+    
+    <g id="Ship" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Engine Glow (Behind Ship) -->
+        <ellipse cx="205" cy="60" rx="25" ry="15" fill="url(#engineGlow)" />
+        
+        <!-- Main Hull - Fuselage -->
+        <path d="M40,60 C40,40 80,30 140,30 C180,30 200,45 200,60 C200,75 180,90 140,90 C80,90 40,80 40,60 Z" fill="url(#metalGradient)" stroke="#444444" stroke-width="2" />
+        
+        <!-- Nose Cone -->
+        <path d="M40,60 C40,60 25,50 20,45 C15,40 15,80 20,75 C25,70 40,60 40,60 Z" fill="#999999" stroke="#444444" stroke-width="1.5" />
+        
+        <!-- Cockpit Canopy -->
+        <path d="M70,45 C75,40 85,37 95,37 C105,37 115,40 120,45 C125,50 125,55 120,60 C115,65 105,68 95,68 C85,68 75,65 70,60 C65,55 65,50 70,45 Z" fill="url(#cockpitGlass)" stroke="#6688AA" stroke-width="1.5" />
+        <path d="M75,47 C80,43 85,41 95,41 C105,41 110,43 115,47" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.6" />
+        
+        <!-- Upper Hull Details -->
+        <path d="M130,30 L150,20 L170,20 L190,30" fill="none" stroke="#666666" stroke-width="2" />
+        <path d="M130,35 L150,25 L170,25 L190,35" fill="none" stroke="#666666" stroke-width="1" />
+        
+        <!-- Lower Hull Details -->
+        <path d="M130,85 L150,95 L170,95 L190,85" fill="none" stroke="#666666" stroke-width="2" />
+        <path d="M130,80 L150,90 L170,90 L190,80" fill="none" stroke="#666666" stroke-width="1" />
+        
+        <!-- Wing Structures -->
+        <path d="M120,35 L110,15 L150,15 L160,35" fill="#999999" stroke="#666666" stroke-width="1.5" />
+        <path d="M120,85 L110,105 L150,105 L160,85" fill="#999999" stroke="#666666" stroke-width="1.5" />
+        
+        <!-- Engine Housing -->
+        <rect x="180" y="45" width="20" height="30" rx="5" fill="#777777" stroke="#555555" stroke-width="1.5" />
+        <circle cx="190" cy="50" r="3" fill="#444444" />
+        <circle cx="190" cy="70" r="3" fill="#444444" />
+        
+        <!-- Panel Lines -->
+        <line x1="60" y1="45" x2="140" y2="45" stroke="#555555" stroke-width="0.8" />
+        <line x1="60" y1="75" x2="140" y2="75" stroke="#555555" stroke-width="0.8" />
+        <line x1="160" y1="35" x2="180" y2="35" stroke="#555555" stroke-width="0.8" />
+        <line x1="160" y1="85" x2="180" y2="85" stroke="#555555" stroke-width="0.8" />
+        
+        <!-- Highlights -->
+        <path d="M50,50 C60,45 120,40 180,55" stroke="url(#highlight)" stroke-width="5" />
+        
+        <!-- Antenna -->
+        <line x1="130" y1="25" x2="120" y2="10" stroke="#AAAAAA" stroke-width="1" />
+        <circle cx="120" cy="10" r="2" fill="#CCCCCC" />
+    </g>
+</svg>

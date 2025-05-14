@@ -96,7 +96,7 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
         
         <div className="svg-ship-container">
           <img 
-            src="/images/spaceship.svg" 
+            src="/images/spaceship-fixed.svg" 
             alt="Spaceship" 
             className="svg-spaceship"
           />
