@@ -45,6 +45,8 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const [showCompanionChat, setShowCompanionChat] = useState(false);
   const [showForearmPad, setShowForearmPad] = useState(false);
   const [showTechnicalPuzzle, setShowTechnicalPuzzle] = useState(false);
+  const [showSaveMenu, setShowSaveMenu] = useState(false);
+  const [showLoadMenu, setShowLoadMenu] = useState(false);
   const [companionChatMinimized, setCompanionChatMinimized] = useState(false);
   const [targetLocationId, setTargetLocationId] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -294,6 +296,22 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
               Open Forearm Terminal
             </button>
             
+            {/* Save/Load buttons */}
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setShowSaveMenu(true)}
+                className="flex-1 bg-amber-700 hover:bg-amber-600 text-white text-xs py-1 px-2 rounded-md"
+              >
+                Save Game
+              </button>
+              <button
+                onClick={() => setShowLoadMenu(true)}
+                className="flex-1 bg-teal-700 hover:bg-teal-600 text-white text-xs py-1 px-2 rounded-md"
+              >
+                Load Game
+              </button>
+            </div>
+            
             {hasUnlockedCompanionAI() && activeCompanion ? (
               <button
                 onClick={() => setShowCompanionChat(prev => !prev)}
@@ -355,6 +373,23 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
                 setShowForearmPad(true);
               }, 1000);
             }}
+          />
+        )}
+        
+        {/* Save/Load menus */}
+        {showSaveMenu && (
+          <SaveLoadMenu 
+            isOpen={showSaveMenu} 
+            onClose={() => setShowSaveMenu(false)} 
+            mode="save" 
+          />
+        )}
+        
+        {showLoadMenu && (
+          <SaveLoadMenu 
+            isOpen={showLoadMenu} 
+            onClose={() => setShowLoadMenu(false)} 
+            mode="load" 
           />
         )}
       </Html>
