@@ -95,7 +95,12 @@ const Game = () => {
   const handleCharacterSelected = () => {
     console.log("Character selected, starting game");
     start(); // This will set phase to "playing"
-    setGameState("game");
+    
+    // Small delay to allow character data to be processed
+    setTimeout(() => {
+      setGameState("game");
+      console.log("Game state set to: game");
+    }, 300);
   };
 
   // Game component rendering based on game state
