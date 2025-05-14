@@ -12,10 +12,11 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
   
   useEffect(() => {
     // Set timeout to match the total animation duration
+    // Extended to 10 seconds for a longer intro animation
     const animationTimer = setTimeout(() => {
       setIsActive(false);
       onComplete();
-    }, 6000);
+    }, 10000); // Extended from 6000 to 10000ms
     
     return () => clearTimeout(animationTimer);
   }, [onComplete]);
@@ -73,7 +74,26 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
       
       {/* For transition to character selection, do a different animation */}
       <div className="warp-scene">
+        {/* Dynamic stars background with animated motion */}
+        <div className="animated-stars">
+          {Array.from({ length: 100 }).map((_, i) => (
+            <div 
+              key={i}
+              className="animated-star"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                width: `${Math.random() * 3 + 1}px`,
+                height: `${Math.random() * 3 + 1}px`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${Math.random() * 3 + 5}s`
+              }}
+            />
+          ))}
+        </div>
+        
         <div className="warp-effect"></div>
+        
         <div className="svg-ship-container">
           <img 
             src="/images/spaceship.svg" 
