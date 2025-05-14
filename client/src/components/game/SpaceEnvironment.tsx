@@ -64,6 +64,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     // Example of puzzle at location
     const puzzleId = currentLocation?.encounters.puzzles?.[0];
     if (puzzleId) {
+      console.log(`Starting puzzle: ${puzzleId}`);
       const puzzleStarted = startPuzzle(puzzleId);
       if (puzzleStarted) {
         onEnterPuzzle();
@@ -74,19 +75,33 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     if (pointId.includes("hostile") || Math.random() < 0.3) {
       const enemyId = currentLocation?.encounters.enemies?.[0];
       if (enemyId) {
+        console.log(`Engaging enemy: ${enemyId}`);
+        
         // In a real implementation, fetch enemy data from a proper source
-        const mockEnemy = {
+        const enemyData = {
           id: enemyId,
           name: "Space Drone",
+          faction: "Syndicate", 
           health: 50,
           maxHealth: 50,
+          shield: 20,
+          maxShield: 20,
           damage: 8,
+          defense: 2,
           abilities: [],
           description: "A hostile security drone.",
-          reward: { experience: 50 }
+          weaknesses: [],
+          resistances: [],
+          immunities: [],
+          canFlee: true,
+          level: 1,
+          image: "",
+          reward: { experience: 50 },
+          dialogues: {},
+          uniqueEncounter: false
         };
         
-        startCombat(mockEnemy);
+        startCombat(enemyData);
         onEnterCombat();
       }
     }

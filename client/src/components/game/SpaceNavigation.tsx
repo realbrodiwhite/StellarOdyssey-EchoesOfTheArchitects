@@ -221,9 +221,6 @@ const SpaceNavigation = ({ onClose, onSelectLocation }: SpaceNavigationProps) =>
                       {getSelectedLocation()!.encounters.puzzles?.length ? (
                         <li>• Points of interest detected</li>
                       ) : null}
-                      {getSelectedLocation()!.encounters.npcs?.length ? (
-                        <li>• Sentient presence detected</li>
-                      ) : null}
                     </ul>
                   </div>
                 )}

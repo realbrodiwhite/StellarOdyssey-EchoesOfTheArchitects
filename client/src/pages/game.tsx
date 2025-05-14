@@ -2,7 +2,7 @@ import { Suspense, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { KeyboardControls } from "@react-three/drei";
 import { useAudio } from "../lib/stores/useAudio";
-import { useGame } from "../lib/stores/useGame";
+import { useGame, GameState as GameStateType } from "../lib/stores/useGame";
 import MainMenu from "../components/game/MainMenu";
 import CharacterSelection from "../components/game/CharacterSelection";
 import SpaceEnvironment from "../components/game/SpaceEnvironment";
@@ -26,10 +26,14 @@ const keyboardControls = [
 
 const Game = () => {
   // Game state management
-  const [gameState, setGameState] = useState<"loading" | "menu" | "transition" | "character" | "exploration" | "combat" | "puzzle">("loading");
   const [transitionType, setTransitionType] = useState<"intro" | "selection">("intro");
   const { backgroundMusic, isMuted, toggleMute } = useAudio();
-  const { phase, start } = useGame();
+  const { 
+    phase, 
+    state: gameState, 
+    setState: setGameState,
+    start 
+  } = useGame();
   
   // Initial animation to show title screen
   useEffect(() => {
@@ -38,13 +42,7 @@ const Game = () => {
     }, 500);
     
     return () => clearTimeout(timer);
-  }, []);
-  
-  // Debug the game state
-  useEffect(() => {
-    console.log("Current game state:", gameState);
-    console.log("Current game phase:", phase);
-  }, [gameState, phase]);
+  }, [setGameState]);
   
   // Handle music playback
   useEffect(() => {
@@ -70,16 +68,16 @@ const Game = () => {
         setGameState("menu");
       }
     } else if (phase === "playing") {
-      // Only change to exploration if not in character selection or transition
+      // Only change to game if not in character selection or transition
       if (gameState !== "character" && gameState !== "transition") {
-        setGameState("exploration");
+        setGameState("game");
       }
     }
-  }, [phase, gameState]);
+  }, [phase, gameState, setGameState]);
 
   // Handlers for state transitions
   const handleStartGame = () => {
-    console.log("Starting new game, showing warp transition");
+    console.log("New Game button clicked");
     setTransitionType("selection");
     setGameState("transition");
   };
@@ -97,7 +95,7 @@ const Game = () => {
   const handleCharacterSelected = () => {
     console.log("Character selected, starting game");
     start(); // This will set phase to "playing"
-    setGameState("exploration");
+    setGameState("game");
   };
 
   // Game component rendering based on game state
@@ -121,7 +119,7 @@ const Game = () => {
       case "character":
         return <CharacterSelection onSelect={handleCharacterSelected} />;
         
-      case "exploration":
+      case "game":
         return (
           <KeyboardControls map={keyboardControls}>
             <Canvas
@@ -138,20 +136,39 @@ const Game = () => {
               </Suspense>
             </Canvas>
             <GameUI 
-              onOpenInventory={() => console.log("Opening inventory")}
+              onOpenInventory={() => setGameState("inventory")}
               onRequestHint={() => console.log("Hint requested")}
               onToggleSound={toggleMute}
               isSoundOn={!isMuted}
-              onReturnToMenu={() => setGameState("menu")}
+              onReturnToMenu={() => {
+                // First confirm with the player
+                if (window.confirm("Return to main menu? Progress will be saved.")) {
+                  setGameState("menu");
+                }
+              }}
             />
           </KeyboardControls>
         );
         
       case "combat":
-        return <Combat onCombatEnd={() => setGameState("exploration")} />;
+        return <Combat onCombatEnd={() => setGameState("game")} />;
         
       case "puzzle":
-        return <Puzzle onPuzzleSolved={() => setGameState("exploration")} />;
+        return <Puzzle onPuzzleSolved={() => setGameState("game")} />;
+        
+      case "inventory":
+        // When returning from inventory, go back to the game
+        return (
+          <div className="inventory-screen">
+            {/* Inventory component would go here */}
+            <button 
+              className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded"
+              onClick={() => setGameState("game")}
+            >
+              Return to Game
+            </button>
+          </div>
+        );
         
       default:
         return <div>Loading...</div>;
