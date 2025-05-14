@@ -12,11 +12,11 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
   
   useEffect(() => {
     // Set timeout to match the total animation duration
-    // Extended to 10 seconds for a longer intro animation
+    // Extended to accommodate the longer ship animation
     const animationTimer = setTimeout(() => {
       setIsActive(false);
       onComplete();
-    }, 10000); // Extended from 6000 to 10000ms
+    }, 12000); // Extended to 12 seconds to fully show the spaceship animation
     
     return () => clearTimeout(animationTimer);
   }, [onComplete]);
