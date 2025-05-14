@@ -43,7 +43,31 @@ export const useCharacter = create<CharacterState>()(
       selectCharacter: (characterClass) => {
         const template = characterTemplates.find(c => c.class.toString() === characterClass);
         if (template) {
-          set({ selectedCharacter: { ...template } });
+          // Generate the common core skills every character should have
+          const coreSkills = generateCoreSkills();
+          
+          // Create a map of existing skill types to avoid duplicating similar skills
+          const existingSkillTypes = new Map();
+          template.skills.forEach(skill => {
+            const key = `${skill.type}-${skill.name}`;
+            existingSkillTypes.set(key, true);
+          });
+          
+          // Filter out core skills that would duplicate existing skills
+          const filteredCoreSkills = coreSkills.filter(coreSkill => {
+            const key = `${coreSkill.type}-${coreSkill.name}`;
+            return !existingSkillTypes.has(key);
+          });
+          
+          // Combine character-specific skills with filtered core skills
+          const combinedSkills = [...template.skills, ...filteredCoreSkills];
+          
+          set({ 
+            selectedCharacter: { 
+              ...template,
+              skills: combinedSkills
+            } 
+          });
         }
       },
       
@@ -209,6 +233,7 @@ export const useCharacter = create<CharacterState>()(
         const character = get().selectedCharacter;
         if (!character) return;
         
+        // Update ability cooldowns
         const updatedAbilities = character.abilities.map(ability => {
           if (ability.currentCooldown > 0) {
             return { ...ability, currentCooldown: ability.currentCooldown - 1 };
@@ -216,10 +241,15 @@ export const useCharacter = create<CharacterState>()(
           return ability;
         });
         
+        // Passively restore a small amount of energy each turn (standard for all character types)
+        const passiveEnergyRegen = 2; // 2 energy per turn
+        const newEnergy = Math.min(character.maxEnergy, character.energy + passiveEnergyRegen);
+        
         set({
           selectedCharacter: {
             ...character,
-            abilities: updatedAbilities
+            abilities: updatedAbilities,
+            energy: newEnergy
           }
         });
       },

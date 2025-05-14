@@ -86,13 +86,27 @@ const CharacterSelection = ({ onSelect }: CharacterSelectionProps) => {
               <p className="text-gray-300 text-sm mb-4">{character.description}</p>
               
               <div className="space-y-3">
-                <h3 className="text-md font-semibold text-gray-200">Skills:</h3>
-                {character.skills.map(skill => (
-                  <div key={skill.id} className="flex justify-between items-center">
-                    <span className="text-gray-300 text-sm">{skill.name}</span>
-                    {getSkillBar(skill.level, skill.maxLevel)}
-                  </div>
-                ))}
+                <h3 className="text-md font-semibold text-gray-200">Specialized Skills:</h3>
+                {character.skills
+                  .filter(skill => skill.level > 1) // Specialized skills have higher starting levels
+                  .slice(0, 3) // Show only top specialized skills
+                  .map(skill => (
+                    <div key={skill.id} className="flex justify-between items-center">
+                      <span className="text-gray-300 text-sm">{skill.name}</span>
+                      {getSkillBar(skill.level, skill.maxLevel)}
+                    </div>
+                  ))
+                }
+                
+                <h3 className="text-md font-semibold text-gray-200 mt-4">Standard Skills:</h3>
+                <p className="text-xs text-gray-400 mb-2">All characters have these core skills:</p>
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+                  <span className="text-gray-300 text-xs">Survival</span>
+                  <span className="text-gray-300 text-xs">Basic Combat</span>
+                  <span className="text-gray-300 text-xs">Spaceship Operations</span>
+                  <span className="text-gray-300 text-xs">Equipment Maintenance</span>
+                  <span className="text-gray-300 text-xs">Communication</span>
+                </div>
               </div>
               
               <div className="mt-4 pt-4 border-t border-gray-700">
