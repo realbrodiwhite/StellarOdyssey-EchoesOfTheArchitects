@@ -10,6 +10,7 @@ import { usePuzzle } from "@/lib/stores/usePuzzle";
 import { useCombat } from "@/lib/stores/useCombat";
 import { useGame } from "@/lib/stores/useGame";
 import { useCompanion, DialogueType } from "@/lib/stores/useCompanion";
+import { useAchievements } from "@/lib/stores/useAchievements";
 import { Controls } from "@/lib/types";
 import { Html } from "@react-three/drei";
 import SpaceExploration from "./SpaceExploration";
@@ -17,6 +18,8 @@ import SpaceNavigation from "./SpaceNavigation";
 import StarMap from "./StarMap";
 import CompanionChat from "./CompanionChat";
 import CompanionSelection from "./CompanionSelection";
+import ForearmPad from "./ForearmPad";
+import TechnicalPuzzle from "./TechnicalPuzzle";
 
 interface SpaceEnvironmentProps {
   onEnterCombat: () => void;
@@ -284,19 +287,33 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
               Open Star Map
             </button>
             
-            {activeCompanion ? (
+            <button
+              onClick={() => setShowForearmPad(true)}
+              className="bg-green-700 hover:bg-green-600 text-white text-xs py-1 px-3 rounded-md w-full"
+            >
+              Open Forearm Terminal
+            </button>
+            
+            {hasUnlockedCompanionAI() && activeCompanion ? (
               <button
                 onClick={() => setShowCompanionChat(prev => !prev)}
                 className="bg-indigo-700 hover:bg-indigo-600 text-white text-xs py-1 px-3 rounded-md w-full"
               >
                 Chat with {activeCompanion.name}
               </button>
-            ) : (
+            ) : hasUnlockedCompanionAI() ? (
               <button
                 onClick={() => setShowCompanionSelect(true)}
                 className="bg-purple-700 hover:bg-purple-600 text-white text-xs py-1 px-3 rounded-md w-full"
               >
                 Activate AI Companion
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowTechnicalPuzzle(true)}
+                className="bg-gray-700 hover:bg-gray-600 text-white text-xs py-1 px-3 rounded-md w-full"
+              >
+                AI System Offline
               </button>
             )}
           </div>
@@ -312,9 +329,32 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         )}
         
         {/* Companion selection modal */}
-        {showCompanionSelect && (
+        {showCompanionSelect && hasUnlockedCompanionAI() && (
           <CompanionSelection 
             onClose={() => setShowCompanionSelect(false)} 
+          />
+        )}
+        
+        {/* Forearm Pad */}
+        {showForearmPad && (
+          <ForearmPad
+            onClose={() => setShowForearmPad(false)}
+          />
+        )}
+        
+        {/* Technical Puzzle for AI unlock */}
+        {showTechnicalPuzzle && (
+          <TechnicalPuzzle
+            onClose={() => setShowTechnicalPuzzle(false)}
+            onSuccess={() => {
+              // After successful puzzle completion, the achievement system
+              // will automatically unlock the companion AI
+              setShowTechnicalPuzzle(false);
+              setTimeout(() => {
+                // Show the forearm pad after a short delay
+                setShowForearmPad(true);
+              }, 1000);
+            }}
           />
         )}
       </Html>
