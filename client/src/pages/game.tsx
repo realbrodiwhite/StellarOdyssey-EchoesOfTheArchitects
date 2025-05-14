@@ -64,7 +64,8 @@ const Game = () => {
   // Update game state based on game phase
   useEffect(() => {
     if (phase === "ready") {
-      if (gameState !== "loading" && gameState !== "transition") {
+      if (gameState !== "loading" && gameState !== "transition" && gameState !== "character") {
+        // We explicitly exclude the character selection state to prevent it from switching back
         setGameState("menu");
       }
     } else if (phase === "playing") {
