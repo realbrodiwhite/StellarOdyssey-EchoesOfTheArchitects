@@ -12,11 +12,11 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
   
   useEffect(() => {
     // Set timeout to match the total animation duration
-    // Extended to accommodate the longer ship animation
+    // Extended to at least 15 seconds for a more immersive experience
     const animationTimer = setTimeout(() => {
       setIsActive(false);
       onComplete();
-    }, 12000); // Extended to 12 seconds to fully show the spaceship animation
+    }, 16000); // Extended to 16 seconds to include barrel rolls and longer flight path
     
     return () => clearTimeout(animationTimer);
   }, [onComplete]);
@@ -76,7 +76,7 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
       <div className="warp-scene">
         {/* Dynamic stars background with animated motion */}
         <div className="animated-stars">
-          {Array.from({ length: 100 }).map((_, i) => (
+          {Array.from({ length: 150 }).map((_, i) => (
             <div 
               key={i}
               className="animated-star"
@@ -85,8 +85,8 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
                 left: `${Math.random() * 100}%`,
                 width: `${Math.random() * 3 + 1}px`,
                 height: `${Math.random() * 3 + 1}px`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${Math.random() * 3 + 5}s`
+                animationDelay: `${Math.random() * 8}s`,
+                animationDuration: `${Math.random() * 7 + 8}s`
               }}
             />
           ))}
