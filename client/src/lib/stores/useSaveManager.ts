@@ -1,20 +1,13 @@
 import { create } from 'zustand';
-import { useCharacter } from './useCharacter';
-import { useInventory } from './useInventory';
-import { useStory } from './useStory';
-import { useGame } from './useGame';
-import { useCompanion } from './useCompanion';
+import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 
+// Simple save data structure
 export interface SaveData {
   id: string;
   name: string;
   timestamp: number;
-  character: any;
-  inventory: any;
-  story: any;
-  game: any;
-  companion: any;
+  data: any; // Store all game state as serialized JSON
 }
 
 interface SaveManagerState {
@@ -32,220 +25,145 @@ interface SaveManagerState {
   getCurrentSave: () => SaveData | null;
 }
 
-export const useSaveManager = create<SaveManagerState>((set, get) => {
-  // Initialize saves from localStorage if available
-  const initialSaves: SaveData[] = (() => {
-    try {
-      const savedData = localStorage.getItem('cosmic_odyssey_saves');
-      return savedData ? JSON.parse(savedData) : [];
-    } catch (error) {
-      console.error('Error loading saved games:', error);
-      return [];
-    }
-  })();
+export const useSaveManager = create<SaveManagerState>()(
+  persist(
+    (set, get) => {
+      // Initialize saves from localStorage if available
+      const initialSaves: SaveData[] = [];
 
-  return {
-    // Initial state
-    saves: initialSaves,
-    currentSaveId: null,
+      return {
+        // Initial state
+        saves: initialSaves,
+        currentSaveId: null,
 
-    // Actions
-    saveGame: (saveName: string) => {
-      // Get current state from all stores
-      const characterState = useCharacter.getState();
-      const inventoryState = useInventory.getState();
-      const storyState = useStory.getState();
-      const gameState = useGame.getState();
-      const companionState = useCompanion.getState();
-      
-      // Create save ID or reuse current
-      const saveId = get().currentSaveId || uuidv4();
-      
-      // Create save data object
-      const saveData: SaveData = {
-        id: saveId,
-        name: saveName,
-        timestamp: Date.now(),
-        character: {
-          activeCharacter: characterState.activeCharacter,
-          availableSkillPoints: characterState.availableSkillPoints
+        // Actions
+        saveGame: (saveName: string) => {
+          // Create save ID or reuse current
+          const saveId = get().currentSaveId || uuidv4();
+          
+          // Get data from localStorage for each store
+          const gameState: Record<string, any> = {};
+          
+          try {
+            // Go through all localStorage items that match our patterns
+            for (let i = 0; i < localStorage.length; i++) {
+              const key = localStorage.key(i);
+              if (key && key.endsWith('-storage')) {
+                const value = localStorage.getItem(key);
+                if (value) {
+                  gameState[key] = JSON.parse(value);
+                }
+              }
+            }
+          } catch (error) {
+            console.error('Error reading from localStorage:', error);
+          }
+          
+          // Create save data object 
+          const saveData: SaveData = {
+            id: saveId,
+            name: saveName,
+            timestamp: Date.now(),
+            data: gameState
+          };
+
+          // Update saves array
+          set(state => {
+            // Check if save already exists and update it, or add new save
+            const existingIndex = state.saves.findIndex(save => save.id === saveId);
+            let newSaves: SaveData[];
+            
+            if (existingIndex >= 0) {
+              // Update existing save
+              newSaves = [...state.saves];
+              newSaves[existingIndex] = saveData;
+            } else {
+              // Add new save
+              newSaves = [...state.saves, saveData];
+            }
+            
+            return { 
+              saves: newSaves,
+              currentSaveId: saveId 
+            };
+          });
+          
+          console.log(`Game saved as "${saveName}"`);
+          return saveId;
         },
-        inventory: {
-          items: inventoryState.items,
-          credits: inventoryState.credits,
-          capacity: inventoryState.capacity
+
+        loadGame: (saveId: string) => {
+          // Find the requested save
+          const saveToLoad = get().saves.find(save => save.id === saveId);
+          
+          if (!saveToLoad) {
+            console.error(`Save with ID ${saveId} not found`);
+            return false;
+          }
+          
+          try {
+            // Restore data to localStorage
+            const { data } = saveToLoad;
+            
+            if (data) {
+              // Write each store's data back to localStorage
+              Object.entries(data).forEach(([key, value]) => {
+                try {
+                  localStorage.setItem(key, JSON.stringify(value));
+                } catch (error) {
+                  console.error(`Error restoring data for ${key}:`, error);
+                }
+              });
+            }
+            
+            // Update current save ID
+            set({ currentSaveId: saveId });
+            
+            console.log(`Game loaded: ${saveToLoad.name}`);
+            
+            // Reload the page to apply loaded state
+            window.location.reload();
+            
+            return true;
+          } catch (error) {
+            console.error('Error loading game:', error);
+            return false;
+          }
         },
-        story: {
-          currentLocation: storyState.currentLocation,
-          visitedLocations: storyState.visitedLocations,
-          questProgress: storyState.questProgress,
-          storyFlags: storyState.storyFlags
+
+        deleteSave: (saveId: string) => {
+          // Remove save from array
+          set(state => {
+            const newSaves = state.saves.filter(save => save.id !== saveId);
+            
+            // If we deleted the current save, set currentSaveId to null
+            const currentSaveId = state.currentSaveId === saveId ? null : state.currentSaveId;
+            
+            return { saves: newSaves, currentSaveId };
+          });
+          
+          console.log(`Save deleted: ${saveId}`);
         },
-        game: {
-          settings: gameState.settings,
-          gameState: gameState.gameState
+
+        // Getters
+        getSaves: () => {
+          return get().saves;
         },
-        companion: {
-          activeCompanion: companionState.activeCompanion,
-          availableCompanions: companionState.availableCompanions,
-          companionRelationship: companionState.companionRelationship
+        
+        getCurrentSave: () => {
+          const { currentSaveId, saves } = get();
+          if (!currentSaveId) return null;
+          
+          return saves.find(save => save.id === currentSaveId) || null;
         }
       };
-
-      // Update saves array
-      set(state => {
-        // Check if save already exists and update it, or add new save
-        const existingIndex = state.saves.findIndex(save => save.id === saveId);
-        let newSaves: SaveData[];
-        
-        if (existingIndex >= 0) {
-          // Update existing save
-          newSaves = [...state.saves];
-          newSaves[existingIndex] = saveData;
-        } else {
-          // Add new save
-          newSaves = [...state.saves, saveData];
-        }
-        
-        // Store saves in localStorage
-        try {
-          localStorage.setItem('cosmic_odyssey_saves', JSON.stringify(newSaves));
-        } catch (error) {
-          console.error('Error saving game:', error);
-        }
-        
-        return { 
-          saves: newSaves,
-          currentSaveId: saveId 
-        };
-      });
-      
-      console.log(`Game saved as "${saveName}"`);
-      return saveId;
     },
-
-    loadGame: (saveId: string) => {
-      // Find the requested save
-      const saveToLoad = get().saves.find(save => save.id === saveId);
-      
-      if (!saveToLoad) {
-        console.error(`Save with ID ${saveId} not found`);
-        return false;
-      }
-      
-      try {
-        // Load data into each store
-        if (saveToLoad.character) {
-          const characterStore = useCharacter.getState();
-          
-          if (saveToLoad.character.activeCharacter) {
-            characterStore.setActiveCharacter(saveToLoad.character.activeCharacter);
-          }
-          
-          if (typeof saveToLoad.character.availableSkillPoints === 'number') {
-            characterStore.setAvailableSkillPoints(saveToLoad.character.availableSkillPoints);
-          }
-        }
-        
-        if (saveToLoad.inventory) {
-          const inventoryStore = useInventory.getState();
-          
-          if (Array.isArray(saveToLoad.inventory.items)) {
-            inventoryStore.setItems(saveToLoad.inventory.items);
-          }
-          
-          if (typeof saveToLoad.inventory.credits === 'number') {
-            inventoryStore.setCredits(saveToLoad.inventory.credits);
-          }
-          
-          if (typeof saveToLoad.inventory.capacity === 'number') {
-            inventoryStore.setCapacity(saveToLoad.inventory.capacity);
-          }
-        }
-        
-        if (saveToLoad.story) {
-          const storyStore = useStory.getState();
-          
-          if (saveToLoad.story.currentLocation) {
-            storyStore.setCurrentLocation(saveToLoad.story.currentLocation);
-          }
-          
-          if (Array.isArray(saveToLoad.story.visitedLocations)) {
-            storyStore.setVisitedLocations(saveToLoad.story.visitedLocations);
-          }
-          
-          if (saveToLoad.story.questProgress) {
-            storyStore.setQuestProgress(saveToLoad.story.questProgress);
-          }
-          
-          if (saveToLoad.story.storyFlags) {
-            storyStore.setStoryFlags(saveToLoad.story.storyFlags);
-          }
-        }
-        
-        if (saveToLoad.game) {
-          const gameStore = useGame.getState();
-          
-          if (saveToLoad.game.settings) {
-            gameStore.setSettings(saveToLoad.game.settings);
-          }
-          
-          if (saveToLoad.game.gameState) {
-            gameStore.setGameState(saveToLoad.game.gameState);
-          }
-        }
-        
-        if (saveToLoad.companion) {
-          // For companion data, we'll need to write specific loading logic
-          // depending on the companion store's actions
-          if (saveToLoad.companion.activeCompanion) {
-            // For example, if there's a setActiveCompanion action
-            // useCompanion.getState().setActiveCompanion(saveToLoad.companion.activeCompanion);
-          }
-        }
-        
-        // Update current save ID
-        set({ currentSaveId: saveId });
-        
-        console.log(`Game loaded: ${saveToLoad.name}`);
-        return true;
-      } catch (error) {
-        console.error('Error loading game:', error);
-        return false;
-      }
-    },
-
-    deleteSave: (saveId: string) => {
-      // Remove save from array
-      set(state => {
-        const newSaves = state.saves.filter(save => save.id !== saveId);
-        
-        // Update localStorage
-        try {
-          localStorage.setItem('cosmic_odyssey_saves', JSON.stringify(newSaves));
-        } catch (error) {
-          console.error('Error updating saved games:', error);
-        }
-        
-        // If we deleted the current save, set currentSaveId to null
-        const currentSaveId = state.currentSaveId === saveId ? null : state.currentSaveId;
-        
-        return { saves: newSaves, currentSaveId };
-      });
-      
-      console.log(`Save deleted: ${saveId}`);
-    },
-
-    // Getters
-    getSaves: () => {
-      return get().saves;
-    },
-    
-    getCurrentSave: () => {
-      const { currentSaveId, saves } = get();
-      if (!currentSaveId) return null;
-      
-      return saves.find(save => save.id === currentSaveId) || null;
+    {
+      name: "save-manager-storage",
+      partialize: (state) => ({ 
+        saves: state.saves,
+        currentSaveId: state.currentSaveId
+      })
     }
-  };
-});
+  )
+);

@@ -161,7 +161,7 @@ const SaveLoadMenu: React.FC<SaveLoadMenuProps> = ({ isOpen, onClose, mode }) =>
               <div className="space-y-2 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
                 {saves
                   .sort((a, b) => b.timestamp - a.timestamp) // Sort newest first
-                  .map((save: SaveData) => (
+                  .map((save: SaveData, index: number) => (
                     <div
                       key={save.id}
                       onClick={() => mode === 'load' && handleLoadGame(save.id)}
@@ -175,16 +175,12 @@ const SaveLoadMenu: React.FC<SaveLoadMenuProps> = ({ isOpen, onClose, mode }) =>
                           <div className="text-xs text-gray-400 mt-1">
                             {formatDate(save.timestamp)}
                           </div>
-                          {save.character?.activeCharacter && (
-                            <div className="text-xs text-blue-300 mt-1">
-                              {save.character.activeCharacter.name} - Level {save.character.activeCharacter.level} {save.character.activeCharacter.class}
-                            </div>
-                          )}
-                          {save.story?.currentLocation && (
-                            <div className="text-xs text-green-300 mt-1">
-                              Location: {save.story.currentLocation}
-                            </div>
-                          )}
+                          <div className="text-xs text-blue-300 mt-1">
+                            Save #{index + 1}
+                          </div>
+                          <div className="text-xs text-green-300 mt-1">
+                            {formatDate(save.timestamp)}
+                          </div>
                         </div>
                         <div className="flex space-x-2">
                           {mode === 'save' && (
