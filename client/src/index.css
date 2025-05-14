@@ -302,12 +302,15 @@ canvas {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 80px;
-  height: 40px;
+  width: 120px;
+  height: 30px;
   background-color: #e6e6e6;
-  clip-path: polygon(0% 50%, 30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%);
+  /* Sleeker spaceship shape */
+  clip-path: polygon(0% 50%, 10% 20%, 40% 20%, 50% 0%, 60% 20%, 90% 20%, 100% 50%, 90% 80%, 60% 80%, 50% 100%, 40% 80%, 10% 80%);
   transform: translate(-50%, -50%) scale(0.5);
   z-index: 1004;
+  /* Add shadow and glow effect */
+  box-shadow: 0 0 15px rgba(100, 200, 255, 0.8), 0 0 30px rgba(70, 130, 255, 0.5);
   animation: shipWarp 5s forwards;
   will-change: transform;
 }

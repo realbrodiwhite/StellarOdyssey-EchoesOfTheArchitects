@@ -1,5 +1,6 @@
 import { Character, CharacterClass, SkillType, Faction } from "../types";
 import { v4 as uuidv4 } from "uuid";
+import { generateCoreSkills } from "./skills";
 
 export const characterTemplates: Character[] = [
   {
