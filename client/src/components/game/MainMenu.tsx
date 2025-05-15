@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useAudio } from "@/lib/stores/useAudio";
 import { useGame } from "@/lib/stores/useGame";
 import { useCharacter } from "@/lib/stores/useCharacter";
+import PuzzleSelector from "./PuzzleSelector";
 
 interface MainMenuProps {
   onStart: () => void;
@@ -11,13 +12,14 @@ interface MainMenuProps {
 const MainMenu = ({ onStart }: MainMenuProps) => {
   const { toggleMute, isMuted } = useAudio();
   const { start } = useGame();
-  const { selectedCharacter, resetCharacter } = useCharacter();
+  const { character, resetCharacter } = useCharacter();
   const [showContinue, setShowContinue] = useState(false);
+  const [showPuzzleSelector, setShowPuzzleSelector] = useState(false);
   
   // Check if there's a saved character to show continue option
   useEffect(() => {
-    setShowContinue(selectedCharacter !== null);
-  }, [selectedCharacter]);
+    setShowContinue(character && character.id !== '');
+  }, [character]);
   
   useEffect(() => {
     // Load audio on component mount
@@ -121,15 +123,22 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           </div>
         )}
         
+        <div className="game-button outline" onClick={() => setShowPuzzleSelector(true)}>
+          Puzzle Showcase
+        </div>
+        
         <div className="game-button ghost" onClick={toggleMute}>
           {isMuted ? "Sound: Off" : "Sound: On"}
         </div>
       </motion.div>
       
+      {/* Puzzle Selector Modal */}
+      {showPuzzleSelector && <PuzzleSelector onClose={() => setShowPuzzleSelector(false)} />}
+      
       {/* Debug buttons */}
       <div className="absolute top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 text-xs text-gray-500 z-10">
         <div>Game Phase: {useGame.getState().phase}</div>
-        {selectedCharacter && <div>Character: {selectedCharacter.name}</div>}
+        {character && character.id && <div>Character: {character.name}</div>}
       </div>
       
       {/* Credits */}
