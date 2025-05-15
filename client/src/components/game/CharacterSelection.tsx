@@ -133,87 +133,87 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
                   </div>
                 )}
                 
-                <div className="space-y-3">
-                  <h3 className="text-md font-semibold text-gray-200 flex items-center">
-                    <span className="mr-2">⚔️</span> Specialized Skills:
+                <div className="space-y-2 sm:space-y-3">
+                  <h3 className="text-sm sm:text-md font-semibold text-gray-200 flex items-center">
+                    <span className="mr-1 sm:mr-2">⚔️</span> Specialized Skills:
                   </h3>
                   {character.skills
                     .filter(skill => skill.level > 1) // Specialized skills have higher starting levels
                     .slice(0, 3) // Show only top specialized skills
                     .map(skill => (
                       <div key={skill.id} className="flex justify-between items-center">
-                        <span className="text-gray-300 text-sm">{skill.name}</span>
+                        <span className="text-gray-300 text-xs sm:text-sm">{skill.name}</span>
                         <div className="flex items-center">
                           {getSkillBar(skill.level, skill.maxLevel)}
-                          <span className="ml-2 text-blue-300 text-xs">{skill.level}/{skill.maxLevel}</span>
+                          <span className="ml-1 sm:ml-2 text-blue-300 text-[10px] sm:text-xs">{skill.level}/{skill.maxLevel}</span>
                         </div>
                       </div>
                     ))
                   }
                   
-                  <h3 className="text-md font-semibold text-gray-200 mt-4 flex items-center">
-                    <span className="mr-2">🛠️</span> Standard Skills:
+                  <h3 className="text-sm sm:text-md font-semibold text-gray-200 mt-3 sm:mt-4 flex items-center">
+                    <span className="mr-1 sm:mr-2">🛠️</span> Standard Skills:
                   </h3>
-                  <p className="text-xs text-gray-400 mb-2">All characters have these core skills:</p>
-                  <div className="grid grid-cols-2 gap-x-2 gap-y-1">
-                    <span className="text-gray-300 text-xs flex items-center">
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Survival
+                  <p className="text-[10px] sm:text-xs text-gray-400 mb-1 sm:mb-2">All characters have these core skills:</p>
+                  <div className="grid grid-cols-2 gap-x-1 sm:gap-x-2 gap-y-0.5 sm:gap-y-1">
+                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
+                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-green-500 rounded-full mr-1 sm:mr-2"></span>Survival
                     </span>
-                    <span className="text-gray-300 text-xs flex items-center">
-                      <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>Basic Combat
+                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
+                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-red-500 rounded-full mr-1 sm:mr-2"></span>Basic Combat
                     </span>
-                    <span className="text-gray-300 text-xs flex items-center">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>Spaceship Operations
+                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
+                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-blue-500 rounded-full mr-1 sm:mr-2"></span>Spaceship Ops
                     </span>
-                    <span className="text-gray-300 text-xs flex items-center">
-                      <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>Equipment Maintenance
+                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
+                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-yellow-500 rounded-full mr-1 sm:mr-2"></span>Maintenance
                     </span>
-                    <span className="text-gray-300 text-xs flex items-center">
-                      <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>Communication
+                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
+                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-purple-500 rounded-full mr-1 sm:mr-2"></span>Communication
                     </span>
                   </div>
                 </div>
                 
-                <div className="mt-6 pt-4 border-t border-gray-700 grid grid-cols-2 gap-4">
-                  <div className="bg-gray-900 p-3 rounded-md">
-                    <div className="text-xs text-blue-400 mb-1">Health</div>
-                    <div className="text-xl font-bold text-white flex items-center">
-                      <span className="text-red-400 mr-1">❤</span> {character.health}
-                      <span className="text-gray-500 text-xs ml-1">/ {character.maxHealth}</span>
+                <div className="mt-3 sm:mt-4 md:mt-6 pt-2 sm:pt-3 md:pt-4 border-t border-gray-700 grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
+                  <div className="bg-gray-900 p-2 sm:p-3 rounded-md">
+                    <div className="text-[10px] sm:text-xs text-blue-400 mb-0.5 sm:mb-1">Health</div>
+                    <div className="text-base sm:text-lg md:text-xl font-bold text-white flex items-center">
+                      <span className="text-red-400 mr-0.5 sm:mr-1">❤</span> {character.health}
+                      <span className="text-gray-500 text-[10px] sm:text-xs ml-0.5 sm:ml-1">/ {character.maxHealth}</span>
                     </div>
                   </div>
                   
-                  <div className="bg-gray-900 p-3 rounded-md">
-                    <div className="text-xs text-blue-400 mb-1">Energy</div>
-                    <div className="text-xl font-bold text-white flex items-center">
-                      <span className="text-blue-400 mr-1">⚡</span> {character.energy}
-                      <span className="text-gray-500 text-xs ml-1">/ {character.maxEnergy}</span>
+                  <div className="bg-gray-900 p-2 sm:p-3 rounded-md">
+                    <div className="text-[10px] sm:text-xs text-blue-400 mb-0.5 sm:mb-1">Energy</div>
+                    <div className="text-base sm:text-lg md:text-xl font-bold text-white flex items-center">
+                      <span className="text-blue-400 mr-0.5 sm:mr-1">⚡</span> {character.energy}
+                      <span className="text-gray-500 text-[10px] sm:text-xs ml-0.5 sm:ml-1">/ {character.maxEnergy}</span>
                     </div>
                   </div>
                   
                   {character.shield && character.maxShield && (
-                    <div className="bg-gray-900 p-3 rounded-md">
-                      <div className="text-xs text-blue-400 mb-1">Shield</div>
-                      <div className="text-xl font-bold text-white flex items-center">
-                        <span className="text-cyan-400 mr-1">🛡️</span> {character.shield}
-                        <span className="text-gray-500 text-xs ml-1">/ {character.maxShield}</span>
+                    <div className="bg-gray-900 p-2 sm:p-3 rounded-md">
+                      <div className="text-[10px] sm:text-xs text-blue-400 mb-0.5 sm:mb-1">Shield</div>
+                      <div className="text-base sm:text-lg md:text-xl font-bold text-white flex items-center">
+                        <span className="text-cyan-400 mr-0.5 sm:mr-1">🛡️</span> {character.shield}
+                        <span className="text-gray-500 text-[10px] sm:text-xs ml-0.5 sm:ml-1">/ {character.maxShield}</span>
                       </div>
                     </div>
                   )}
                   
                   {character.credits !== undefined && (
-                    <div className="bg-gray-900 p-3 rounded-md">
-                      <div className="text-xs text-blue-400 mb-1">Credits</div>
-                      <div className="text-xl font-bold text-white flex items-center">
-                        <span className="text-yellow-400 mr-1">💰</span> {character.credits}
+                    <div className="bg-gray-900 p-2 sm:p-3 rounded-md">
+                      <div className="text-[10px] sm:text-xs text-blue-400 mb-0.5 sm:mb-1">Credits</div>
+                      <div className="text-base sm:text-lg md:text-xl font-bold text-white flex items-center">
+                        <span className="text-yellow-400 mr-0.5 sm:mr-1">💰</span> {character.credits}
                       </div>
                     </div>
                   )}
                 </div>
                 
                 {selectedIndex === index && (
-                  <div className="mt-4 w-full">
-                    <div className="h-1 w-full bg-blue-500 animate-pulse rounded"></div>
+                  <div className="mt-2 sm:mt-3 md:mt-4 w-full">
+                    <div className="h-0.5 sm:h-1 w-full bg-blue-500 animate-pulse rounded"></div>
                   </div>
                 )}
               </Card>
