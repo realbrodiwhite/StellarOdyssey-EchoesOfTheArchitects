@@ -37,9 +37,9 @@ interface StoryState {
   discoverLocation: (locationId: string) => void;
   changeFactionReputation: (faction: Faction, amount: number) => void;
   
-  // Derived properties
-  visitedLocations: string[];
-  discoveredLocations: string[];
+  // Internal placeholders (these will be replaced with getters)
+  _tempVisitedLocations: any[];
+  _tempDiscoveredLocations: any[];
 }
 
 export const useStory = create<StoryState>((set, get) => ({
@@ -294,13 +294,16 @@ export const useStory = create<StoryState>((set, get) => ({
     console.log(`Reputation with ${faction} changed by ${amount}`);
   },
   
-  // Derived properties - implemented as properties
-  visitedLocations: [],
-  discoveredLocations: []
+  // Use any other property names to avoid conflicts
+  _tempVisitedLocations: [],
+  _tempDiscoveredLocations: []
 }));
 
-// Update the derived properties with getters
-Object.defineProperties(useStory.getState(), {
+// Update the state store to add the getters we need
+const storeAPI = useStory.getState();
+
+// Define the required properties as getters
+Object.defineProperties(storeAPI, {
   visitedLocations: {
     get: function() { return this.gameState.visitedLocations; }
   },
