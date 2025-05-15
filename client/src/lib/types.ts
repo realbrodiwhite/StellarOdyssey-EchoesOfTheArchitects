@@ -81,7 +81,9 @@ export interface Character {
   experience: number;
   inventory: Item[];
   abilities: Ability[];
-  // New fields
+  // Gender selection
+  gender: Gender;
+  // Other fields
   shield?: number;
   maxShield?: number;
   credits?: number;
@@ -209,6 +211,8 @@ export interface PartyMember {
   experience: number;
   inventory: Item[];
   abilities: Ability[];
+  // Gender selection
+  gender: Gender;
   // Optional fields
   shield?: number;
   maxShield?: number;

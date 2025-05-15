@@ -1,28 +1,69 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
-import { characterTemplates } from "@/lib/data/characters";
+import { characterTemplates } from "@/lib/data/characters"; // Original templates as fallback
+import { expandedCharacterTemplates } from "@/lib/data/expanded-characters"; // New expanded templates
 import { useCharacter } from "@/lib/stores/useCharacter";
-import { CharacterClass, SkillType } from "@/lib/types";
+import { CharacterClass, SkillType, Gender, Character } from "@/lib/types";
 import CharacterDetailModal from "./CharacterDetailModal";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CharacterSelectionProps {
   onSelect: () => void;
 }
 
 const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => {
+  // Use expanded character templates if available, otherwise fall back to original
+  const templates = expandedCharacterTemplates.length > 0 ? expandedCharacterTemplates : characterTemplates;
+  
   // Debug: Check if character templates are loaded correctly
-  console.log("Character templates available:", characterTemplates);
-  console.log("Number of templates:", characterTemplates.length);
+  console.log("Character templates available:", templates);
+  console.log("Number of templates:", templates.length);
   
   const { selectCharacter } = useCharacter();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [modalCharacter, setModalCharacter] = useState<number | null>(null);
+  const [selectedGender, setSelectedGender] = useState<Gender>(Gender.Male);
+  
+  // Group characters by class and gender for easier selection
+  const charactersByClass = useMemo(() => {
+    const result: Record<string, Record<Gender, Character[]>> = {};
+    
+    templates.forEach(character => {
+      // Create class group if it doesn't exist
+      if (!result[character.class]) {
+        result[character.class] = {
+          [Gender.Male]: [],
+          [Gender.Female]: []
+        };
+      }
+      
+      // Add character to appropriate gender group
+      result[character.class][character.gender].push(character);
+    });
+    
+    return result;
+  }, [templates]);
+  
+  // Get unique character classes (no gender duplicates)
+  const uniqueClasses = useMemo(() => {
+    return [...new Set(templates.map(c => c.class))];
+  }, [templates]);
+  
+  // Get the full template based on selected index but respecting gender choice
+  const getSelectedTemplate = (): Character | null => {
+    if (selectedIndex === null) return null;
+    
+    const selectedClass = uniqueClasses[selectedIndex];
+    const genderOptions = charactersByClass[selectedClass][selectedGender];
+    
+    return genderOptions && genderOptions.length > 0 ? genderOptions[0] : null;
+  };
   
   const handleCharacterSelect = (index: number) => {
-    console.log("Selected character index:", index);
-    console.log("Character data:", characterTemplates[index]);
+    console.log("Selected character class index:", index);
+    console.log("Character class:", uniqueClasses[index]);
     setSelectedIndex(index);
   };
 
@@ -33,11 +74,18 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
   
   const handleConfirmSelection = () => {
     if (selectedIndex !== null) {
-      // Pass the actual CharacterClass enum value, not a string
-      selectCharacter(characterTemplates[selectedIndex].class);
-      console.log("Selected character class:", characterTemplates[selectedIndex].class);
-      onSelect();
+      const selectedTemplate = getSelectedTemplate();
+      if (selectedTemplate) {
+        console.log("Selected character:", selectedTemplate);
+        selectCharacter(selectedTemplate);
+        onSelect();
+      }
     }
+  };
+  
+  const handleGenderToggle = (gender: Gender) => {
+    setSelectedGender(gender);
+    console.log("Selected gender:", gender);
   };
   
   // Add keyboard navigation
