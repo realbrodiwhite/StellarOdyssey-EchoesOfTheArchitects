@@ -450,6 +450,13 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
             mode="load" 
           />
         )}
+        
+        {/* Emergency Pirate Encounter */}
+        {showEmergencyEncounter && (
+          <EmergencyEncounter
+            onComplete={handleEmergencyComplete}
+          />
+        )}
       </Html>
     </>
   );
