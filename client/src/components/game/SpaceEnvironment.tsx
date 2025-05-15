@@ -56,8 +56,9 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentObjective, setCurrentObjective] = useState("First mission: Land at Proxima Outpost to deliver cargo");
   
-  // Emergency pirate encounter system - trigger immediately after game start
-  const [showEmergencyEncounter, setShowEmergencyEncounter] = useState(true); // Start with emergency encounter active
+  // Ship launch and emergency pirate encounter system
+  const [showShipLaunch, setShowShipLaunch] = useState(true); // Start with ship launch animation
+  const [showEmergencyEncounter, setShowEmergencyEncounter] = useState(false); // Will show after ship launch
   
   // Companion and achievement systems
   const { activeCompanion, getRandomDialogue, addDialogue } = useCompanion();
@@ -122,6 +123,13 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   
   const toggleStarMap = () => {
     setShowStarMap(prev => !prev);
+  };
+  
+  // Ship launch and emergency encounter handlers
+  const handleShipLaunchComplete = () => {
+    console.log("Ship launch animation complete, triggering emergency encounter");
+    setShowShipLaunch(false);
+    setShowEmergencyEncounter(true);
   };
   
   // Emergency encounter handlers
@@ -463,6 +471,13 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
             isOpen={showLoadMenu} 
             onClose={() => setShowLoadMenu(false)} 
             mode="load" 
+          />
+        )}
+        
+        {/* Ship Launch Animation */}
+        {showShipLaunch && (
+          <ShipLaunchAnimation 
+            onComplete={handleShipLaunchComplete}
           />
         )}
         
