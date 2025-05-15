@@ -55,10 +55,8 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentObjective, setCurrentObjective] = useState("First mission: Land at Proxima Outpost to deliver cargo");
   
-  // Emergency pirate encounter system
-  const [showEmergencyEncounter, setShowEmergencyEncounter] = useState(false);
-  const [firstInputTime, setFirstInputTime] = useState<number | null>(null);
-  const [pirateAmbushScheduled, setPirateAmbushScheduled] = useState(false);
+  // Emergency pirate encounter system - trigger immediately after game start
+  const [showEmergencyEncounter, setShowEmergencyEncounter] = useState(true); // Start with emergency encounter active
   
   // Companion and achievement systems
   const { activeCompanion, getRandomDialogue, addDialogue } = useCompanion();

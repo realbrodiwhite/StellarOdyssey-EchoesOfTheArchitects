@@ -28,11 +28,24 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
     const hitSound = new Audio('/sounds/hit.mp3');
     const successSound = new Audio('/sounds/success.mp3');
     
+    // Load emergency encounter sounds
+    const alarmSound = new Audio('/sounds/alarm.mp3');
+    const explosionSound = new Audio('/sounds/explosion.mp3');
+    
     // Store audio in state management
-    const { setBackgroundMusic, setHitSound, setSuccessSound } = useAudio.getState();
+    const { 
+      setBackgroundMusic, 
+      setHitSound, 
+      setSuccessSound,
+      setAlarmSound,
+      setExplosionSound 
+    } = useAudio.getState();
+    
     setBackgroundMusic(backgroundMusic);
     setHitSound(hitSound);
     setSuccessSound(successSound);
+    setAlarmSound(alarmSound);
+    setExplosionSound(explosionSound);
     
     console.log("Audio files loaded");
   }, []);
