@@ -5,17 +5,23 @@ interface AudioState {
   backgroundMusic: HTMLAudioElement | null;
   hitSound: HTMLAudioElement | null;
   successSound: HTMLAudioElement | null;
+  alarmSound: HTMLAudioElement | null;
+  explosionSound: HTMLAudioElement | null;
   isMuted: boolean;
   
   // Setter functions
   setBackgroundMusic: (music: HTMLAudioElement) => void;
   setHitSound: (sound: HTMLAudioElement) => void;
   setSuccessSound: (sound: HTMLAudioElement) => void;
+  setAlarmSound: (sound: HTMLAudioElement) => void;
+  setExplosionSound: (sound: HTMLAudioElement) => void;
   
   // Control functions
   toggleMute: () => void;
   playHit: () => void;
   playSuccess: () => void;
+  playAlarm: () => void;
+  playExplosion: () => void;
 }
 
 export const useAudio = create<AudioState>()(
@@ -24,11 +30,15 @@ export const useAudio = create<AudioState>()(
       backgroundMusic: null,
       hitSound: null,
       successSound: null,
+      alarmSound: null,
+      explosionSound: null,
       isMuted: false, // Start unmuted by default
       
       setBackgroundMusic: (music) => set({ backgroundMusic: music }),
       setHitSound: (sound) => set({ hitSound: sound }),
       setSuccessSound: (sound) => set({ successSound: sound }),
+      setAlarmSound: (sound) => set({ alarmSound: sound }),
+      setExplosionSound: (sound) => set({ explosionSound: sound }),
       
       toggleMute: () => {
         const { isMuted, backgroundMusic } = get();
@@ -82,6 +92,42 @@ export const useAudio = create<AudioState>()(
           successSound.currentTime = 0;
           successSound.play().catch(error => {
             console.log("Success sound play prevented:", error);
+          });
+        }
+      },
+      
+      playAlarm: () => {
+        const { alarmSound, isMuted } = get();
+        if (alarmSound) {
+          // If sound is muted, don't play anything
+          if (isMuted) {
+            console.log("Alarm sound skipped (muted)");
+            return;
+          }
+          
+          alarmSound.currentTime = 0;
+          alarmSound.loop = true;
+          alarmSound.volume = 0.5;
+          alarmSound.play().catch(error => {
+            console.log("Alarm sound play prevented:", error);
+          });
+        }
+      },
+      
+      playExplosion: () => {
+        const { explosionSound, isMuted } = get();
+        if (explosionSound) {
+          // If sound is muted, don't play anything
+          if (isMuted) {
+            console.log("Explosion sound skipped (muted)");
+            return;
+          }
+          
+          // Clone the sound to allow overlapping playback
+          const soundClone = explosionSound.cloneNode() as HTMLAudioElement;
+          soundClone.volume = 0.4;
+          soundClone.play().catch(error => {
+            console.log("Explosion sound play prevented:", error);
           });
         }
       }
