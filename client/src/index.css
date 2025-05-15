@@ -34,15 +34,16 @@ canvas {
 .game-button {
   background-color: #2563eb;
   color: white;
-  padding: 12px 24px;
+  padding: clamp(8px, 2vh, 14px) clamp(16px, 4vw, 24px);
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  width: 250px;
+  width: 100%;
+  max-width: 100%;
   text-align: center;
-  margin: 8px 0;
-  font-size: 18px;
+  margin: 6px 0;
+  font-size: clamp(14px, 3vw, 18px);
   display: block;
 }
 

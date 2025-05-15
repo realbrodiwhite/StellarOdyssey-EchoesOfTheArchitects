@@ -57,10 +57,10 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedIndex]);
   
-  // Function to get skill level as a visual bar
+  // Function to get skill level as a visual bar - responsive
   const getSkillBar = (level: number, maxLevel: number) => {
     return (
-      <div className="w-24 h-3 bg-gray-700 rounded-full overflow-hidden">
+      <div className="w-16 sm:w-20 md:w-24 h-2 sm:h-2.5 md:h-3 bg-gray-700 rounded-full overflow-hidden">
         <div 
           className="h-full bg-blue-400 rounded-full"
           style={{ width: `${(level / maxLevel) * 100}%` }}
@@ -70,16 +70,16 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
   };
   
   return (
-    <div className="h-screen w-full bg-black flex flex-col items-center justify-center relative overflow-auto py-8">
-      {/* Background stars */}
+    <div className="h-screen w-full bg-black flex flex-col items-center justify-center relative overflow-auto py-4 sm:py-6 md:py-8">
+      {/* Background stars - responsive */}
       <div className="absolute inset-0 z-0">
-        {[...Array(50)].map((_, i) => (
+        {[...Array(Math.min(80, Math.max(30, Math.floor(window.innerWidth / 12))))].map((_, i) => (
           <div
             key={i}
             className="absolute bg-white rounded-full"
             style={{
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
+              width: `${Math.min(3, Math.max(1, window.innerWidth / 800))}px`,
+              height: `${Math.min(3, Math.max(1, window.innerWidth / 800))}px`,
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
               opacity: Math.random() * 0.8 + 0.2
@@ -89,7 +89,7 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
       </div>
       
       <motion.h1
-        className="text-3xl md:text-4xl font-bold text-white mb-6 z-10"
+        className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-5 md:mb-6 z-10 px-4 text-center"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -97,7 +97,7 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
         Select Your Character
       </motion.h1>
       
-      <div className="flex flex-col md:flex-row gap-6 max-w-6xl mx-auto mb-8 z-10 px-4">
+      <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-5 md:gap-6 max-w-6xl mx-auto mb-6 sm:mb-7 md:mb-8 z-10 px-2 sm:px-3 md:px-4">
         {characterTemplates && characterTemplates.length > 0 ? (
           characterTemplates.map((character, index) => (
             <motion.div
@@ -105,31 +105,31 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="flex-1 min-w-[280px]"
+              className="flex-1 min-w-[280px] max-w-[400px]"
             >
               <Card 
-                className={`p-6 h-full cursor-pointer transition-all duration-200 ${
+                className={`p-3 sm:p-4 md:p-6 h-full cursor-pointer transition-all duration-200 ${
                   selectedIndex === index 
-                    ? 'ring-4 ring-blue-500 bg-gray-800 transform scale-[1.02]' 
+                    ? 'ring-3 sm:ring-4 ring-blue-500 bg-gray-800 transform scale-[1.02]' 
                     : 'hover:bg-gray-900 hover:ring-2 hover:ring-blue-300 bg-gray-950'
                 }`}
                 onClick={() => handleCharacterSelect(index)}
               >
                 <div className="flex justify-between items-start">
-                  <h2 className="text-xl font-bold text-white mb-2">{character.class}</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">{character.class}</h2>
                   {selectedIndex === index && (
-                    <div className="bg-blue-500 text-white text-xs px-2 py-1 rounded">Selected</div>
+                    <div className="bg-blue-500 text-white text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs">Selected</div>
                   )}
                 </div>
                 
-                <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-500 mb-4"></div>
+                <div className="h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-blue-500 to-purple-500 mb-2 sm:mb-3 md:mb-4"></div>
                 
-                <p className="text-gray-300 text-sm mb-6 leading-relaxed">{character.description}</p>
+                <p className="text-gray-300 text-xs sm:text-sm mb-3 sm:mb-4 md:mb-6 leading-relaxed">{character.description}</p>
                 
                 {/* Character backstory preview */}
                 {character.backstory && (
-                  <div className="mb-5 px-3 py-2 bg-gray-900 rounded-md border-l-2 border-blue-500">
-                    <p className="text-gray-400 text-xs italic leading-snug">"{character.backstory.substring(0, 120)}..."</p>
+                  <div className="mb-3 sm:mb-4 md:mb-5 px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-900 rounded-md border-l-2 border-blue-500">
+                    <p className="text-gray-400 text-[10px] sm:text-xs italic leading-snug">"{character.backstory.substring(0, 120)}..."</p>
                   </div>
                 )}
                 
@@ -230,26 +230,26 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="z-10 flex flex-col items-center"
+        className="z-10 flex flex-col items-center px-4 w-full max-w-md"
       >
         {selectedIndex !== null ? (
           <motion.div
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
-            className="mb-8 text-center"
+            className="mb-4 sm:mb-6 md:mb-8 text-center"
           >
-            <h3 className="text-green-400 text-lg mb-2">Character Selected: {characterTemplates[selectedIndex]?.class}</h3>
-            <p className="text-gray-400 text-sm">Are you ready to begin your cosmic adventure?</p>
+            <h3 className="text-green-400 text-base sm:text-lg mb-1 sm:mb-2">Character Selected: {characterTemplates[selectedIndex]?.class}</h3>
+            <p className="text-gray-400 text-xs sm:text-sm">Are you ready to begin your cosmic adventure?</p>
           </motion.div>
         ) : (
           <motion.div
             initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 1 }}
-            className="mb-8 text-center"
+            className="mb-4 sm:mb-6 md:mb-8 text-center"
           >
-            <h3 className="text-amber-400 text-lg mb-2">Select a character to continue</h3>
-            <p className="text-gray-400 text-sm">Each class has unique abilities and advantages</p>
+            <h3 className="text-amber-400 text-base sm:text-lg mb-1 sm:mb-2">Select a character to continue</h3>
+            <p className="text-gray-400 text-xs sm:text-sm">Each class has unique abilities and advantages</p>
           </motion.div>
         )}
         
@@ -258,14 +258,14 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
           size="lg" 
           disabled={selectedIndex === null}
           onClick={handleConfirmSelection}
-          className={`px-16 py-6 text-lg transition-all ${
+          className={`px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6 text-base sm:text-lg transition-all w-full sm:w-auto ${
             selectedIndex !== null 
               ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg' 
               : 'bg-gray-700'
           }`}
         >
           {selectedIndex !== null ? (
-            <div className="flex items-center">
+            <div className="flex items-center justify-center">
               <span>Begin Adventure</span>
               <span className="ml-2">→</span>
             </div>
@@ -277,7 +277,7 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-gray-400 text-xs"
+            className="mt-3 sm:mt-4 text-gray-400 text-xs"
           >
             Press ENTER to continue
           </motion.div>
