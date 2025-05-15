@@ -1,469 +1,491 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useStory } from '@/lib/stores/useStory';
-import { gameLocations } from '@/lib/data/locations';
-import { Location, LocationType } from '@/lib/types';
 import { motion } from 'framer-motion';
+import { useStory } from '../../lib/stores/useStory';
+import { Location, LocationType } from '../../lib/types';
+import { cn } from '../../lib/utils';
+import { useAudio } from '../../lib/stores/useAudio';
 
 interface StarMapProps {
-  onSelectLocation: (locationId: string) => void;
   onClose: () => void;
+  onSelectLocation?: (locationId: string) => void;
 }
 
-const StarMap = ({ onSelectLocation, onClose }: StarMapProps) => {
-  const { 
-    getCurrentLocation, 
-    canTravelTo, 
-    visitedLocations, 
-    discoveredLocations 
-  } = useStory();
-  
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
-  const [regions, setRegions] = useState<Record<string, Location[]>>({});
-  const [hoveredLocation, setHoveredLocation] = useState<string | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  
-  const currentLocation = getCurrentLocation();
-  
-  // Group locations by region and initialize selected region
-  useEffect(() => {
-    const regionMap: Record<string, Location[]> = {};
-    
-    gameLocations.forEach(location => {
-      if (!discoveredLocations.includes(location.id) && 
-          !canTravelTo(location.id) &&
-          !visitedLocations.includes(location.id)) {
-        return;
-      }
-      
-      const region = location.region || "Unknown";
-      if (!regionMap[region]) {
-        regionMap[region] = [];
-      }
-      regionMap[region].push(location);
-    });
-    
-    setRegions(regionMap);
-    
-    // Set initial region to current location's region
-    if (currentLocation?.region) {
-      setSelectedRegion(currentLocation.region);
-    } else if (Object.keys(regionMap).length > 0) {
-      setSelectedRegion(Object.keys(regionMap)[0]);
-    }
-    
-    // Set initial selected location to current location
-    if (currentLocation) {
-      setSelectedLocation(currentLocation.id);
-    }
-  }, [discoveredLocations, canTravelTo, visitedLocations, currentLocation]);
-  
-  // Draw the star map canvas when region or locations change
-  useEffect(() => {
-    if (!canvasRef.current || !selectedRegion) return;
-    
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    // Set canvas dimensions
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-    
-    // Clear the canvas
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Get relevant locations for this region
-    const locationsInRegion = regions[selectedRegion] || [];
-    
-    // Draw connection lines first (so they appear behind locations)
-    ctx.lineWidth = 1;
-    locationsInRegion.forEach(location => {
-      // Only draw connections if this location is visited or current
-      if (visitedLocations.includes(location.id) || location.id === currentLocation?.id) {
-        location.connections.forEach(connId => {
-          // Only draw if the connection is in the same region and is discovered
-          const connLocation = locationsInRegion.find(l => l.id === connId);
-          if (connLocation && discoveredLocations.includes(connId)) {
-            // Find screen coordinates for both locations
-            const x1 = getLocationPositionX(location.id, canvas.width);
-            const y1 = getLocationPositionY(location.id, canvas.height);
-            const x2 = getLocationPositionX(connId, canvas.width);
-            const y2 = getLocationPositionY(connId, canvas.height);
-            
-            // Determine line style based on if it's a possible travel route
-            if (canTravelTo(connId) || connId === currentLocation?.id) {
-              ctx.strokeStyle = 'rgba(100, 149, 237, 0.7)'; // Brighter line for valid travel routes
-            } else {
-              ctx.strokeStyle = 'rgba(100, 149, 237, 0.3)'; // Dimmer line for routes not currently available
-            }
-            
-            // Draw the line
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-          }
-        });
-      }
-    });
-    
-    // Draw backgrounds for locations (glow effects)
-    locationsInRegion.forEach(location => {
-      if (!discoveredLocations.includes(location.id)) return;
-      
-      const x = getLocationPositionX(location.id, canvas.width);
-      const y = getLocationPositionY(location.id, canvas.height);
-      const isCurrentLocation = location.id === currentLocation?.id;
-      const isSelected = location.id === selectedLocation;
-      const isHovered = location.id === hoveredLocation;
-      const canTravel = canTravelTo(location.id);
-      
-      // Draw glow based on location status
-      let radius = 12;
-      let glowColor = 'rgba(50, 50, 100, 0.3)'; // Default
-      
-      if (isCurrentLocation) {
-        radius = 18;
-        glowColor = 'rgba(0, 255, 128, 0.5)'; // Green glow for current location
-      } else if (isSelected) {
-        radius = 16;
-        glowColor = 'rgba(100, 149, 237, 0.5)'; // Blue glow for selected
-      } else if (isHovered && canTravel) {
-        radius = 14;
-        glowColor = 'rgba(255, 210, 0, 0.4)'; // Yellow glow for hovered and travel-able
-      }
-      
-      // Draw the location glow
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fillStyle = glowColor;
-      ctx.fill();
-    });
-    
-    // Draw location points
-    locationsInRegion.forEach(location => {
-      if (!discoveredLocations.includes(location.id)) return;
-      
-      const x = getLocationPositionX(location.id, canvas.width);
-      const y = getLocationPositionY(location.id, canvas.height);
-      const isCurrentLocation = location.id === currentLocation?.id;
-      const isSelected = location.id === selectedLocation;
-      const isHovered = location.id === hoveredLocation;
-      const isVisited = visitedLocations.includes(location.id);
-      const canTravel = canTravelTo(location.id);
-      
-      // Determine appearance based on location status
-      let radius = 5;
-      let fillColor = '#666';
-      
-      if (isCurrentLocation) {
-        radius = 8;
-        fillColor = '#00ff80'; // Green for current location
-      } else if (isSelected) {
-        radius = 7;
-        fillColor = '#6495ED'; // Blue for selected
-      } else if (isHovered && canTravel) {
-        radius = 6;
-        fillColor = '#FFD700'; // Gold for hovered and travel-able
-      } else if (isVisited) {
-        fillColor = '#a0a0ff'; // Light blue for visited
-      } else if (canTravel) {
-        fillColor = '#90a0d0'; // Light purple for available but not visited
-      }
-      
-      // Draw the location point
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fillStyle = fillColor;
-      ctx.fill();
-      
-      // Add a border for clarity
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      
-      // Draw location names for important ones
-      if (isCurrentLocation || isSelected || isHovered) {
-        ctx.font = '12px Arial';
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'center';
-        ctx.fillText(location.name, x, y - 15);
-        
-        // Draw location type
-        ctx.font = '10px Arial';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.fillText(location.type, x, y + 15);
-      }
-    });
-  }, [selectedRegion, regions, selectedLocation, hoveredLocation, currentLocation, canTravelTo, visitedLocations, discoveredLocations]);
+// Different colors for different location types
+const getLocationColor = (locationType: LocationType): string => {
+  switch (locationType) {
+    case LocationType.Ship:
+      return 'bg-blue-500';
+    case LocationType.Planet:
+      return 'bg-green-500';
+    case LocationType.Space:
+      return 'bg-indigo-800';
+    case LocationType.Station:
+      return 'bg-yellow-500';
+    case LocationType.Derelict:
+      return 'bg-red-700';
+    case LocationType.Settlement:
+      return 'bg-amber-500';
+    case LocationType.Ruins:
+      return 'bg-purple-700';
+    case LocationType.Anomaly:
+      return 'bg-pink-500';
+    default:
+      return 'bg-gray-500';
+  }
+};
 
-  // Generate consistent positions based on location ID
-  const getLocationPositionX = (locationId: string, width: number): number => {
-    // Use a hash of the location ID to get a consistent position
-    let hash = 0;
-    for (let i = 0; i < locationId.length; i++) {
-      hash = ((hash << 5) - hash) + locationId.charCodeAt(i);
-      hash |= 0; // Convert to 32bit integer
-    }
-    
-    // Create a seeded random position within the bounds
-    const padding = 50;
-    return ((Math.abs(hash) % 83) / 100) * (width - padding * 2) + padding;
-  };
+// Function to get an icon based on location type
+const getLocationIcon = (locationType: LocationType): string => {
+  switch (locationType) {
+    case LocationType.Ship:
+      return '🚀';
+    case LocationType.Planet:
+      return '🪐';
+    case LocationType.Space:
+      return '✨';
+    case LocationType.Station:
+      return '🛰️';
+    case LocationType.Derelict:
+      return '🛸';
+    case LocationType.Settlement:
+      return '🏙️';
+    case LocationType.Ruins:
+      return '🏛️';
+    case LocationType.Anomaly:
+      return '⚠️';
+    default:
+      return '❓';
+  }
+};
+
+// Get danger level indicator
+const getDangerLevelIndicator = (dangerLevel: number = 1): string => {
+  if (dangerLevel <= 3) return 'Low Threat';
+  if (dangerLevel <= 6) return 'Medium Threat';
+  return 'High Threat';
+};
+
+// Get danger level color
+const getDangerLevelColor = (dangerLevel: number = 1): string => {
+  if (dangerLevel <= 3) return 'text-green-500';
+  if (dangerLevel <= 6) return 'text-yellow-500';
+  return 'text-red-500';
+};
+
+// Calculate pseudo-position for locations for visual layout
+const calculateMapPositions = (locations: Location[]): Map<string, { x: number, y: number }> => {
+  const positionMap = new Map<string, { x: number, y: number }>();
+  const mapWidth = 1000;
+  const mapHeight = 800;
   
-  const getLocationPositionY = (locationId: string, height: number): number => {
-    // Use a different hash calculation for Y to ensure different positions
+  // Use location IDs to create deterministic positions
+  locations.forEach(location => {
+    // Create a simple hash from the ID
     let hash = 0;
-    for (let i = 0; i < locationId.length; i++) {
-      hash = ((hash << 7) - hash) + locationId.charCodeAt(i);
+    for (let i = 0; i < location.id.length; i++) {
+      hash = ((hash << 5) - hash) + location.id.charCodeAt(i);
       hash |= 0;
     }
     
-    const padding = 50;
-    return ((Math.abs(hash) % 89) / 100) * (height - padding * 2) + padding;
-  };
+    // Use hash to create a position
+    const x = Math.abs(hash % mapWidth);
+    const y = Math.abs((hash >> 10) % mapHeight);
+    
+    positionMap.set(location.id, { x, y });
+  });
   
-  // Handle canvas click events
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current || !selectedRegion) return;
-    
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    // Get locations in the current region
-    const locationsInRegion = regions[selectedRegion] || [];
-    
-    // Find if we clicked on a location
-    for (const location of locationsInRegion) {
-      if (!discoveredLocations.includes(location.id)) continue;
-      
-      const locX = getLocationPositionX(location.id, canvas.width);
-      const locY = getLocationPositionY(location.id, canvas.height);
-      
-      // Check if click is within the location point (use a reasonable radius for clicking)
-      const distance = Math.sqrt(Math.pow(x - locX, 2) + Math.pow(y - locY, 2));
-      if (distance <= 15) { // 15px click radius
-        setSelectedLocation(location.id);
-        
-        // If the location is travel-able and not the current one, select it
-        if (canTravelTo(location.id) && location.id !== currentLocation?.id) {
-          // Just select it, don't navigate yet
-          return;
-        }
-        break;
-      }
-    }
-  };
-  
-  // Handle canvas mouse move for hover effects
-  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current || !selectedRegion) return;
-    
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    // Get locations in the current region
-    const locationsInRegion = regions[selectedRegion] || [];
-    
-    // Check for hover over locations
-    let found = false;
-    for (const location of locationsInRegion) {
-      if (!discoveredLocations.includes(location.id)) continue;
-      
-      const locX = getLocationPositionX(location.id, canvas.width);
-      const locY = getLocationPositionY(location.id, canvas.height);
-      
-      const distance = Math.sqrt(Math.pow(x - locX, 2) + Math.pow(y - locY, 2));
-      if (distance <= 15) { // Same hover radius as click
-        setHoveredLocation(location.id);
-        found = true;
-        break;
-      }
-    }
-    
-    if (!found && hoveredLocation) {
-      setHoveredLocation(null);
-    }
-  };
-  
-  const handleCanvasMouseLeave = () => {
-    setHoveredLocation(null);
-  };
-  
-  // Get the currently selected location object
-  const getSelectedLocationDetails = () => {
-    if (!selectedLocation) return null;
-    return gameLocations.find(loc => loc.id === selectedLocation);
-  };
-  
-  // Travel to the selected location
-  const handleTravel = () => {
-    if (selectedLocation && currentLocation?.id !== selectedLocation && canTravelTo(selectedLocation)) {
-      onSelectLocation(selectedLocation);
-      onClose();
-    }
-  };
-  
-  const getLocationTypeIcon = (type: LocationType): string => {
-    switch (type) {
-      case LocationType.Ship:
-        return '🚀';
-      case LocationType.Planet:
-        return '🪐';
-      case LocationType.Space:
-        return '✨';
-      case LocationType.Station:
-        return '🛰️';
-      case LocationType.Derelict:
-        return '☠️';
-      case LocationType.Settlement:
-        return '🏙️';
-      case LocationType.Ruins:
-        return '🏛️';
-      case LocationType.Anomaly:
-        return '❓';
-      default:
-        return '📍';
-    }
-  };
+  return positionMap;
+};
 
+const StarMap: React.FC<StarMapProps> = ({ onClose, onSelectLocation }) => {
+  const audioState = useAudio();
+  const story = useStory();
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [positions, setPositions] = useState<Map<string, { x: number, y: number }>>(new Map());
+  const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const mapRef = useRef<HTMLDivElement>(null);
+  
+  // Current location from the game state
+  const currentLocation = story.getCurrentLocation();
+  
+  // Available discovered locations
+  const discoveredLocations = story.getAvailableLocations();
+  
+  // All exploration points (separate reference for special display)
+  const explorationPoints = story.getExplorationPoints();
+  
+  // Filter to show only discovered locations
+  const visibleLocations = discoveredLocations;
+  
+  useEffect(() => {
+    // Calculate positions for map display
+    setPositions(calculateMapPositions([...visibleLocations, ...explorationPoints]));
+    
+    // Center the map on the current location if possible
+    if (currentLocation && mapRef.current) {
+      const currentPos = positions.get(currentLocation.id);
+      if (currentPos) {
+        const mapCenter = {
+          x: mapRef.current.clientWidth / 2,
+          y: mapRef.current.clientHeight / 2
+        };
+        
+        setMapOffset({
+          x: mapCenter.x - currentPos.x * zoomLevel,
+          y: mapCenter.y - currentPos.y * zoomLevel
+        });
+      }
+    }
+  }, [visibleLocations, currentLocation, explorationPoints]);
+  
+  // Handle selecting a location
+  const handleSelectLocation = (location: Location) => {
+    // Play sound if available (simplified for now)
+    new Audio('/sounds/ui_select.mp3').play().catch(() => {});
+    setSelectedLocation(location);
+  };
+  
+  // Handle travel to a location
+  const handleTravelToLocation = () => {
+    if (selectedLocation && story.canTravelTo(selectedLocation.id)) {
+      // Play sound if available
+      new Audio('/sounds/warp_drive.mp3').play().catch(() => {});
+      onSelectLocation?.(selectedLocation.id);
+      onClose();
+    } else {
+      // Play error sound if available
+      new Audio('/sounds/error.mp3').play().catch(() => {});
+    }
+  };
+  
+  // Handle map dragging
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+  
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging) {
+      const dx = e.clientX - dragStart.x;
+      const dy = e.clientY - dragStart.y;
+      
+      setMapOffset(prev => ({
+        x: prev.x + dx,
+        y: prev.y + dy
+      }));
+      
+      setDragStart({ x: e.clientX, y: e.clientY });
+    }
+  };
+  
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+  
+  // Handle mouse wheel zoom
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+    setZoomLevel(prev => Math.max(0.5, Math.min(2, prev * zoomFactor)));
+  };
+  
+  // Calculate connection lines between locations
+  const renderConnectionLines = () => {
+    const lines: JSX.Element[] = [];
+    
+    visibleLocations.forEach(location => {
+      const sourcePos = positions.get(location.id);
+      if (!sourcePos) return;
+      
+      location.connections.forEach(targetId => {
+        // Only draw connections to discovered locations
+        if (!story.gameState.discoveredLocations.includes(targetId)) return;
+        
+        const targetPos = positions.get(targetId);
+        if (!targetPos) return;
+        
+        const key = `${location.id}-${targetId}`;
+        
+        // Check if this is the current travel route
+        const isCurrentRoute = currentLocation && selectedLocation && 
+          ((currentLocation.id === location.id && selectedLocation.id === targetId) ||
+          (currentLocation.id === targetId && selectedLocation.id === location.id));
+        
+        // Check if this is a potential travel route
+        const isPotentialRoute = currentLocation && selectedLocation &&
+          currentLocation.id === location.id && selectedLocation.id === targetId;
+        
+        lines.push(
+          <line
+            key={key}
+            x1={sourcePos.x}
+            y1={sourcePos.y}
+            x2={targetPos.x}
+            y2={targetPos.y}
+            stroke={isCurrentRoute ? "#00aaff" : (isPotentialRoute ? "#22cc22" : "#555555")}
+            strokeWidth={isCurrentRoute || isPotentialRoute ? 3 : 1}
+            strokeDasharray={isPotentialRoute ? "5,5" : undefined}
+          />
+        );
+      });
+    });
+    
+    return lines;
+  };
+  
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
-      <motion.div 
-        className="bg-gray-900 border border-blue-500 shadow-lg rounded-lg max-w-5xl w-[90vw] overflow-hidden"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 50 }}
-        transition={{ duration: 0.3 }}
-      >
-        {/* Header */}
-        <div className="p-4 bg-gradient-to-r from-blue-900 to-purple-900 text-white flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Star Map</h2>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+    >
+      <div className="bg-gray-900 border border-blue-800 rounded-lg overflow-hidden w-full max-w-6xl h-[80vh] flex flex-col">
+        <div className="p-4 bg-blue-900 text-white flex justify-between items-center">
+          <h2 className="text-xl font-bold">Star Map Navigation</h2>
           <button 
             onClick={onClose}
-            className="text-white hover:text-red-400 text-xl"
+            className="p-1 hover:bg-blue-800 rounded"
           >
-            ×
+            ✕
           </button>
         </div>
         
-        <div className="flex flex-col md:flex-row h-[75vh]">
-          {/* Region selector */}
-          <div className="w-full md:w-1/5 bg-gray-950 border-r border-blue-900 p-3 overflow-y-auto">
-            <h3 className="text-blue-400 text-lg font-semibold mb-3">Regions</h3>
-            <ul className="space-y-1">
-              {Object.keys(regions).map(region => (
-                <li key={region}>
-                  <button
-                    className={`w-full text-left px-3 py-2 rounded-md ${selectedRegion === region 
-                      ? 'bg-blue-900 text-white' 
-                      : 'hover:bg-gray-800 text-gray-300'}`}
-                    onClick={() => setSelectedRegion(region)}
-                  >
-                    {region}
-                    <span className="text-xs ml-2 text-gray-400">
-                      ({regions[region].length})
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+        <div className="flex flex-1 overflow-hidden">
+          {/* Left panel - Star Map */}
+          <div 
+            ref={mapRef}
+            className="relative flex-1 bg-black overflow-hidden cursor-move"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onWheel={handleWheel}
+          >
+            {/* Map background */}
+            <div className="absolute inset-0 bg-[url('/textures/space_bg.jpg')] opacity-40"></div>
+            
+            {/* SVG for connection lines */}
+            <svg 
+              className="absolute inset-0 w-full h-full"
+              style={{ 
+                transform: `translate(${mapOffset.x}px, ${mapOffset.y}px) scale(${zoomLevel})`,
+                transformOrigin: '0 0'
+              }}
+            >
+              {renderConnectionLines()}
+            </svg>
+            
+            {/* Location markers */}
+            {visibleLocations.map(location => {
+              const pos = positions.get(location.id);
+              if (!pos) return null;
+              
+              const isCurrentLocation = currentLocation?.id === location.id;
+              const isSelected = selectedLocation?.id === location.id;
+              const isDiscovered = story.gameState.discoveredLocations.includes(location.id);
+              const isVisited = story.gameState.visitedLocations.includes(location.id);
+              const canTravelTo = currentLocation && story.canTravelTo(location.id);
+              
+              // Special styling based on location status
+              const locationColor = getLocationColor(location.type);
+              
+              return (
+                <motion.div
+                  key={location.id}
+                  className={cn(
+                    "absolute rounded-full flex items-center justify-center shadow-lg",
+                    locationColor,
+                    isSelected ? "ring-4 ring-white" : "",
+                    isCurrentLocation ? "ring-4 ring-yellow-400" : "",
+                    !isDiscovered ? "opacity-50" : "",
+                    !canTravelTo ? "grayscale" : ""
+                  )}
+                  style={{
+                    left: `${pos.x}px`,
+                    top: `${pos.y}px`,
+                    width: isCurrentLocation ? '30px' : '24px',
+                    height: isCurrentLocation ? '30px' : '24px',
+                    transform: `translate(-50%, -50%) translate(${mapOffset.x}px, ${mapOffset.y}px) scale(${zoomLevel})`,
+                    transformOrigin: '0 0',
+                    cursor: 'pointer',
+                    zIndex: isCurrentLocation ? 10 : (isSelected ? 5 : 1)
+                  }}
+                  whileHover={{ scale: 1.2 * zoomLevel }}
+                  onClick={() => handleSelectLocation(location)}
+                >
+                  <span className="text-xs">
+                    {getLocationIcon(location.type)}
+                  </span>
+                </motion.div>
+              );
+            })}
+            
+            {/* Exploration points - shown with special styling */}
+            {explorationPoints.filter(point => 
+              story.gameState.discoveredLocations.includes(point.id)
+            ).map(point => {
+              const pos = positions.get(point.id);
+              if (!pos) return null;
+              
+              const isSelected = selectedLocation?.id === point.id;
+              const canTravelTo = currentLocation && story.canTravelTo(point.id);
+              
+              return (
+                <motion.div
+                  key={point.id}
+                  className={cn(
+                    "absolute rounded-full flex items-center justify-center shadow-lg border-2 border-dashed border-yellow-400",
+                    getLocationColor(point.type),
+                    isSelected ? "ring-2 ring-white" : "",
+                    !canTravelTo ? "opacity-50" : ""
+                  )}
+                  style={{
+                    left: `${pos.x}px`,
+                    top: `${pos.y}px`,
+                    width: '24px',
+                    height: '24px',
+                    transform: `translate(-50%, -50%) translate(${mapOffset.x}px, ${mapOffset.y}px) scale(${zoomLevel})`,
+                    transformOrigin: '0 0',
+                    cursor: 'pointer'
+                  }}
+                  whileHover={{ scale: 1.2 * zoomLevel }}
+                  onClick={() => handleSelectLocation(point)}
+                >
+                  <span className="text-xs">
+                    {getLocationIcon(point.type)}
+                  </span>
+                </motion.div>
+              );
+            })}
           </div>
           
-          {/* Star map canvas */}
-          <div className="w-full md:w-3/5 bg-gray-900 p-0 relative overflow-hidden">
-            <canvas 
-              ref={canvasRef} 
-              className="w-full h-full cursor-pointer" 
-              onClick={handleCanvasClick}
-              onMouseMove={handleCanvasMouseMove}
-              onMouseLeave={handleCanvasMouseLeave}
-            />
-            
-            {/* Map controls overlay */}
-            <div className="absolute bottom-3 left-3 right-3 bg-black bg-opacity-50 text-white text-xs p-2 rounded flex items-center justify-between">
-              <div>
-                <div className="flex items-center mb-1">
-                  <span className="inline-block w-3 h-3 rounded-full bg-green-400 mr-2"></span>
-                  <span>Your Location</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="inline-block w-3 h-3 rounded-full bg-blue-400 mr-2"></span>
-                  <span>Travel Routes</span>
-                </div>
-              </div>
-              <div>
-                <div className="flex items-center mb-1">
-                  <span className="inline-block w-3 h-3 rounded-full bg-purple-400 mr-2"></span>
-                  <span>Unexplored</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="inline-block w-3 h-3 rounded-full bg-yellow-400 mr-2"></span>
-                  <span>Selected</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Location details */}
-          <div className="w-full md:w-1/5 bg-gray-950 border-l border-blue-900 p-3 overflow-y-auto">
-            <h3 className="text-blue-400 text-lg font-semibold mb-3">Details</h3>
-            
-            {getSelectedLocationDetails() ? (
+          {/* Right panel - Location details */}
+          <div className="w-80 bg-gray-800 p-4 overflow-y-auto text-white">
+            {selectedLocation ? (
               <div className="space-y-4">
-                <div>
-                  <h4 className="text-xl font-semibold text-white mb-1">
-                    {getLocationTypeIcon(getSelectedLocationDetails()!.type)} {getSelectedLocationDetails()!.name}
-                  </h4>
-                  <div className="text-xs text-blue-300 mb-2">
-                    {getSelectedLocationDetails()!.type} • {getSelectedLocationDetails()!.region || "Unknown Region"}
+                <div className="flex items-center space-x-2">
+                  <div className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center", 
+                    getLocationColor(selectedLocation.type)
+                  )}>
+                    <span className="text-xl">{getLocationIcon(selectedLocation.type)}</span>
                   </div>
-                  <p className="text-gray-300 text-sm">
-                    {getSelectedLocationDetails()!.description}
-                  </p>
+                  <h3 className="text-xl font-bold">{selectedLocation.name}</h3>
                 </div>
                 
-                {selectedLocation !== currentLocation?.id && canTravelTo(selectedLocation!) && (
-                  <button
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition-colors"
-                    onClick={handleTravel}
-                  >
-                    Set Course
-                  </button>
-                )}
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-400">Type: {selectedLocation.type}</div>
+                  {selectedLocation.region && (
+                    <div className="text-sm text-gray-400">Region: {selectedLocation.region}</div>
+                  )}
+                  {selectedLocation.dangerLevel && (
+                    <div className="text-sm flex items-center space-x-2">
+                      <span>Threat Level:</span>
+                      <span className={getDangerLevelColor(selectedLocation.dangerLevel)}>
+                        {getDangerLevelIndicator(selectedLocation.dangerLevel)}
+                      </span>
+                    </div>
+                  )}
+                </div>
                 
-                {getSelectedLocationDetails()!.encounters && (
-                  <div className="mt-4">
-                    <h5 className="text-sm font-semibold text-gray-200 mb-1">Known Data:</h5>
-                    <ul className="text-xs text-gray-400">
-                      {getSelectedLocationDetails()!.encounters.enemies?.length ? (
-                        <li className="mb-1">• Hostile entities detected</li>
-                      ) : null}
-                      {getSelectedLocationDetails()!.encounters.puzzles?.length ? (
-                        <li className="mb-1">• Points of interest detected</li>
-                      ) : null}
-                      {visitedLocations.includes(selectedLocation!) ? (
-                        <li className="text-blue-300">• Location previously visited</li>
-                      ) : null}
+                <p className="text-sm text-gray-300">{selectedLocation.description}</p>
+                
+                {/* Environmental Effects */}
+                {selectedLocation.environmentEffects && selectedLocation.environmentEffects.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-yellow-400">Environmental Hazards</h4>
+                    <ul className="space-y-1">
+                      {selectedLocation.environmentEffects.map((effect, index) => (
+                        <li key={index} className="text-sm bg-red-900 bg-opacity-50 p-2 rounded">
+                          {effect.effect}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 )}
+                
+                {/* Encounters */}
+                {selectedLocation.encounters && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-blue-400">Points of Interest</h4>
+                    <ul className="space-y-1">
+                      {selectedLocation.encounters.enemies && selectedLocation.encounters.enemies.length > 0 && (
+                        <li className="text-sm">Combat Encounters: {selectedLocation.encounters.enemies.length}</li>
+                      )}
+                      {selectedLocation.encounters.puzzles && selectedLocation.encounters.puzzles.length > 0 && (
+                        <li className="text-sm">Puzzles: {selectedLocation.encounters.puzzles.length}</li>
+                      )}
+                      {selectedLocation.encounters.npcs && selectedLocation.encounters.npcs.length > 0 && (
+                        <li className="text-sm">NPCs: {selectedLocation.encounters.npcs.length}</li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+                
+                {/* Travel button */}
+                <div className="pt-4">
+                  <button
+                    onClick={handleTravelToLocation}
+                    disabled={!story.canTravelTo(selectedLocation.id)}
+                    className={cn(
+                      "w-full py-2 px-4 rounded",
+                      story.canTravelTo(selectedLocation.id)
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : "bg-gray-700 cursor-not-allowed"
+                    )}
+                  >
+                    {story.canTravelTo(selectedLocation.id) 
+                      ? "Travel to Location" 
+                      : "Cannot Travel Here"}
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className="text-gray-500 italic">
-                Select a location to view details
+              <div className="h-full flex flex-col items-center justify-center text-gray-400">
+                <p className="text-center">Select a location on the star map to view details</p>
+                <p className="text-xs mt-4">Use mouse wheel to zoom in/out</p>
+                <p className="text-xs">Drag to pan the map</p>
               </div>
             )}
           </div>
         </div>
-      </motion.div>
-    </div>
+        
+        {/* Footer with legend */}
+        <div className="p-2 bg-gray-900 text-xs text-gray-400 flex flex-wrap gap-4">
+          <div className="flex items-center space-x-1">
+            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+            <span>Ship</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            <span>Planet</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <span>Station</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <div className="w-3 h-3 rounded-full bg-red-700"></div>
+            <span>Derelict</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <div className="w-3 h-3 rounded-full bg-purple-700"></div>
+            <span>Ruins</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <div className="w-3 h-3 rounded-full bg-pink-500"></div>
+            <span>Anomaly</span>
+          </div>
+          <div className="flex items-center space-x-1 ml-auto">
+            <span>Discovered Locations: {story.gameState.discoveredLocations.length}</span>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 

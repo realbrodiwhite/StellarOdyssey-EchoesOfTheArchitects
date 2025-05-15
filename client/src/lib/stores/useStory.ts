@@ -292,5 +292,22 @@ export const useStory = create<StoryState>((set, get) => ({
     }));
     
     console.log(`Reputation with ${faction} changed by ${amount}`);
-  }
+  },
+  
+  // Derived properties - implemented as properties
+  visitedLocations: [],
+  discoveredLocations: []
 }));
+
+// Update the derived properties with getters
+Object.defineProperties(useStory.getState(), {
+  visitedLocations: {
+    get: function() { return this.gameState.visitedLocations; }
+  },
+  discoveredLocations: {
+    get: function() { return this.gameState.discoveredLocations; }
+  }
+});
+
+// Initialize exploration points at startup
+useStory.getState().generateExplorationPoints();
