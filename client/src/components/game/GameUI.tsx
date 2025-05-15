@@ -128,6 +128,14 @@ const GameUI = ({
             variant="outline" 
             size="icon" 
             className="bg-gray-800 bg-opacity-80"
+            onClick={() => setShowPartyManager(true)}
+          >
+            <Users size={18} />
+          </Button>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="bg-gray-800 bg-opacity-80"
             onClick={onRequestHint}
           >
             <HelpCircle size={18} />
@@ -245,6 +253,13 @@ const GameUI = ({
             onClose={() => setShowLoadMenu(false)} 
             mode="load" 
           />
+        )}
+      </AnimatePresence>
+      
+      {/* Party Manager modal */}
+      <AnimatePresence>
+        {showPartyManager && (
+          <SimplePartyManager onClose={() => setShowPartyManager(false)} />
         )}
       </AnimatePresence>
     </>

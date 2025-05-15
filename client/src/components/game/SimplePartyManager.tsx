@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useParty, PartyMember, initializeStarterCompanions } from '@/lib/stores/useParty';
-import { useCharacter } from '@/lib/stores/useCharacter';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Button } from '../ui/button';
+import { useParty } from '@/lib/stores/useParty';
 import PartyMemberCard from './PartyMemberCard';
+import { Button } from '../ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { CharacterClass, SkillType, PartyMember } from '@/lib/types';
+import { X, Plus, Shield, Sword, Brain, Star } from 'lucide-react';
 
 interface SimplePartyManagerProps {
   onClose: () => void;
@@ -12,194 +13,247 @@ interface SimplePartyManagerProps {
 
 const SimplePartyManager: React.FC<SimplePartyManagerProps> = ({ onClose }) => {
   const { 
-    partyMembers, 
+    availableCompanions, 
     activePartyMembers, 
-    availableCompanions,
-    addPartyMember, 
-    activatePartyMember, 
-    deactivatePartyMember,
-    purchaseCompanion,
-    isPartyFull,
-    maxPartySize
+    addToParty, 
+    removeFromParty,
+    setActivePartyMember,
+    setInactivePartyMember
   } = useParty();
   
-  const { selectedCharacter } = useCharacter();
-  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'current' | 'available'>('current');
   
-  // Initialize starter companions if we don't have any
-  useEffect(() => {
-    if (availableCompanions.length === 0) {
-      initializeStarterCompanions();
+  const getSpecializationIcon = (specialization: string) => {
+    switch (specialization.toLowerCase()) {
+      case 'combat':
+        return <Sword className="h-4 w-4 text-red-400" />;
+      case 'support':
+        return <Shield className="h-4 w-4 text-blue-400" />;
+      case 'technical':
+        return <Brain className="h-4 w-4 text-yellow-400" />;
+      default:
+        return <Star className="h-4 w-4 text-purple-400" />;
     }
-  }, [availableCompanions.length]);
-  
-  const handleSelectMember = (id: string) => {
-    setSelectedMemberId(id === selectedMemberId ? null : id);
   };
   
-  const handleActivate = (id: string) => {
-    if (isPartyFull()) {
-      // Show a message that party is full
-      alert('Your party is already full. Deactivate a member first.');
-      return;
+  const getClassIcon = (characterClass: CharacterClass | string) => {
+    switch (characterClass) {
+      case CharacterClass.Soldier:
+        return '⚔️';
+      case CharacterClass.Engineer:
+        return '🔧';
+      case CharacterClass.Scientist:
+        return '🔬';
+      case CharacterClass.Pilot:
+        return '🚀';
+      case CharacterClass.Diplomat:
+        return '🗣️';
+      case CharacterClass.Mercenary:
+        return '💰';
+      case CharacterClass.Explorer:
+        return '🧭';
+      default:
+        return '👤';
     }
-    activatePartyMember(id);
   };
   
-  const handleDeactivate = (id: string) => {
-    deactivatePartyMember(id);
-  };
-  
-  const handleRecruitCompanion = (id: string) => {
-    const success = purchaseCompanion(id);
-    if (!success) {
-      // If recruitment fails (not enough credits)
-      alert('Not enough credits to recruit this companion');
+  const getSkillTypeIcon = (type: SkillType | string) => {
+    switch (type) {
+      case SkillType.Combat:
+        return '⚔️';
+      case SkillType.Technical:
+        return '🔧';
+      case SkillType.Scientific:
+        return '🔬';
+      case SkillType.Social:
+        return '🗣️';
+      case SkillType.Navigation:
+        return '🧭';
+      default:
+        return '❓';
     }
   };
   
   return (
-    <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <motion.div
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
         className="bg-gray-900 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.1 }}
       >
-        <div className="flex justify-between items-center p-4 border-b border-gray-700">
+        <div className="flex justify-between items-center border-b border-gray-700 p-4">
           <h2 className="text-xl font-bold text-white">Party Management</h2>
-          <Button variant="ghost" size="sm" onClick={onClose}>&times;</Button>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <X className="h-5 w-5" />
+          </Button>
         </div>
         
-        <div className="p-4 border-b border-gray-700">
-          <div className="flex items-center space-x-4">
-            <div className="text-white font-semibold">
-              Party: {activePartyMembers.length}/{maxPartySize}
-            </div>
-            {selectedCharacter?.credits !== undefined && (
-              <div className="flex items-center text-yellow-400">
-                <span>💰</span>
-                <span className="ml-1">{selectedCharacter.credits} Credits</span>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <Tabs defaultValue="party" className="flex-1 flex flex-col">
-          <div className="px-4 border-b border-gray-700">
-            <TabsList className="bg-gray-800">
-              <TabsTrigger value="party">Your Party</TabsTrigger>
-              <TabsTrigger value="available">Available Companions</TabsTrigger>
+        <Tabs 
+          defaultValue="current" 
+          className="flex-1 flex flex-col"
+          onValueChange={(value) => setActiveTab(value as 'current' | 'available')}
+        >
+          <div className="border-b border-gray-700">
+            <TabsList className="bg-gray-800 mx-4 mt-2">
+              <TabsTrigger value="current" className="data-[state=active]:bg-gray-700">
+                Current Party ({activePartyMembers.length})
+              </TabsTrigger>
+              <TabsTrigger value="available" className="data-[state=active]:bg-gray-700">
+                Available Companions ({availableCompanions.length})
+              </TabsTrigger>
             </TabsList>
           </div>
           
-          <div className="flex-1 overflow-auto p-4">
-            <TabsContent value="party" className="h-full mt-0">
-              {partyMembers.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 text-center">
-                  <div className="text-6xl mb-4">👥</div>
-                  <h3 className="text-lg font-bold text-white mb-2">No Companions Yet</h3>
-                  <p className="text-gray-400 text-sm max-w-md">
-                    You don't have any companions in your party yet. 
-                    Check the "Available Companions" tab to recruit some allies for your journey.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {partyMembers.map(member => (
-                    <PartyMemberCard
-                      key={member.id}
-                      partyMember={member}
-                      isActive={activePartyMembers.some(m => m.id === member.id)}
-                      onClick={() => handleSelectMember(member.id)}
-                      onActivate={() => handleActivate(member.id)}
-                      onDeactivate={() => handleDeactivate(member.id)}
+          <TabsContent value="current" className="flex-1 p-4 overflow-auto">
+            {activePartyMembers.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-400 mb-4">Your party is currently empty.</p>
+                <Button onClick={() => setActiveTab('available')}>Recruit Companions</Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {activePartyMembers.map((member) => (
+                  <div key={member.id} className="relative">
+                    <PartyMemberCard 
+                      partyMember={member} 
+                      isActive={true}
+                      showControls={true}
+                      onDeactivate={() => setInactivePartyMember(member.id)}
                     />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      className="absolute top-2 right-2"
+                      onClick={() => removeFromParty(member.id)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
             
-            <TabsContent value="available" className="h-full mt-0">
-              {availableCompanions.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 text-center">
-                  <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-lg font-bold text-white mb-2">No Available Companions</h3>
-                  <p className="text-gray-400 text-sm max-w-md">
-                    There are no companions available for recruitment at this time.
-                    Continue exploring the galaxy to discover potential allies.
-                  </p>
+            {activePartyMembers.length > 0 && (
+              <div className="mt-6 border-t border-gray-700 pt-4">
+                <h3 className="text-lg font-semibold text-white mb-3">Party Stats</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-gray-800 p-3 rounded-lg">
+                    <div className="text-sm text-gray-400">Combat Power</div>
+                    <div className="text-xl font-bold text-white flex items-center gap-2">
+                      <Sword className="h-5 w-5 text-red-400" />
+                      {/* Calculate based on combat skills and abilities */}
+                      {activePartyMembers.reduce((sum, member) => {
+                        // Simple calculation for demo
+                        return sum + (member.skills?.filter(s => s.type === SkillType.Combat)
+                          .reduce((acc, s) => acc + s.level, 0) || 0);
+                      }, 0)}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-800 p-3 rounded-lg">
+                    <div className="text-sm text-gray-400">Technical Skill</div>
+                    <div className="text-xl font-bold text-white flex items-center gap-2">
+                      <Brain className="h-5 w-5 text-yellow-400" />
+                      {activePartyMembers.reduce((sum, member) => {
+                        return sum + (member.skills?.filter(s => s.type === SkillType.Technical)
+                          .reduce((acc, s) => acc + s.level, 0) || 0);
+                      }, 0)}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-800 p-3 rounded-lg">
+                    <div className="text-sm text-gray-400">Social Skills</div>
+                    <div className="text-xl font-bold text-white flex items-center gap-2">
+                      <Shield className="h-5 w-5 text-blue-400" />
+                      {activePartyMembers.reduce((sum, member) => {
+                        return sum + (member.skills?.filter(s => s.type === SkillType.Social)
+                          .reduce((acc, s) => acc + s.level, 0) || 0);
+                      }, 0)}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-800 p-3 rounded-lg">
+                    <div className="text-sm text-gray-400">Scientific Knowledge</div>
+                    <div className="text-xl font-bold text-white flex items-center gap-2">
+                      <Star className="h-5 w-5 text-purple-400" />
+                      {activePartyMembers.reduce((sum, member) => {
+                        return sum + (member.skills?.filter(s => s.type === SkillType.Scientific)
+                          .reduce((acc, s) => acc + s.level, 0) || 0);
+                      }, 0)}
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {availableCompanions.map(companion => (
-                    <div key={companion.id} className="bg-gray-800 p-4 rounded-lg">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-lg font-bold text-white">{companion.name}</h3>
-                          <div className="text-sm text-gray-400">
-                            Level {companion.level} {companion.class} - {companion.specialization}
-                          </div>
-                          <p className="text-gray-300 mt-2 text-sm">
-                            {companion.description}
-                          </p>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="available" className="flex-1 p-4 overflow-auto">
+            {availableCompanions.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-400">No companions available for recruitment.</p>
+                <p className="text-gray-500 text-sm mt-2">Explore the galaxy to find companions who can join your crew.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {availableCompanions.map((companion) => (
+                  <div key={companion.id} className="bg-gray-800 rounded-lg p-4 relative">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">{companion.name}</h3>
+                        <div className="flex items-center text-sm text-gray-400 mb-2">
+                          <span className="mr-1">{getClassIcon(companion.class || '')}</span>
+                          <span>{companion.class}</span>
+                          {companion.specialization && (
+                            <>
+                              <span className="mx-1">•</span>
+                              <span className="flex items-center">
+                                {getSpecializationIcon(companion.specialization)}
+                                <span className="ml-1">{companion.specialization}</span>
+                              </span>
+                            </>
+                          )}
                         </div>
-                        
-                        {companion.cost && (
-                          <div className="flex flex-col items-end">
-                            <div className="flex items-center text-yellow-400 mb-2">
-                              <span>💰</span>
-                              <span className="ml-1">{companion.cost} Credits</span>
-                            </div>
-                            <Button
-                              size="sm"
-                              onClick={() => handleRecruitCompanion(companion.id)}
-                              disabled={!selectedCharacter?.credits || selectedCharacter.credits < companion.cost}
-                            >
-                              Recruit
-                            </Button>
-                          </div>
-                        )}
                       </div>
-                      
-                      <div className="mt-4 grid grid-cols-3 gap-4">
-                        <div className="bg-gray-900 p-2 rounded">
-                          <div className="text-xs text-blue-400">Health</div>
-                          <div className="text-sm text-white">
-                            {companion.health}/{companion.maxHealth}
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="bg-blue-900/50 hover:bg-blue-800"
+                        onClick={() => addToParty(companion.id)}
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Recruit
+                      </Button>
+                    </div>
+                    
+                    <p className="text-gray-300 text-sm mb-4">{companion.description}</p>
+                    
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-gray-300">Key Skills:</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        {companion.skills?.slice(0, 4).map((skill) => (
+                          <div key={skill.id} className="flex items-center text-xs text-gray-400">
+                            <span className="mr-1">{getSkillTypeIcon(skill.type)}</span>
+                            <span>{skill.name} (Lv.{skill.level})</span>
                           </div>
-                        </div>
-                        <div className="bg-gray-900 p-2 rounded">
-                          <div className="text-xs text-blue-400">Energy</div>
-                          <div className="text-sm text-white">
-                            {companion.energy}/{companion.maxEnergy}
-                          </div>
-                        </div>
-                        <div className="bg-gray-900 p-2 rounded">
-                          <div className="text-xs text-blue-400">Key Skills</div>
-                          <div className="text-sm text-white">
-                            {companion.skills[0]?.name}, {companion.skills[1]?.name}
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
         </Tabs>
         
-        <div className="border-t border-gray-700 p-4 flex justify-end">
+        <div className="border-t border-gray-700 p-4 flex justify-between">
+          <div className="text-sm text-gray-400">
+            <span>Party Limit: {activePartyMembers.length}/4</span>
+          </div>
           <Button onClick={onClose}>Close</Button>
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 

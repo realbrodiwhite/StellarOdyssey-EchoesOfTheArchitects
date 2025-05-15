@@ -178,6 +178,32 @@ export interface Location {
   discovered?: boolean;
 }
 
+export interface PartyMember {
+  id: string;
+  name: string;
+  class: CharacterClass | string;
+  specialization?: string;
+  description: string;
+  skills: Skill[];
+  health: number;
+  maxHealth: number;
+  energy: number;
+  maxEnergy: number;
+  level: number;
+  experience: number;
+  inventory: Item[];
+  abilities: Ability[];
+  // Optional fields
+  shield?: number;
+  maxShield?: number;
+  credits?: number;
+  faction?: Faction;
+  statusEffects?: string[];
+  backstory?: string;
+  appearance?: string;
+  personality?: string;
+}
+
 export interface GameState {
   currentLocation: string;
   completedPuzzles: string[];
