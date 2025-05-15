@@ -10,14 +10,17 @@ import {
   VolumeX,
   Menu,
   Save,
-  Upload
+  Upload,
+  Users
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { useCharacter } from "@/lib/stores/useCharacter";
+import { useParty } from "@/lib/stores/useParty";
 import { Controls } from "@/lib/types";
 import Inventory from "./Inventory";
 import SaveLoadMenu from "./SaveLoadMenu";
+import SimplePartyManager from "./SimplePartyManager";
 
 interface GameUIProps {
   onOpenInventory: () => void;
@@ -38,6 +41,7 @@ const GameUI = ({
   const [showMenu, setShowMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
   const [showLoadMenu, setShowLoadMenu] = useState(false);
+  const [showPartyManager, setShowPartyManager] = useState(false);
   
   // Keyboard controls subscription
   const inventoryPressed = useKeyboardControls<Controls>(state => state.inventory);
@@ -81,11 +85,12 @@ const GameUI = ({
           <div className="flex items-center gap-2">
             <Heart className="text-red-500" size={20} />
             <div className="w-32 md:w-48">
-              <Progress 
-                value={(selectedCharacter.health / selectedCharacter.maxHealth) * 100} 
-                className="h-2 bg-gray-700"
-                indicatorClassName="bg-red-500"
-              />
+              <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-red-500 rounded-full" 
+                  style={{ width: `${(selectedCharacter.health / selectedCharacter.maxHealth) * 100}%` }}
+                />
+              </div>
               <div className="text-xs text-white mt-1">
                 {selectedCharacter.health}/{selectedCharacter.maxHealth}
               </div>
@@ -96,11 +101,12 @@ const GameUI = ({
           <div className="flex items-center gap-2">
             <Zap className="text-blue-400" size={20} />
             <div className="w-32 md:w-48">
-              <Progress 
-                value={(selectedCharacter.energy / selectedCharacter.maxEnergy) * 100} 
-                className="h-2 bg-gray-700"
-                indicatorClassName="bg-blue-400"
-              />
+              <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-blue-400 rounded-full" 
+                  style={{ width: `${(selectedCharacter.energy / selectedCharacter.maxEnergy) * 100}%` }}
+                />
+              </div>
               <div className="text-xs text-white mt-1">
                 {selectedCharacter.energy}/{selectedCharacter.maxEnergy}
               </div>

@@ -5,6 +5,7 @@ import { Card } from "../ui/card";
 import { characterTemplates } from "@/lib/data/characters";
 import { useCharacter } from "@/lib/stores/useCharacter";
 import { CharacterClass, SkillType } from "@/lib/types";
+import CharacterDetailModal from "./CharacterDetailModal";
 
 interface CharacterSelectionProps {
   onSelect: () => void;
@@ -17,11 +18,17 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
   
   const { selectCharacter } = useCharacter();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [modalCharacter, setModalCharacter] = useState<number | null>(null);
   
   const handleCharacterSelect = (index: number) => {
     console.log("Selected character index:", index);
     console.log("Character data:", characterTemplates[index]);
     setSelectedIndex(index);
+  };
+
+  const handleCharacterDetails = (e: React.MouseEvent, index: number) => {
+    e.stopPropagation();
+    setModalCharacter(index);
   };
   
   const handleConfirmSelection = () => {
@@ -57,18 +64,6 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedIndex]);
   
-  // Function to get skill level as a visual bar - responsive
-  const getSkillBar = (level: number, maxLevel: number) => {
-    return (
-      <div className="w-16 sm:w-20 md:w-24 h-2 sm:h-2.5 md:h-3 bg-gray-700 rounded-full overflow-hidden">
-        <div 
-          className="h-full bg-blue-400 rounded-full"
-          style={{ width: `${(level / maxLevel) * 100}%` }}
-        />
-      </div>
-    );
-  };
-  
   return (
     <div className="h-screen w-full bg-black flex flex-col items-center justify-center relative overflow-auto py-4 sm:py-6 md:py-8">
       {/* Background stars - responsive */}
@@ -97,7 +92,7 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
         Select Your Character
       </motion.h1>
       
-      <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-5 md:gap-6 max-w-6xl mx-auto mb-6 sm:mb-7 md:mb-8 z-10 px-2 sm:px-3 md:px-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto mb-6 sm:mb-7 md:mb-8 z-10 px-2 sm:px-3 md:px-4">
         {characterTemplates && characterTemplates.length > 0 ? (
           characterTemplates.map((character, index) => (
             <motion.div
@@ -105,122 +100,84 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="flex-1 min-w-[280px] max-w-[400px]"
             >
               <Card 
-                className={`p-3 sm:p-4 md:p-6 h-full cursor-pointer transition-all duration-200 ${
+                className={`cursor-pointer transition-all duration-200 overflow-hidden ${
                   selectedIndex === index 
-                    ? 'ring-3 sm:ring-4 ring-blue-500 bg-gray-800 transform scale-[1.02]' 
-                    : 'hover:bg-gray-900 hover:ring-2 hover:ring-blue-300 bg-gray-950'
+                    ? 'ring-3 ring-blue-500 bg-gray-800 transform scale-[1.02]' 
+                    : 'hover:bg-gray-900 hover:ring-1 hover:ring-blue-300 bg-gray-950'
                 }`}
                 onClick={() => handleCharacterSelect(index)}
               >
-                <div className="flex justify-between items-start">
-                  <h2 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">{character.class}</h2>
+                <div className="relative">
+                  {/* Character glow effect on selected */}
                   {selectedIndex === index && (
-                    <div className="bg-blue-500 text-white text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs">Selected</div>
+                    <div className="absolute -inset-0.5 bg-blue-500/20 animate-pulse rounded-lg z-0"></div>
                   )}
-                </div>
-                
-                <div className="h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-blue-500 to-purple-500 mb-2 sm:mb-3 md:mb-4"></div>
-                
-                <p className="text-gray-300 text-xs sm:text-sm mb-3 sm:mb-4 md:mb-6 leading-relaxed">{character.description}</p>
-                
-                {/* Character backstory preview */}
-                {character.backstory && (
-                  <div className="mb-3 sm:mb-4 md:mb-5 px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-900 rounded-md border-l-2 border-blue-500">
-                    <p className="text-gray-400 text-[10px] sm:text-xs italic leading-snug">"{character.backstory.substring(0, 120)}..."</p>
-                  </div>
-                )}
-                
-                <div className="space-y-2 sm:space-y-3">
-                  <h3 className="text-sm sm:text-md font-semibold text-gray-200 flex items-center">
-                    <span className="mr-1 sm:mr-2">⚔️</span> Specialized Skills:
-                  </h3>
-                  {character.skills
-                    .filter(skill => skill.level > 1) // Specialized skills have higher starting levels
-                    .slice(0, 3) // Show only top specialized skills
-                    .map(skill => (
-                      <div key={skill.id} className="flex justify-between items-center">
-                        <span className="text-gray-300 text-xs sm:text-sm">{skill.name}</span>
-                        <div className="flex items-center">
-                          {getSkillBar(skill.level, skill.maxLevel)}
-                          <span className="ml-1 sm:ml-2 text-blue-300 text-[10px] sm:text-xs">{skill.level}/{skill.maxLevel}</span>
+                  
+                  <div className="p-3 relative z-10">
+                    <div className="flex items-center justify-between mb-2">
+                      <h2 className="text-base font-bold text-white">{character.class}</h2>
+                      {selectedIndex === index && (
+                        <div className="bg-blue-500 text-white text-[10px] px-1 py-0.5 rounded">Selected</div>
+                      )}
+                    </div>
+                    
+                    <div className="h-0.5 w-12 bg-gradient-to-r from-blue-500 to-purple-500 mb-2"></div>
+                    
+                    <p className="text-gray-300 text-xs mb-3 line-clamp-2">{character.description.split('.')[0]}.</p>
+                    
+                    <div className="space-y-1.5">
+                      {/* Top skills at a glance */}
+                      {character.skills
+                        .filter(skill => skill.level > 1)
+                        .slice(0, 2)
+                        .map(skill => (
+                          <div key={skill.id} className="flex justify-between items-center">
+                            <span className="text-gray-400 text-[10px]">{skill.name}</span>
+                            <div className="flex space-x-0.5">
+                              {[...Array(5)].map((_, i) => (
+                                <div 
+                                  key={i}
+                                  className={`w-1 h-2 rounded-sm ${
+                                    i < skill.level ? 'bg-blue-400' : 'bg-gray-700'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                      
+                    <div className="mt-3 pt-2 border-t border-gray-800 grid grid-cols-2 gap-1.5">
+                      <div className="bg-gray-900/60 p-1.5 rounded">
+                        <div className="text-[9px] text-blue-400">Health</div>
+                        <div className="text-xs font-bold text-white">
+                          <span className="text-red-400 mr-0.5">❤</span> {character.health}
                         </div>
                       </div>
-                    ))
-                  }
-                  
-                  <h3 className="text-sm sm:text-md font-semibold text-gray-200 mt-3 sm:mt-4 flex items-center">
-                    <span className="mr-1 sm:mr-2">🛠️</span> Standard Skills:
-                  </h3>
-                  <p className="text-[10px] sm:text-xs text-gray-400 mb-1 sm:mb-2">All characters have these core skills:</p>
-                  <div className="grid grid-cols-2 gap-x-1 sm:gap-x-2 gap-y-0.5 sm:gap-y-1">
-                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
-                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-green-500 rounded-full mr-1 sm:mr-2"></span>Survival
-                    </span>
-                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
-                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-red-500 rounded-full mr-1 sm:mr-2"></span>Basic Combat
-                    </span>
-                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
-                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-blue-500 rounded-full mr-1 sm:mr-2"></span>Spaceship Ops
-                    </span>
-                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
-                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-yellow-500 rounded-full mr-1 sm:mr-2"></span>Maintenance
-                    </span>
-                    <span className="text-gray-300 text-[10px] sm:text-xs flex items-center">
-                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-purple-500 rounded-full mr-1 sm:mr-2"></span>Communication
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="mt-3 sm:mt-4 md:mt-6 pt-2 sm:pt-3 md:pt-4 border-t border-gray-700 grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
-                  <div className="bg-gray-900 p-2 sm:p-3 rounded-md">
-                    <div className="text-[10px] sm:text-xs text-blue-400 mb-0.5 sm:mb-1">Health</div>
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white flex items-center">
-                      <span className="text-red-400 mr-0.5 sm:mr-1">❤</span> {character.health}
-                      <span className="text-gray-500 text-[10px] sm:text-xs ml-0.5 sm:ml-1">/ {character.maxHealth}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-900 p-2 sm:p-3 rounded-md">
-                    <div className="text-[10px] sm:text-xs text-blue-400 mb-0.5 sm:mb-1">Energy</div>
-                    <div className="text-base sm:text-lg md:text-xl font-bold text-white flex items-center">
-                      <span className="text-blue-400 mr-0.5 sm:mr-1">⚡</span> {character.energy}
-                      <span className="text-gray-500 text-[10px] sm:text-xs ml-0.5 sm:ml-1">/ {character.maxEnergy}</span>
-                    </div>
-                  </div>
-                  
-                  {character.shield && character.maxShield && (
-                    <div className="bg-gray-900 p-2 sm:p-3 rounded-md">
-                      <div className="text-[10px] sm:text-xs text-blue-400 mb-0.5 sm:mb-1">Shield</div>
-                      <div className="text-base sm:text-lg md:text-xl font-bold text-white flex items-center">
-                        <span className="text-cyan-400 mr-0.5 sm:mr-1">🛡️</span> {character.shield}
-                        <span className="text-gray-500 text-[10px] sm:text-xs ml-0.5 sm:ml-1">/ {character.maxShield}</span>
+                      
+                      <div className="bg-gray-900/60 p-1.5 rounded">
+                        <div className="text-[9px] text-blue-400">Energy</div>
+                        <div className="text-xs font-bold text-white">
+                          <span className="text-blue-400 mr-0.5">⚡</span> {character.energy}
+                        </div>
                       </div>
                     </div>
-                  )}
-                  
-                  {character.credits !== undefined && (
-                    <div className="bg-gray-900 p-2 sm:p-3 rounded-md">
-                      <div className="text-[10px] sm:text-xs text-blue-400 mb-0.5 sm:mb-1">Credits</div>
-                      <div className="text-base sm:text-lg md:text-xl font-bold text-white flex items-center">
-                        <span className="text-yellow-400 mr-0.5 sm:mr-1">💰</span> {character.credits}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                {selectedIndex === index && (
-                  <div className="mt-2 sm:mt-3 md:mt-4 w-full">
-                    <div className="h-0.5 sm:h-1 w-full bg-blue-500 animate-pulse rounded"></div>
+                    
+                    <button
+                      className="mt-2 w-full text-center text-[10px] bg-gray-800/80 hover:bg-gray-700 text-gray-300 py-1 rounded transition-colors"
+                      onClick={(e) => handleCharacterDetails(e, index)}
+                    >
+                      View Details
+                    </button>
                   </div>
-                )}
+                </div>
               </Card>
             </motion.div>
           ))
         ) : (
-          <div className="w-full text-center text-white">
+          <div className="w-full text-center text-white col-span-4">
             <p>Loading character templates...</p>
           </div>
         )}
@@ -283,6 +240,15 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
           </motion.div>
         )}
       </motion.div>
+      
+      {/* Character Detail Modal */}
+      {modalCharacter !== null && (
+        <CharacterDetailModal 
+          character={characterTemplates[modalCharacter]} 
+          isOpen={modalCharacter !== null}
+          onClose={() => setModalCharacter(null)}
+        />
+      )}
     </div>
   );
 };

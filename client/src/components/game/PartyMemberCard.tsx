@@ -4,7 +4,7 @@ import { CharacterClass, SkillType } from '@/lib/types';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Progress } from '../ui/progress';
+
 
 interface PartyMemberCardProps {
   partyMember: PartyMember;
@@ -91,21 +91,23 @@ const PartyMemberCard: React.FC<PartyMemberCardProps> = ({
           <span className="text-gray-400">Health</span>
           <span className="text-white">{partyMember.health}/{partyMember.maxHealth}</span>
         </div>
-        <Progress 
-          value={(partyMember.health / partyMember.maxHealth) * 100} 
-          className="h-1.5" 
-          indicatorClassName="bg-red-500"
-        />
+        <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-red-500 rounded-full" 
+            style={{ width: `${(partyMember.health / partyMember.maxHealth) * 100}%` }}
+          />
+        </div>
         
         <div className="flex justify-between text-xs">
           <span className="text-gray-400">Energy</span>
           <span className="text-white">{partyMember.energy}/{partyMember.maxEnergy}</span>
         </div>
-        <Progress 
-          value={(partyMember.energy / partyMember.maxEnergy) * 100} 
-          className="h-1.5" 
-          indicatorClassName="bg-blue-500"
-        />
+        <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-blue-500 rounded-full" 
+            style={{ width: `${(partyMember.energy / partyMember.maxEnergy) * 100}%` }}
+          />
+        </div>
         
         {partyMember.shield !== undefined && partyMember.maxShield !== undefined && (
           <>
@@ -113,11 +115,12 @@ const PartyMemberCard: React.FC<PartyMemberCardProps> = ({
               <span className="text-gray-400">Shield</span>
               <span className="text-white">{partyMember.shield}/{partyMember.maxShield}</span>
             </div>
-            <Progress 
-              value={(partyMember.shield / partyMember.maxShield) * 100} 
-              className="h-1.5" 
-              indicatorClassName="bg-cyan-500"
-            />
+            <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-cyan-500 rounded-full" 
+                style={{ width: `${(partyMember.shield / partyMember.maxShield) * 100}%` }}
+              />
+            </div>
           </>
         )}
       </div>
