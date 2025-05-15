@@ -600,6 +600,57 @@ canvas {
   border-radius: 0 0 30% 70%;
 }
 
+/* Outer engine exhaust - creates a wider, more diffuse effect */
+.engine-exhaust-outer {
+  position: absolute;
+  top: 50%;
+  right: -20%;
+  width: 60%;
+  height: 45%;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    to left, 
+    rgba(140, 220, 255, 0.7),
+    rgba(120, 210, 255, 0.5) 20%, 
+    rgba(100, 200, 255, 0.3) 40%, 
+    rgba(80, 190, 255, 0.2) 60%, 
+    rgba(60, 180, 255, 0.1) 80%,
+    rgba(40, 170, 255, 0) 100%
+  );
+  opacity: 0.15;
+  z-index: 1002;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  filter: blur(6px);
+  animation: engineExhaustOuter 15s forwards, outerThrustFlicker 0.6s ease-in-out infinite alternate;
+  border-radius: 0 0 40% 60%;
+}
+
+/* Shield effect around the ship */
+.ship-shield-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 130%;
+  height: 150%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(160, 230, 255, 0.03) 30%,
+    rgba(120, 210, 255, 0.02) 50%,
+    rgba(80, 190, 255, 0.01) 70%,
+    transparent 85%
+  );
+  border-radius: 50%;
+  z-index: 1001;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  filter: blur(8px);
+  opacity: 0;
+  animation: shieldPulse 4s ease-in-out infinite alternate;
+}
+
 @keyframes shipRubberBand {
   /* Ship enters from completely off-screen (bottom-right) */
   0% {
@@ -877,6 +928,140 @@ canvas {
   100% {
     opacity: 0.95;
     filter: blur(1.3px) brightness(1.1);
+  }
+}
+
+/* New animations for enhanced ship effects */
+@keyframes engineExhaustOuter {
+  /* Regular space flight - subtle outer exhaust */
+  0% {
+    width: 60%;
+    height: 45%;
+    opacity: 0.15;
+    filter: blur(6px) brightness(0.95);
+    right: -20%;
+  }
+  
+  /* Beginning acceleration - slightly increased */
+  50% {
+    width: 65%;
+    height: 50%;
+    opacity: 0.18;
+    filter: blur(7px) brightness(1.05);
+    right: -22%;
+  }
+  
+  /* Pre-warp acceleration - growing larger */
+  62% {
+    width: 75%;
+    height: 55%;
+    opacity: 0.22;
+    filter: blur(8px) brightness(1.15);
+    right: -28%;
+  }
+  
+  /* Warp initiation - significant increase */
+  70% {
+    width: 90%;
+    height: 65%;
+    opacity: 0.28;
+    filter: blur(10px) brightness(1.3);
+    right: -35%;
+  }
+  
+  /* Full warp - dramatic outer glow */
+  80% {
+    width: 120%;
+    height: 85%;
+    opacity: 0.35;
+    filter: blur(13px) brightness(1.5);
+    right: -50%;
+  }
+  
+  /* Warp velocity reached - maximum effect */
+  90% {
+    width: 150%;
+    height: 100%;
+    opacity: 0.4;
+    filter: blur(18px) brightness(1.7);
+    right: -70%;
+  }
+  
+  /* Ship vanishes into warp - final surge */
+  100% {
+    width: 180%;
+    height: 120%;
+    opacity: 0.3;
+    filter: blur(22px) brightness(1.5);
+    right: -100%;
+  }
+}
+
+@keyframes outerThrustFlicker {
+  0% {
+    opacity: 0.12;
+    width: 58%;
+    filter: blur(6px) brightness(0.9) hue-rotate(-10deg);
+  }
+  
+  25% {
+    opacity: 0.15;
+    width: 60%;
+    filter: blur(6.5px) brightness(0.95) hue-rotate(-8deg);
+  }
+  
+  50% {
+    opacity: 0.18;
+    width: 62%;
+    filter: blur(7px) brightness(1) hue-rotate(-5deg);
+  }
+  
+  75% {
+    opacity: 0.16;
+    width: 61%;
+    filter: blur(6.8px) brightness(0.98) hue-rotate(-7deg);
+  }
+  
+  100% {
+    opacity: 0.19;
+    width: 63%;
+    filter: blur(7.2px) brightness(1.05) hue-rotate(-3deg);
+  }
+}
+
+@keyframes shieldPulse {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(8px) brightness(0.9);
+  }
+  
+  /* Shield starts to activate as ship accelerates */
+  50% {
+    opacity: 0.02;
+    transform: translate(-50%, -50%) scale(1.02);
+    filter: blur(9px) brightness(1);
+  }
+  
+  /* Shield strengthens when approaching warp */
+  70% {
+    opacity: 0.06;
+    transform: translate(-50%, -50%) scale(1.04);
+    filter: blur(10px) brightness(1.1);
+  }
+  
+  /* Shield at full strength during warp initiation */
+  85% {
+    opacity: 0.12;
+    transform: translate(-50%, -50%) scale(1.08);
+    filter: blur(12px) brightness(1.25) hue-rotate(-5deg);
+  }
+  
+  /* Shield maximum during warp flight */
+  100% {
+    opacity: 0.15;
+    transform: translate(-50%, -50%) scale(1.12);
+    filter: blur(15px) brightness(1.3) hue-rotate(-10deg);
   }
 }
 
