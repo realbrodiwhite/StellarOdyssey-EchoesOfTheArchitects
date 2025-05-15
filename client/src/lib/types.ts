@@ -11,13 +11,24 @@ export enum Controls {
 }
 
 export enum CharacterClass {
+  // Original classes
   Engineer = 'Engineer',
   Scientist = 'Scientist',
   Diplomat = 'Diplomat',
   Pilot = 'Pilot',
   Soldier = 'Soldier',
   Mercenary = 'Mercenary',
-  Explorer = 'Explorer'
+  Explorer = 'Explorer',
+  
+  // New classes
+  Hacker = 'Hacker',
+  Medic = 'Medic',
+  Trader = 'Trader',
+  Captain = 'Captain',
+  Smuggler = 'Smuggler',
+  
+  // Gender variants (not used in enum but for display)
+  // We'll implement gender selection separately
 }
 
 export enum SkillType {
@@ -145,6 +156,11 @@ export enum Faction {
   Mystics = 'Mystics',
   Independent = 'Independent',
   VoidEntity = 'Void Entities'
+}
+
+export enum Gender {
+  Male = 'Male',
+  Female = 'Female'
 }
 
 export interface Location {

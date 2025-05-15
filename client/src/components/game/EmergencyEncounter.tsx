@@ -166,43 +166,138 @@ const EmergencyEncounter = ({ onComplete }: EmergencyEncounterProps) => {
       {/* Explosion effects during combat */}
       {renderExplosions()}
       
-      {/* Pirate ships (simplified) */}
+      {/* Pirate ships with smooth entry and movement */}
       {phase === "pirates" || phase === "combat" ? (
         <div className="absolute inset-0 flex items-center justify-center">
+          {/* Lead pirate ship */}
           <motion.div 
-            className="absolute w-12 h-6 bg-gray-700 rounded-lg transform rotate-45"
+            className="absolute w-16 h-7 bg-gray-700 rounded-lg"
+            initial={{ 
+              x: phase === "pirates" ? -500 : 0, 
+              y: phase === "pirates" ? -100 : 0,
+              rotate: 15
+            }}
+            animate={{ 
+              x: phase === "combat" 
+                ? [0, -50, 30, -20, 0] 
+                : phase === "pirates" ? 0 : 0,
+              y: phase === "combat" 
+                ? [0, 30, -20, 10, 0] 
+                : phase === "pirates" ? 0 : 0,
+              rotate: phase === "pirates" ? [15, 5, 10, 5] : 5,
+              scale: phase === "pirates" ? [0.5, 1] : 1
+            }}
+            transition={{ 
+              duration: phase === "pirates" ? 3 : 4,
+              ease: phase === "pirates" ? "easeOut" : "linear",
+              repeat: phase === "combat" ? Infinity : 0
+            }}
             style={{ left: '20%', top: '30%' }}
-            animate={{ 
-              x: phase === "combat" ? [0, -50, 30, -20, 0] : 0,
-              y: phase === "combat" ? [0, 30, -20, 10, 0] : 0
-            }}
-            transition={{ duration: 4, repeat: Infinity }}
           >
+            <div className="absolute w-10 h-4 bg-gray-800 rounded-t-lg" style={{ top: -4, left: 3 }}></div>
             <div className="absolute w-2 h-2 bg-red-500 rounded-full" style={{ bottom: '0', left: '5px' }}></div>
-          </motion.div>
-          
-          <motion.div 
-            className="absolute w-14 h-7 bg-gray-800 rounded-lg transform -rotate-30"
-            style={{ right: '25%', top: '40%' }}
-            animate={{ 
-              x: phase === "combat" ? [0, 40, -30, 20, 0] : 0,
-              y: phase === "combat" ? [0, -20, 40, -10, 0] : 0
-            }}
-            transition={{ duration: 5, repeat: Infinity }}
-          >
             <div className="absolute w-2 h-2 bg-red-500 rounded-full" style={{ bottom: '0', right: '5px' }}></div>
+            
+            {/* Engine glow */}
+            <motion.div
+              className="absolute h-3 rounded-full"
+              style={{ 
+                width: '8px',
+                right: '-4px', 
+                top: '2px',
+                background: 'linear-gradient(to left, #ff4500, rgba(255, 69, 0, 0))'
+              }}
+              animate={{ width: [8, 15, 8], opacity: [0.6, 0.9, 0.6] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
           </motion.div>
           
+          {/* Second pirate ship */}
           <motion.div 
-            className="absolute w-10 h-5 bg-gray-600 rounded-lg transform rotate-15"
-            style={{ right: '35%', bottom: '30%' }}
-            animate={{ 
-              x: phase === "combat" ? [0, -30, 20, -10, 0] : 0,
-              y: phase === "combat" ? [0, 10, -30, 15, 0] : 0
+            className="absolute w-18 h-8 bg-gray-800 rounded-lg"
+            initial={{ 
+              x: phase === "pirates" ? -700 : 0, 
+              y: phase === "pirates" ? 50 : 0,
+              rotate: -10
             }}
-            transition={{ duration: 4.5, repeat: Infinity }}
+            animate={{ 
+              x: phase === "combat" 
+                ? [0, 40, -30, 20, 0] 
+                : phase === "pirates" ? 0 : 0,
+              y: phase === "combat" 
+                ? [0, -20, 40, -10, 0] 
+                : phase === "pirates" ? 0 : 0,
+              rotate: phase === "pirates" ? [-10, -5, -8, -5] : -5,
+              scale: phase === "pirates" ? [0.5, 1] : 1
+            }}
+            transition={{ 
+              duration: phase === "pirates" ? 3.5 : 5,
+              ease: phase === "pirates" ? "easeOut" : "linear",
+              repeat: phase === "combat" ? Infinity : 0,
+              delay: phase === "pirates" ? 0.3 : 0
+            }}
+            style={{ right: '25%', top: '40%' }}
           >
+            <div className="absolute w-12 h-5 bg-gray-900 rounded-t-lg" style={{ top: -5, left: 3 }}></div>
+            <div className="absolute w-2 h-2 bg-red-500 rounded-full" style={{ bottom: '0', right: '5px' }}></div>
+            <div className="absolute w-2 h-2 bg-red-500 rounded-full" style={{ bottom: '0', left: '8px' }}></div>
+            
+            {/* Engine glow */}
+            <motion.div
+              className="absolute h-4 rounded-full"
+              style={{ 
+                width: '10px',
+                right: '-5px', 
+                top: '2px',
+                background: 'linear-gradient(to left, #ff4500, rgba(255, 69, 0, 0))'
+              }}
+              animate={{ width: [10, 18, 10], opacity: [0.6, 0.9, 0.6] }}
+              transition={{ duration: 1.8, repeat: Infinity }}
+            />
+          </motion.div>
+          
+          {/* Third pirate ship */}
+          <motion.div 
+            className="absolute w-14 h-6 bg-gray-600 rounded-lg"
+            initial={{ 
+              x: phase === "pirates" ? -800 : 0, 
+              y: phase === "pirates" ? 150 : 0,
+              rotate: 8
+            }}
+            animate={{ 
+              x: phase === "combat" 
+                ? [0, -30, 20, -10, 0] 
+                : phase === "pirates" ? 0 : 0,
+              y: phase === "combat" 
+                ? [0, 10, -30, 15, 0] 
+                : phase === "pirates" ? 0 : 0,
+              rotate: phase === "pirates" ? [8, 3, 5, 3] : 3,
+              scale: phase === "pirates" ? [0.5, 1] : 1
+            }}
+            transition={{ 
+              duration: phase === "pirates" ? 4 : 4.5,
+              ease: phase === "pirates" ? "easeOut" : "linear",
+              repeat: phase === "combat" ? Infinity : 0,
+              delay: phase === "pirates" ? 0.6 : 0
+            }}
+            style={{ right: '35%', bottom: '30%' }}
+          >
+            <div className="absolute w-8 h-3 bg-gray-700 rounded-t-lg" style={{ top: -3, left: 3 }}></div>
             <div className="absolute w-2 h-2 bg-red-500 rounded-full" style={{ top: '0', left: '3px' }}></div>
+            <div className="absolute w-2 h-2 bg-red-500 rounded-full" style={{ bottom: '0', right: '4px' }}></div>
+            
+            {/* Engine glow */}
+            <motion.div
+              className="absolute h-3 rounded-full"
+              style={{ 
+                width: '8px',
+                right: '-4px', 
+                top: '1.5px',
+                background: 'linear-gradient(to left, #ff4500, rgba(255, 69, 0, 0))'
+              }}
+              animate={{ width: [8, 14, 8], opacity: [0.5, 0.8, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
           </motion.div>
         </div>
       ) : null}
