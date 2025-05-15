@@ -405,7 +405,10 @@ const StarMap: React.FC<StarMapProps> = ({ onClose, onSelectLocation }) => {
                  !story.gameState.visitedLocations.includes("frontier_outpost") && (
                   <div className="my-2 p-2 bg-blue-900 bg-opacity-50 border border-blue-500 rounded animate-pulse">
                     <p className="text-sm font-bold text-blue-300">
-                      MISSION OBJECTIVE: Dock at this station
+                      MISSION OBJECTIVE: Dock at this station to pick up supplies
+                    </p>
+                    <p className="text-xs text-blue-200 mt-1">
+                      Your ship's systems indicate critical supplies are waiting at this location
                     </p>
                   </div>
                 )}

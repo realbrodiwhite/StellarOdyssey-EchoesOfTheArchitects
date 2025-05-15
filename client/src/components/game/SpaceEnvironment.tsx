@@ -61,17 +61,13 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const currentLocation = getCurrentLocation();
   const getLocationById = useStory().getLocationById;
   
-  // Initialize first mission guidance
+  // Initialize first mission guidance through ship's automated system
   useEffect(() => {
-    if (activeCompanion && currentLocation?.id === "ship") {
-      // Add a mission briefing dialogue when starting on the ship
-      addDialogue(
-        DialogueType.Advice, 
-        "Mission update: You need to dock at Proxima Outpost space station. Use the Star Map (press M) to navigate there.",
-        { event: "mission_start" }
-      );
+    if (currentLocation?.id === "ship") {
+      // Set the objective message through the ship's automated system
+      setCurrentObjective("Mission: Dock at Proxima Outpost to pick up supplies");
     }
-  }, [activeCompanion, currentLocation?.id, addDialogue]);
+  }, [currentLocation?.id]);
   
   // Handle keyboard input for opening navigation console and star map
   useEffect(() => {
@@ -129,14 +125,16 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         if (locationId === "frontier_outpost") {
           setCurrentObjective("Mission accomplished! Docked at Proxima Outpost");
           
-          // Add mission completion dialogue
-          if (activeCompanion) {
-            addDialogue(
-              DialogueType.Advice, 
-              "Mission Accomplished! You've successfully docked at Proxima Outpost. Check in with the station commander for your next assignment.",
-              { event: "mission_complete" }
-            );
+          // Complete the "First Steps" achievement
+          const achievements = useAchievements.getState();
+          const firstStepsAchievement = achievements.achievements.find(a => a.name === "First Steps");
+          if (firstStepsAchievement && !firstStepsAchievement.completed) {
+            achievements.completeAchievement(firstStepsAchievement.id);
           }
+          
+          // Add mission completion notification through ship's systems
+          // We'll dispatch an event to show this in the UI later
+          console.log("MISSION COMPLETE: Successfully docked at Proxima Outpost");
         } else {
           // For other locations, set a generic objective
           const location = getLocationById(locationId);
