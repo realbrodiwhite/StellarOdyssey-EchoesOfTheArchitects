@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Character, Skill, SkillType, Item, Ability } from "../types";
+import { Character, Skill, SkillType, Item, Ability, Gender } from "../types";
 import { characterTemplates } from "../data/characters";
+import { expandedCharacterTemplates } from "../data/expanded-characters";
 import { generateCoreSkills } from "../data/skills";
 
 interface CharacterState {
