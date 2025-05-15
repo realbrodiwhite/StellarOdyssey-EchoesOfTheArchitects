@@ -33,6 +33,14 @@ export const achievements: Achievement[] = [
   },
   {
     id: uuidv4(),
+    name: "Emergency Response",
+    description: "Successfully defend against a pirate ambush.",
+    completed: false,
+    reward: "Combat maneuvering tutorial",
+    isHidden: false
+  },
+  {
+    id: uuidv4(),
     name: "Technical Genius",
     description: "Solve your first technical puzzle.",
     completed: false,

@@ -11,6 +11,7 @@ import { useCombat } from "@/lib/stores/useCombat";
 import { useGame } from "@/lib/stores/useGame";
 import { useCompanion, DialogueType } from "@/lib/stores/useCompanion";
 import { useAchievements } from "@/lib/stores/useAchievements";
+import { useAudio } from "@/lib/stores/useAudio";
 import { Controls } from "@/lib/types";
 import { Html } from "@react-three/drei";
 import SpaceExploration from "./SpaceExploration";
@@ -21,6 +22,7 @@ import CompanionSelection from "./CompanionSelection";
 import ForearmPad from "./ForearmPad";
 import TechnicalPuzzle from "./TechnicalPuzzle";
 import SaveLoadMenu from "./SaveLoadMenu";
+import EmergencyEncounter from "./EmergencyEncounter";
 
 interface SpaceEnvironmentProps {
   onEnterCombat: () => void;
@@ -51,7 +53,10 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const [companionChatMinimized, setCompanionChatMinimized] = useState(false);
   const [targetLocationId, setTargetLocationId] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [currentObjective, setCurrentObjective] = useState("First mission: Land at Proxima Outpost space station");
+  const [currentObjective, setCurrentObjective] = useState("First mission: Land at Proxima Outpost to deliver cargo");
+  
+  // Emergency pirate encounter system
+  const [showEmergencyEncounter, setShowEmergencyEncounter] = useState(false);
   
   // Companion and achievement systems
   const { activeCompanion, getRandomDialogue, addDialogue } = useCompanion();
@@ -65,9 +70,21 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   useEffect(() => {
     if (currentLocation?.id === "ship") {
       // Set the objective message through the ship's automated system
-      setCurrentObjective("Mission: Dock at Proxima Outpost to pick up supplies");
+      setCurrentObjective("Mission: Deliver urgent cargo to Proxima Outpost");
     }
   }, [currentLocation?.id]);
+  
+  // Trigger pirate ambush if player is traveling to the frontier outpost
+  useEffect(() => {
+    if (targetLocationId === "frontier_outpost" && isTransitioning && mode === "flying" && !showEmergencyEncounter) {
+      // Wait a bit to let the flight animation start, then trigger the pirate ambush
+      const pirateAmbushTimer = setTimeout(() => {
+        setShowEmergencyEncounter(true);
+      }, 2000);
+      
+      return () => clearTimeout(pirateAmbushTimer);
+    }
+  }, [targetLocationId, isTransitioning, mode, showEmergencyEncounter]);
   
   // Handle keyboard input for opening navigation console and star map
   useEffect(() => {
@@ -98,6 +115,15 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   
   const toggleStarMap = () => {
     setShowStarMap(prev => !prev);
+  };
+  
+  // Emergency encounter handlers
+  const handleEmergencyComplete = () => {
+    setShowEmergencyEncounter(false);
+    setCurrentObjective("Mission: Continue to Proxima Outpost to deliver cargo");
+    
+    // Resume normal travel to the destination
+    console.log("Emergency encounter completed, continuing travel");
   };
   
   // Handle selecting a location from either map view
