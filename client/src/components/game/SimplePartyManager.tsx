@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useParty, type PartyState } from '@/lib/stores/useParty';
+import { useParty } from '@/lib/stores/useParty';
 import PartyMemberCard from './PartyMemberCard';
 import { Button } from '../ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
@@ -12,14 +12,28 @@ interface SimplePartyManagerProps {
 }
 
 const SimplePartyManager: React.FC<SimplePartyManagerProps> = ({ onClose }) => {
-  const { 
-    availableCompanions, 
-    activePartyMembers, 
-    addToParty, 
-    removeFromParty,
-    setActivePartyMember,
-    setInactivePartyMember
-  } = useParty();
+  const partyStore = useParty();
+  
+  // Access state directly to avoid TypeScript issues
+  const availableCompanions = partyStore.availableCompanions;
+  const activePartyMembers = partyStore.activePartyMembers;
+  
+  // Create wrapper functions for the actions
+  const addToParty = (id: string) => {
+    (partyStore as any).addToParty(id);
+  };
+  
+  const removeFromParty = (id: string) => {
+    (partyStore as any).removeFromParty(id);
+  };
+  
+  const setActivePartyMember = (id: string) => {
+    (partyStore as any).setActivePartyMember(id);
+  };
+  
+  const setInactivePartyMember = (id: string) => {
+    (partyStore as any).setInactivePartyMember(id);
+  };
   
   const [activeTab, setActiveTab] = useState<'current' | 'available'>('current');
   

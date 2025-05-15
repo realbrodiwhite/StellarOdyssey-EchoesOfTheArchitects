@@ -298,7 +298,7 @@ const sampleCompanions: PartyMember[] = [
   }
 ];
 
-interface PartyState {
+export interface PartyState {
   // Party members actively in the player's squad
   activePartyMembers: PartyMember[];
   
