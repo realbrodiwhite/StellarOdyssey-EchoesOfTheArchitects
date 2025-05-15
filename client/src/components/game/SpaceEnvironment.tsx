@@ -51,14 +51,27 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const [companionChatMinimized, setCompanionChatMinimized] = useState(false);
   const [targetLocationId, setTargetLocationId] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [currentObjective, setCurrentObjective] = useState("Explore the current location");
+  const [currentObjective, setCurrentObjective] = useState("First mission: Land at Proxima Outpost space station");
   
   // Companion and achievement systems
   const { activeCompanion, getRandomDialogue, addDialogue } = useCompanion();
   const { hasUnlockedCompanionAI } = useAchievements();
   
-  // Get the current location data
+  // Get location data
   const currentLocation = getCurrentLocation();
+  const getLocationById = useStory().getLocationById;
+  
+  // Initialize first mission guidance
+  useEffect(() => {
+    if (activeCompanion && currentLocation?.id === "ship") {
+      // Add a mission briefing dialogue when starting on the ship
+      addDialogue(
+        DialogueType.Advice, 
+        "Mission update: You need to dock at Proxima Outpost space station. Use the Star Map (press M) to navigate there.",
+        { event: "mission_start" }
+      );
+    }
+  }, [activeCompanion, currentLocation?.id, addDialogue]);
   
   // Handle keyboard input for opening navigation console and star map
   useEffect(() => {
@@ -111,6 +124,26 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
       
       if (success) {
         console.log(`Successfully traveled to ${locationId}`);
+        
+        // Check if this is the space station for the first mission
+        if (locationId === "frontier_outpost") {
+          setCurrentObjective("Mission accomplished! Docked at Proxima Outpost");
+          
+          // Add mission completion dialogue
+          if (activeCompanion) {
+            addDialogue(
+              DialogueType.Mission, 
+              "Mission Accomplished! You've successfully docked at Proxima Outpost. Check in with the station commander for your next assignment.",
+              { event: "mission_complete" }
+            );
+          }
+        } else {
+          // For other locations, set a generic objective
+          const location = getLocationById(locationId);
+          if (location) {
+            setCurrentObjective(`Explore ${location.name}`);
+          }
+        }
       } else {
         console.error(`Failed to travel to ${locationId}`);
       }
