@@ -396,51 +396,51 @@ canvas {
     filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.7));
   }
   
-  /* Ship performs a slight vertical correction - space RCS thrusters */
+  /* Ship begins first barrel roll - starts banking */
   25% {
-    transform: translate(-10%, -45%) scale(0.65) rotate(-2deg);
+    transform: translate(-10%, -45%) scale(0.65) rotate(45deg);
     filter: drop-shadow(0 0 17px rgba(110, 190, 255, 0.72));
   }
   
-  /* Ship performs subtle banking maneuver - roll axis */
+  /* Ship continues first barrel roll */
   30% {
-    transform: translate(-15%, -47%) scale(0.7) rotate(3deg);
+    transform: translate(-15%, -47%) scale(0.7) rotate(135deg);
     filter: drop-shadow(0 0 18px rgba(120, 200, 255, 0.75));
   }
   
-  /* Ship continues maneuvering - typical space flight small corrections */
+  /* Ship completes first barrel roll */
   35% {
-    transform: translate(-20%, -51%) scale(0.75) rotate(-1deg);
+    transform: translate(-20%, -51%) scale(0.75) rotate(270deg);
     filter: drop-shadow(0 0 19px rgba(125, 205, 255, 0.77));
   }
   
-  /* Ship stabilizes in center position */
+  /* Ship finishes first barrel roll and stabilizes */
   40% {
-    transform: translate(-25%, -50%) scale(0.8) rotate(0deg);
+    transform: translate(-25%, -50%) scale(0.8) rotate(360deg);
     filter: drop-shadow(0 0 20px rgba(130, 210, 255, 0.8));
   }
   
-  /* Ship makes slight thruster adjustment - realistic small movement */
+  /* Ship makes slight thruster adjustment - hover momentarily */
   45% {
-    transform: translate(-22%, -49%) scale(0.8) rotate(1deg);
+    transform: translate(-22%, -49%) scale(0.8) rotate(0deg);
     filter: drop-shadow(0 0 21px rgba(135, 215, 255, 0.82));
   }
   
-  /* Ship performs pitch adjustment - no rolling */
+  /* Ship begins second barrel roll */
   50% {
-    transform: translate(-20%, -50%) scale(0.85) rotate(2deg);
+    transform: translate(-20%, -50%) scale(0.85) rotate(90deg);
     filter: drop-shadow(0 0 22px rgba(140, 220, 255, 0.85));
   }
   
-  /* Ship begins gentle banking maneuver - realistic attitude change */
+  /* Ship continues second barrel roll */
   55% {
-    transform: translate(-15%, -52%) scale(0.85) rotate(5deg);
+    transform: translate(-15%, -52%) scale(0.85) rotate(180deg);
     filter: drop-shadow(0 0 23px rgba(145, 225, 255, 0.87));
   }
   
-  /* Ship continues banking, preparing for departure vector */
+  /* Ship finishes second barrel roll */
   60% {
-    transform: translate(-10%, -53%) scale(0.9) rotate(8deg);
+    transform: translate(-10%, -53%) scale(0.9) rotate(360deg);
     filter: drop-shadow(0 0 25px rgba(150, 230, 255, 0.9));
   }
   
@@ -450,7 +450,7 @@ canvas {
     filter: drop-shadow(0 0 27px rgba(155, 230, 255, 0.92));
   }
   
-  /* Ship turns more sharply to its left - realistic bank angle */
+  /* Ship turns to its left - realistic bank angle */
   70% {
     transform: translate(0%, -48%) scale(0.8) rotate(20deg);
     filter: drop-shadow(0 0 29px rgba(160, 235, 255, 0.95));
@@ -462,22 +462,22 @@ canvas {
     filter: drop-shadow(0 0 30px rgba(170, 240, 255, 1));
   }
   
-  /* Ship speeds away - significant engine thrust */
+  /* Ship performs departure barrel roll */
   80% {
-    transform: translate(-100%, -50%) scale(0.6) rotate(20deg);
+    transform: translate(-100%, -50%) scale(0.6) rotate(180deg);
     filter: drop-shadow(0 0 35px rgba(180, 245, 255, 1));
   }
   
-  /* Ship continues speeding away - engine burn continues */
+  /* Ship continues speeding away with barrel roll */
   85% {
-    transform: translate(-150%, -55%) scale(0.5) rotate(15deg);
+    transform: translate(-150%, -55%) scale(0.5) rotate(270deg);
     opacity: 0.8;
     filter: drop-shadow(0 0 30px rgba(170, 235, 255, 0.9));
   }
   
-  /* Ship almost out of view - distance increasing */
+  /* Ship completes barrel roll as it speeds away */
   90% {
-    transform: translate(-200%, -60%) scale(0.4) rotate(10deg);
+    transform: translate(-200%, -60%) scale(0.4) rotate(360deg);
     opacity: 0.5;
     filter: drop-shadow(0 0 25px rgba(160, 220, 255, 0.7));
   }
