@@ -74,17 +74,17 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
       
       {/* For transition to character selection, do a different animation */}
       <div className="warp-scene">
-        {/* Dynamic stars background with animated motion */}
+        {/* Dynamic stars background with animated motion - responsive */}
         <div className="animated-stars">
-          {Array.from({ length: 150 }).map((_, i) => (
+          {Array.from({ length: Math.min(150, Math.max(50, Math.floor(window.innerWidth / 10))) }).map((_, i) => (
             <div 
               key={i}
               className="animated-star"
               style={{
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
-                width: `${Math.random() * 3 + 1}px`,
-                height: `${Math.random() * 3 + 1}px`,
+                width: `${Math.min(3, Math.max(1, window.innerWidth / 640))}px`,
+                height: `${Math.min(3, Math.max(1, window.innerWidth / 640))}px`,
                 animationDelay: `${Math.random() * 8}s`,
                 animationDuration: `${Math.random() * 7 + 8}s`
               }}

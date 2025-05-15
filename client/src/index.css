@@ -90,8 +90,8 @@ canvas {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
   z-index: 1001;
   background-image: 
     radial-gradient(2px 2px at 20px 30px, #fff, rgba(0, 0, 0, 0)),
@@ -115,7 +115,7 @@ canvas {
     radial-gradient(1px 1px at 950px 40px, #fff, rgba(0, 0, 0, 0)),
     radial-gradient(2px 2px at 990px 100px, #fff, rgba(0, 0, 0, 0));
   background-repeat: repeat;
-  background-size: 1000px 200px;
+  background-size: min(1000px, 100vw) min(200px, 50vh); /* Responsive background size */
   will-change: transform;
   animation: twinkling 50s linear infinite;
 }
@@ -271,8 +271,8 @@ canvas {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 200vw;
-  height: 200vh;
+  width: max(200vw, 200vh); /* Use the larger of viewport width or height to ensure coverage */
+  height: max(200vw, 200vh);
   background: radial-gradient(ellipse at center, 
     rgba(33,13,134,0) 0%, 
     rgba(33,13,134,0.2) 30%, 
@@ -283,6 +283,7 @@ canvas {
   animation: warpSpeed 15s forwards;
   z-index: 1002;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 
 @keyframes warpSpeed {
@@ -345,8 +346,8 @@ canvas {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 240px;
-  height: 120px;
+  width: min(240px, 35vw); /* Responsive width based on viewport width */
+  height: min(120px, 18vw); /* Maintain aspect ratio */
   transform: translate(-50%, -50%) scale(0.7);
   z-index: 1004;
   animation: shipWarpRealistic 15s forwards;
@@ -359,157 +360,158 @@ canvas {
   width: 100%;
   height: 100%;
   display: block;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 @keyframes shipWarpRealistic {
   /* Ship starts from right side, far away */
   0% {
-    transform: translate(150%, -50%) scale(0.1) rotateZ(-5deg);
+    transform: translate(150%, -50%) scale(0.1);
     opacity: 0;
     filter: drop-shadow(0 0 5px rgba(100, 180, 255, 0.3));
   }
   
   /* Ship approaches from right, becoming visible */
   5% {
-    transform: translate(120%, -50%) scale(0.2) rotateZ(-3deg);
+    transform: translate(120%, -50%) scale(0.2);
     opacity: 0.5;
     filter: drop-shadow(0 0 8px rgba(100, 180, 255, 0.4));
   }
   
   /* Ship gets closer, continuing approach */
   10% {
-    transform: translate(80%, -50%) scale(0.3) rotateZ(-2deg);
+    transform: translate(80%, -50%) scale(0.3);
     opacity: 0.8;
     filter: drop-shadow(0 0 10px rgba(100, 180, 255, 0.5));
   }
   
   /* Ship approaching, slowing down slightly */
   15% {
-    transform: translate(40%, -50%) scale(0.4) rotateZ(-1deg);
+    transform: translate(40%, -50%) scale(0.4);
     opacity: 1;
     filter: drop-shadow(0 0 12px rgba(100, 180, 255, 0.6));
   }
   
   /* Ship reaches center area */
   20% {
-    transform: translate(0%, -50%) scale(0.6) rotateZ(0deg);
+    transform: translate(0%, -50%) scale(0.6);
     filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.7));
   }
   
-  /* Ship begins first barrel roll - starts banking on longitudinal axis */
-  25% {
-    transform: translate(-10%, -50%) scale(0.65) rotateZ(90deg);
+  /* Begin first barrel roll sequence */
+  23% {
+    transform: translate(-8%, -50%) scale(0.63) rotate(90deg);
+    filter: drop-shadow(0 0 16px rgba(105, 185, 255, 0.71));
+  }
+  
+  26% {
+    transform: translate(-12%, -50%) scale(0.65) rotate(180deg);
     filter: drop-shadow(0 0 17px rgba(110, 190, 255, 0.72));
   }
   
-  /* Ship continues first barrel roll - halfway through rotation */
-  30% {
-    transform: translate(-15%, -50%) scale(0.7) rotateZ(180deg);
-    filter: drop-shadow(0 0 18px rgba(120, 200, 255, 0.75));
+  29% {
+    transform: translate(-14%, -50%) scale(0.68) rotate(270deg);
+    filter: drop-shadow(0 0 18px rgba(115, 195, 255, 0.74));
   }
   
-  /* Ship completes first barrel roll - three quarters */
-  35% {
-    transform: translate(-20%, -50%) scale(0.75) rotateZ(270deg);
-    filter: drop-shadow(0 0 19px rgba(125, 205, 255, 0.77));
+  /* Complete first barrel roll */
+  32% {
+    transform: translate(-18%, -50%) scale(0.7) rotate(360deg);
+    filter: drop-shadow(0 0 19px rgba(120, 200, 255, 0.75));
   }
   
-  /* Ship finishes first barrel roll */
+  /* Travel straight for a bit */
   40% {
-    transform: translate(-25%, -50%) scale(0.8) rotateZ(360deg);
+    transform: translate(-22%, -50%) scale(0.8) rotate(0deg);
     filter: drop-shadow(0 0 20px rgba(130, 210, 255, 0.8));
   }
   
-  /* Ship makes slight adjustment - hover momentarily */
-  45% {
-    transform: translate(-22%, -50%) scale(0.8) rotateZ(0deg);
-    filter: drop-shadow(0 0 21px rgba(135, 215, 255, 0.82));
+  /* Begin second barrel roll */
+  43% {
+    transform: translate(-20%, -50%) scale(0.82) rotate(90deg);
+    filter: drop-shadow(0 0 21px rgba(135, 215, 255, 0.81));
   }
   
-  /* Ship begins second barrel roll - quarter turn */
-  50% {
-    transform: translate(-20%, -50%) scale(0.85) rotateZ(90deg);
-    filter: drop-shadow(0 0 22px rgba(140, 220, 255, 0.85));
+  46% {
+    transform: translate(-18%, -50%) scale(0.84) rotate(180deg);
+    filter: drop-shadow(0 0 22px rgba(140, 220, 255, 0.83));
   }
   
-  /* Ship continues second barrel roll - half turn */
-  55% {
-    transform: translate(-15%, -50%) scale(0.85) rotateZ(180deg);
-    filter: drop-shadow(0 0 23px rgba(145, 225, 255, 0.87));
+  49% {
+    transform: translate(-16%, -50%) scale(0.86) rotate(270deg);
+    filter: drop-shadow(0 0 23px rgba(145, 225, 255, 0.85));
   }
   
-  /* Ship continues second barrel roll - three quarters */
-  58% {
-    transform: translate(-12%, -50%) scale(0.87) rotateZ(270deg);
-    filter: drop-shadow(0 0 24px rgba(148, 228, 255, 0.88));
+  /* Complete second barrel roll */
+  52% {
+    transform: translate(-14%, -50%) scale(0.88) rotate(360deg);
+    filter: drop-shadow(0 0 24px rgba(150, 230, 255, 0.87));
   }
   
-  /* Ship finishes second barrel roll */
+  /* Ship stabilizes briefly before launching */
   60% {
-    transform: translate(-10%, -50%) scale(0.9) rotateZ(360deg);
+    transform: translate(-10%, -50%) scale(0.9) rotate(0deg);
     filter: drop-shadow(0 0 25px rgba(150, 230, 255, 0.9));
   }
   
-  /* Ship begins to engage main engines for departure */
+  /* Ship begins to engage main engines */
   65% {
-    transform: translate(-5%, -50%) scale(0.85) rotateZ(0deg);
+    transform: translate(-25%, -50%) scale(0.85);
     filter: drop-shadow(0 0 27px rgba(155, 230, 255, 0.92));
   }
   
-  /* Ship turns slightly for departure vector */
+  /* Ship accelerates */
   70% {
-    transform: translate(0%, -50%) scale(0.8) rotateZ(0deg);
+    transform: translate(-50%, -50%) scale(0.8);
     filter: drop-shadow(0 0 29px rgba(160, 235, 255, 0.95));
   }
   
-  /* Ship accelerates as main engines engage */
-  75% {
-    transform: translate(-50%, -50%) scale(0.7) rotateZ(0deg);
-    filter: drop-shadow(0 0 30px rgba(170, 240, 255, 1));
+  /* Ship begins final barrel roll while accelerating */
+  73% {
+    transform: translate(-70%, -50%) scale(0.75) rotate(90deg);
+    filter: drop-shadow(0 0 31px rgba(165, 238, 255, 0.97));
   }
   
-  /* Ship begins final barrel roll - quarter turn */
-  78% {
-    transform: translate(-80%, -50%) scale(0.65) rotateZ(90deg);
-    filter: drop-shadow(0 0 32px rgba(175, 242, 255, 1));
+  76% {
+    transform: translate(-90%, -50%) scale(0.7) rotate(180deg);
+    filter: drop-shadow(0 0 33px rgba(170, 240, 255, 0.98));
   }
   
-  /* Ship continues final barrel roll - half turn */
-  80% {
-    transform: translate(-100%, -50%) scale(0.6) rotateZ(180deg);
+  79% {
+    transform: translate(-110%, -50%) scale(0.65) rotate(270deg);
+    filter: drop-shadow(0 0 35px rgba(175, 243, 255, 1));
+  }
+  
+  /* Complete final barrel roll at high speed */
+  82% {
+    transform: translate(-130%, -50%) scale(0.6) rotate(360deg);
     filter: drop-shadow(0 0 35px rgba(180, 245, 255, 1));
   }
   
-  /* Ship continues final barrel roll - three quarters */
-  83% {
-    transform: translate(-125%, -50%) scale(0.55) rotateZ(270deg);
-    filter: drop-shadow(0 0 33px rgba(175, 238, 255, 0.95));
-  }
-  
-  /* Ship completes final barrel roll while speeding away */
+  /* Ship continues speeding away */
   85% {
-    transform: translate(-150%, -50%) scale(0.5) rotateZ(360deg);
+    transform: translate(-160%, -50%) scale(0.5) rotate(0deg);
     opacity: 0.8;
     filter: drop-shadow(0 0 30px rgba(170, 235, 255, 0.9));
   }
   
-  /* Ship continues speeding away */
   90% {
-    transform: translate(-200%, -50%) scale(0.4) rotateZ(0deg);
+    transform: translate(-200%, -50%) scale(0.4);
     opacity: 0.5;
     filter: drop-shadow(0 0 25px rgba(160, 220, 255, 0.7));
   }
   
-  /* Ship nearly gone - just a distant speck */
+  /* Ship nearly gone */
   95% {
-    transform: translate(-250%, -50%) scale(0.2) rotateZ(0deg);
+    transform: translate(-250%, -50%) scale(0.2);
     opacity: 0.2;
     filter: drop-shadow(0 0 15px rgba(140, 200, 255, 0.5));
   }
   
   /* Complete disappearance */
   100% {
-    transform: translate(-300%, -50%) scale(0.1) rotateZ(0deg);
+    transform: translate(-300%, -50%) scale(0.1);
     opacity: 0;
     filter: drop-shadow(0 0 0px rgba(120, 180, 255, 0));
   }
@@ -535,12 +537,15 @@ canvas {
 
 .skip-message {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  bottom: max(10px, 2vh);
+  right: max(10px, 2vw);
   color: #fff;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.5vw, 1rem);
   opacity: 0.7;
   z-index: 1006;
+  padding: clamp(5px, 1vw, 10px);
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
 }
 
 /* Add animation for stars */
