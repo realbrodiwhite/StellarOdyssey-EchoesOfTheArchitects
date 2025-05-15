@@ -175,7 +175,7 @@ canvas {
   background-size: 1500px 800px;
   opacity: 0.4;
   will-change: transform;
-  animation: twinkling 80s linear infinite, starsDistantParallax 18s ease-in-out infinite;
+  animation: twinkling 80s linear infinite, starsDistantParallax 25s ease-in-out infinite;
   transform: translateZ(-100px);
   z-index: 1001;
   pointer-events: none;
@@ -498,7 +498,7 @@ canvas {
   height: min(135px, 19vw); /* Maintain aspect ratio */
   transform: translate(-50%, -50%) scale(0.7);
   z-index: 1004;
-  animation: shipWarpRealistic 15s forwards, shipRubberBand 18s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation: shipWarpRealistic 15s forwards, shipRubberBand 25s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   will-change: transform, filter, opacity;
   filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.8)) drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.5));
   transform-origin: center center;
@@ -551,7 +551,7 @@ canvas {
   pointer-events: none;
   mix-blend-mode: screen;
   filter: blur(2px);
-  animation: engineGlow 1.5s infinite alternate, glowIntensityFlicker 0.3s infinite alternate, engineGlowExpansion 15s forwards;
+  animation: engineGlow 25s infinite, glowIntensityFlicker 0.4s infinite alternate, engineGlowExpansion 15s forwards;
   transform-origin: center right;
 }
 
@@ -600,84 +600,135 @@ canvas {
 }
 
 @keyframes shipRubberBand {
-  /* These positions create a smooth path with consistent motion */
-  
-  /* Starting position - offset from center */
+  /* Ship enters from off-screen (bottom-right) */
   0% {
-    transform: translate(-60%, -55%) rotate(1deg);
+    transform: translate(20%, 120%) scale(0.4) rotate(5deg);
   }
   
-  /* Gradual drift to upper right corner */
+  /* Ship moves closer and grows as it enters the scene */
+  5% {
+    transform: translate(0%, 80%) scale(0.6) rotate(3deg);
+  }
+  
+  /* Approaches center, still growing */
   10% {
-    transform: translate(-45%, -40%) rotate(0deg);
+    transform: translate(-20%, 20%) scale(0.8) rotate(1deg);
   }
   
-  /* Continue drifting right - up to 60% off center */
+  /* Near center, almost full size */
+  15% {
+    transform: translate(-40%, -20%) scale(0.9) rotate(0deg);
+  }
+  
+  /* Continue drifting right - appears closer */
   20% {
-    transform: translate(-25%, -35%) rotate(-1deg);
+    transform: translate(-25%, -35%) scale(1.1) rotate(-1deg);
   }
   
-  /* Hold briefly at far right position */
+  /* Maximum right position - slightly smaller as it moves away */
   25% {
-    transform: translate(-20%, -38%) rotate(-1.5deg);
+    transform: translate(-15%, -38%) scale(0.95) rotate(-1.5deg);
   }
   
-  /* Begin slow transition across - smoother curve */
+  /* Begin transition across - moves closer again */
   35% {
-    transform: translate(-35%, -45%) rotate(-0.5deg);
+    transform: translate(-35%, -45%) scale(1.05) rotate(-0.5deg);
   }
   
   /* Cross center with smooth movement */
   45% {
-    transform: translate(-55%, -52%) rotate(0.5deg);
+    transform: translate(-55%, -52%) scale(1) rotate(0.5deg);
   }
   
-  /* Continue to far left - up to 60% off center */
+  /* Continue to left - getting slightly closer */
   55% {
-    transform: translate(-75%, -58%) rotate(1deg);
+    transform: translate(-75%, -58%) scale(1.08) rotate(1deg);
   }
   
-  /* Maximum left position */
-  65% {
-    transform: translate(-90%, -60%) rotate(1.5deg);
+  /* Maximum left position - at closest point */
+  60% {
+    transform: translate(-90%, -60%) scale(1.15) rotate(1.2deg);
   }
   
   /* Hold briefly at maximum left position */
+  65% {
+    transform: translate(-100%, -50%) scale(1.1) rotate(1.5deg);
+  }
+  
+  /* Begin moving away - getting smaller */
   70% {
-    transform: translate(-85%, -55%) rotate(1deg);
+    transform: translate(-110%, -30%) scale(0.9) rotate(2deg);
   }
   
-  /* Begin gentle return */
+  /* Ship starts to exit screen top-left */
   80% {
-    transform: translate(-70%, -50%) rotate(0.5deg);
+    transform: translate(-120%, -10%) scale(0.7) rotate(3deg);
   }
   
-  /* Continue smooth return */
+  /* Almost off-screen */
   90% {
-    transform: translate(-55%, -52%) rotate(0deg);
+    transform: translate(-130%, 50%) scale(0.5) rotate(4deg);
   }
   
-  /* Return to original position for seamless loop */
+  /* Exit scene entirely */
+  95% {
+    transform: translate(-150%, 100%) scale(0.3) rotate(5deg);
+  }
+  
+  /* Loop back to start - reappear at bottom-right */
   100% {
-    transform: translate(-60%, -55%) rotate(1deg);
+    transform: translate(20%, 120%) scale(0.4) rotate(5deg);
   }
 }
 
 @keyframes engineGlow {
+  /* Ship entering from distance - dim glow */
   0% {
+    opacity: 0.4;
+    transform: scale(0.75) translateX(-3px);
+    filter: blur(1.5px) brightness(0.8);
+  }
+  
+  /* Approaching - glow intensifies */
+  15% {
     opacity: 0.5;
-    transform: scale(0.92) translateX(-2px);
+    transform: scale(0.85) translateX(-2.5px);
     filter: blur(2px) brightness(0.9);
   }
-  50% {
-    opacity: 0.65;
-    transform: scale(0.96) translateX(-1px);
-    filter: blur(2.5px) brightness(1);
+  
+  /* Regular distance - normal glow */
+  30% {
+    opacity: 0.6;
+    transform: scale(0.92) translateX(-2px);
+    filter: blur(2.2px) brightness(1);
   }
+  
+  /* Close approach - intense glow */
+  60% {
+    opacity: 0.9;
+    transform: scale(1.1) translateX(0);
+    filter: blur(3px) brightness(1.2);
+  }
+  
+  /* Moving away - glow reduces */
+  75% {
+    opacity: 0.7;
+    transform: scale(0.98) translateX(-1px);
+    filter: blur(2.5px) brightness(1.1);
+  }
+  
+  /* Further distance - glow diminishes */
+  90% {
+    opacity: 0.5;
+    transform: scale(0.85) translateX(-2.5px);
+    filter: blur(2px) brightness(0.9);
+  }
+  
+  /* Furthest distance - minimal glow */
   100% {
-    opacity: 0.8;
-    transform: scale(1) translateX(0);
-    filter: blur(3px) brightness(1.1);
+    opacity: 0.4;
+    transform: scale(0.75) translateX(-3px);
+    filter: blur(1.5px) brightness(0.8);
   }
 }
 
@@ -759,32 +810,53 @@ canvas {
 }
 
 @keyframes thrustFlicker {
-  /* Slower flame flicker that changes size and heat with wider timing */
+  /* Ship entering from distance - smaller, cooler thrust */
   0% {
-    opacity: 0.85;
-    width: 38%;
-    filter: blur(3px) brightness(0.9) hue-rotate(-5deg);
+    opacity: 0.75;
+    width: 30%;
+    filter: blur(2px) brightness(0.8) hue-rotate(-8deg);
   }
   
-  /* Increasing in size and heat */
-  33% {
+  /* Increasing as ship approaches */
+  15% {
+    opacity: 0.8;
+    width: 35%;
+    filter: blur(2.5px) brightness(0.9) hue-rotate(-5deg);
+  }
+  
+  /* Regular size as ship is in main viewing area */
+  30% {
+    opacity: 0.85;
+    width: 40%;
+    filter: blur(3px) brightness(1) hue-rotate(-2deg);
+  }
+  
+  /* Ship at closest approach - thrust at maximum */
+  60% {
+    opacity: 0.95;
+    width: 50%;
+    filter: blur(4px) brightness(1.2) hue-rotate(5deg);
+  }
+  
+  /* Ship starting to move away - thrust reducing */
+  75% {
     opacity: 0.9;
     width: 42%;
-    filter: blur(3.5px) brightness(1.05) hue-rotate(0deg);
+    filter: blur(3.5px) brightness(1.1) hue-rotate(3deg);
   }
   
-  /* Slight reduction for natural flame behavior */
-  66% {
-    opacity: 0.92;
-    width: 40%;
-    filter: blur(3.5px) brightness(1.1) hue-rotate(2deg);
+  /* Ship getting farther - thrust smaller */
+  90% {
+    opacity: 0.8;
+    width: 35%;
+    filter: blur(2.5px) brightness(0.9) hue-rotate(-2deg);
   }
   
-  /* Largest and hottest point */
+  /* Ship at furthest distance before looping */
   100% {
-    opacity: 0.95;
-    width: 45%;
-    filter: blur(4px) brightness(1.15) hue-rotate(5deg);
+    opacity: 0.75;
+    width: 30%;
+    filter: blur(2px) brightness(0.8) hue-rotate(-8deg);
   }
 }
 
