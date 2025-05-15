@@ -292,51 +292,51 @@ canvas {
     opacity: 0;
   }
   
-  /* No warp effect during ship approach and first maneuvers */
+  /* No warp effect during initial ship approach */
   65% {
     transform: translate(-50%, -50%) scale(0);
     opacity: 0;
   }
   
-  /* Slight glow begins during ship's final positioning */
+  /* Subtle engine glow begins as thrusters engage */
   70% {
     transform: translate(-50%, -50%) scale(0.05);
-    opacity: 0.2;
+    opacity: 0.15;
   }
   
-  /* Warp tunnel begins to form as ship does final barrel roll */
+  /* Engine glow intensifies as main engines engage */
   75% {
-    transform: translate(-50%, -50%) scale(0.2);
-    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 0.3;
   }
   
-  /* Warp tunnel expands as ship accelerates left */
+  /* Propulsion effects become visible as ship accelerates */
   80% {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0.5;
   }
   
-  /* Warp tunnel fully forms as ship reaches high speed */
+  /* Engine exhaust expands as ship reaches high velocity */
   85% {
-    transform: translate(-50%, -50%) scale(1.5);
-    opacity: 0.9;
-  }
-  
-  /* Warp tunnel intensifies at near light speed */
-  90% {
-    transform: translate(-50%, -50%) scale(3);
-    opacity: 1;
-  }
-  
-  /* Warp tunnel expands outward as ship enters hyperspace */
-  95% {
-    transform: translate(-50%, -50%) scale(5);
+    transform: translate(-50%, -50%) scale(1);
     opacity: 0.6;
   }
   
-  /* Warp tunnel dissipates */
+  /* Maximum engine burn creates visible distortion */
+  90% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0.7;
+  }
+  
+  /* Engine effects start to fade as ship moves away */
+  95% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0.4;
+  }
+  
+  /* Effects dissipate completely */
   100% {
-    transform: translate(-50%, -50%) scale(7);
+    transform: translate(-50%, -50%) scale(2.5);
     opacity: 0;
   }
 }
@@ -369,124 +369,129 @@ canvas {
     filter: drop-shadow(0 0 5px rgba(100, 180, 255, 0.3));
   }
   
-  /* Ship approaches from right, becomes visible */
+  /* Ship approaches from right, becoming visible */
   5% {
     transform: translate(120%, -50%) scale(0.2) rotate(-3deg);
     opacity: 0.5;
     filter: drop-shadow(0 0 8px rgba(100, 180, 255, 0.4));
   }
   
-  /* Ship gets closer */
+  /* Ship gets closer, continuing approach */
   10% {
     transform: translate(80%, -50%) scale(0.3) rotate(-2deg);
     opacity: 0.8;
     filter: drop-shadow(0 0 10px rgba(100, 180, 255, 0.5));
   }
   
-  /* Ship approaches more */
+  /* Ship approaching, slowing down slightly */
   15% {
     transform: translate(40%, -50%) scale(0.4) rotate(-1deg);
     opacity: 1;
     filter: drop-shadow(0 0 12px rgba(100, 180, 255, 0.6));
   }
   
-  /* Ship reaches center area, first time */
+  /* Ship reaches center area, with slight forward momentum */
   20% {
     transform: translate(0%, -50%) scale(0.6) rotate(0deg);
     filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.7));
   }
   
-  /* Ship performs a slight up movement */
+  /* Ship performs a slight vertical correction - space RCS thrusters */
   25% {
-    transform: translate(-10%, -70%) scale(0.65) rotate(-5deg);
+    transform: translate(-10%, -45%) scale(0.65) rotate(-2deg);
+    filter: drop-shadow(0 0 17px rgba(110, 190, 255, 0.72));
   }
   
-  /* First barrel roll - rotation around X axis while moving */
+  /* Ship performs subtle banking maneuver - roll axis */
   30% {
-    transform: translate(-20%, -40%) scale(0.7) rotateX(180deg) rotate(10deg);
+    transform: translate(-15%, -47%) scale(0.7) rotate(3deg);
     filter: drop-shadow(0 0 18px rgba(120, 200, 255, 0.75));
   }
   
-  /* Continue roll movement */
+  /* Ship continues maneuvering - typical space flight small corrections */
   35% {
-    transform: translate(-25%, -60%) scale(0.75) rotateX(360deg) rotate(0deg);
+    transform: translate(-20%, -51%) scale(0.75) rotate(-1deg);
+    filter: drop-shadow(0 0 19px rgba(125, 205, 255, 0.77));
   }
   
-  /* Ship stabilizes briefly */
+  /* Ship stabilizes in center position */
   40% {
-    transform: translate(-30%, -50%) scale(0.8) rotate(0deg);
+    transform: translate(-25%, -50%) scale(0.8) rotate(0deg);
     filter: drop-shadow(0 0 20px rgba(130, 210, 255, 0.8));
   }
   
-  /* Ship starts banking for a second maneuver */
+  /* Ship makes slight thruster adjustment - realistic small movement */
   45% {
-    transform: translate(-25%, -45%) scale(0.8) rotate(15deg);
+    transform: translate(-22%, -49%) scale(0.8) rotate(1deg);
+    filter: drop-shadow(0 0 21px rgba(135, 215, 255, 0.82));
   }
   
-  /* Second barrel roll - rotation around Z axis */
+  /* Ship performs pitch adjustment - no rolling */
   50% {
-    transform: translate(-20%, -50%) scale(0.85) rotate(180deg);
+    transform: translate(-20%, -50%) scale(0.85) rotate(2deg);
     filter: drop-shadow(0 0 22px rgba(140, 220, 255, 0.85));
   }
   
-  /* Continue Z rotation */
+  /* Ship begins gentle banking maneuver - realistic attitude change */
   55% {
-    transform: translate(-15%, -55%) scale(0.85) rotate(360deg);
+    transform: translate(-15%, -52%) scale(0.85) rotate(5deg);
+    filter: drop-shadow(0 0 23px rgba(145, 225, 255, 0.87));
   }
   
-  /* Ship stabilizes again */
+  /* Ship continues banking, preparing for departure vector */
   60% {
-    transform: translate(-10%, -50%) scale(0.9) rotate(0deg);
-    filter: drop-shadow(0 0 25px rgba(150, 225, 255, 0.9));
+    transform: translate(-10%, -53%) scale(0.9) rotate(8deg);
+    filter: drop-shadow(0 0 25px rgba(150, 230, 255, 0.9));
   }
   
-  /* Ship begins to bank for departure */
+  /* Ship begins to engage main engines for departure */
   65% {
-    transform: translate(-5%, -45%) scale(0.85) rotate(10deg);
+    transform: translate(-5%, -50%) scale(0.85) rotate(12deg);
+    filter: drop-shadow(0 0 27px rgba(155, 230, 255, 0.92));
   }
   
-  /* Ship turns more sharply to its left */
+  /* Ship turns more sharply to its left - realistic bank angle */
   70% {
-    transform: translate(0%, -50%) scale(0.8) rotate(20deg);
-    filter: drop-shadow(0 0 28px rgba(160, 230, 255, 0.9));
+    transform: translate(0%, -48%) scale(0.8) rotate(20deg);
+    filter: drop-shadow(0 0 29px rgba(160, 235, 255, 0.95));
   }
   
-  /* Ship accelerates and does a final roll as it departs */
+  /* Ship accelerates as main engines engage */
   75% {
-    transform: translate(-50%, -50%) scale(0.7) rotateY(180deg) rotate(30deg);
-    filter: drop-shadow(0 0 30px rgba(170, 235, 255, 0.95));
+    transform: translate(-50%, -47%) scale(0.7) rotate(25deg);
+    filter: drop-shadow(0 0 30px rgba(170, 240, 255, 1));
   }
   
-  /* Ship speeds away */
+  /* Ship speeds away - significant engine thrust */
   80% {
-    transform: translate(-100%, -60%) scale(0.5) rotateY(360deg) rotate(40deg);
-    filter: drop-shadow(0 0 35px rgba(180, 240, 255, 1));
+    transform: translate(-100%, -50%) scale(0.6) rotate(20deg);
+    filter: drop-shadow(0 0 35px rgba(180, 245, 255, 1));
   }
   
-  /* Ship continues speeding away */
+  /* Ship continues speeding away - engine burn continues */
   85% {
-    transform: translate(-150%, -70%) scale(0.4) rotate(50deg);
+    transform: translate(-150%, -55%) scale(0.5) rotate(15deg);
     opacity: 0.8;
-    filter: drop-shadow(0 0 30px rgba(170, 230, 255, 0.9));
+    filter: drop-shadow(0 0 30px rgba(170, 235, 255, 0.9));
   }
   
-  /* Ship almost out of view */
+  /* Ship almost out of view - distance increasing */
   90% {
-    transform: translate(-200%, -80%) scale(0.3) rotate(60deg);
+    transform: translate(-200%, -60%) scale(0.4) rotate(10deg);
     opacity: 0.5;
     filter: drop-shadow(0 0 25px rgba(160, 220, 255, 0.7));
   }
   
-  /* Ship nearly gone */
+  /* Ship nearly gone - just a distant speck */
   95% {
-    transform: translate(-250%, -90%) scale(0.2) rotate(70deg);
+    transform: translate(-250%, -65%) scale(0.2) rotate(5deg);
     opacity: 0.2;
     filter: drop-shadow(0 0 15px rgba(140, 200, 255, 0.5));
   }
   
   /* Complete disappearance */
   100% {
-    transform: translate(-300%, -100%) scale(0.1) rotate(80deg);
+    transform: translate(-300%, -70%) scale(0.1) rotate(0deg);
     opacity: 0;
     filter: drop-shadow(0 0 0px rgba(120, 180, 255, 0));
   }
@@ -550,57 +555,57 @@ canvas {
 }
 
 @keyframes starFloat {
-  /* Stars start stationary during ship approach */
+  /* Stars appear stationary as ship approaches from distance */
   0%, 20% {
     transform: translateX(0px);
     opacity: 0.3;
   }
   
-  /* Slight movement during first maneuvers */
+  /* Very slight parallax effect as ship moves through space */
   30% {
-    opacity: 0.6;
-    transform: translateX(-30px);
+    opacity: 0.5;
+    transform: translateX(-20px);
   }
   
-  /* Stars slow during barrel rolls */
+  /* Gradual increase in parallax as ship movement continues */
   40% {
-    opacity: 0.8;
+    opacity: 0.6;
+    transform: translateX(-40px);
+  }
+  
+  /* Stars maintain steady movement during ship hovering/maneuvering */
+  50% {
+    opacity: 0.7;
     transform: translateX(-60px);
   }
   
-  /* Stars react to second barrel roll */
-  50% {
-    opacity: 1;
-    transform: translateX(-100px);
-  }
-  
-  /* Stars slow briefly as ship stabilizes */
+  /* Slight increase in star movement as ship begins to orient for departure */
   60% {
-    transform: translateX(-130px);
-    opacity: 1;
+    transform: translateX(-80px);
+    opacity: 0.8;
   }
   
-  /* Stars begin accelerating as ship banks for departure */
+  /* Stars begin to move faster as ship engages thrusters */
   70% {
-    transform: translateX(-180px);
-    opacity: 1;
+    transform: translateX(-120px);
+    opacity: 0.9;
   }
   
-  /* Stars speed up dramatically as ship does final roll */
+  /* Increased star movement as ship accelerates */
   80% {
-    transform: translateX(-250px);
-    opacity: 1;
+    transform: translateX(-180px);
+    opacity: 0.9;
   }
   
-  /* Stars stream by at maximum speed */
+  /* Stars stream by at consistent rate - realistic space travel */
   90% {
-    transform: translateX(-350px);
+    transform: translateX(-250px);
     opacity: 0.7;
   }
   
-  /* Stars begin to fade as ship disappears */
+  /* Stars continue consistent movement as ship disappears */
   100% {
-    transform: translateX(-450px);
-    opacity: 0.3;
+    transform: translateX(-300px);
+    opacity: 0.4;
   }
 }
