@@ -7,10 +7,11 @@ import { Progress } from '../ui/progress';
 import { Separator } from '../ui/separator';
 import usePuzzle from '@/lib/stores/usePuzzle';
 import { useCharacter } from '@/lib/stores/useCharacter';
-import { SkillType } from '@/lib/types';
+import { SkillType, PuzzleType } from '@/lib/types';
 import { PuzzleSolution } from '@/lib/data/puzzle-templates';
 import { AlertCircle, Clock, HelpCircle, Lightbulb, Zap } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { cn } from '@/lib/utils';
 
 interface MultiPathPuzzleProps {
   puzzleId: string;
@@ -145,6 +146,18 @@ const MultiPathPuzzle: React.FC<MultiPathPuzzleProps> = ({
     }
   };
   
+  // Get display name for puzzle type
+  const getPuzzleTypeName = (type: PuzzleType) => {
+    switch (type) {
+      case PuzzleType.Logic: return 'Logic';
+      case PuzzleType.Pattern: return 'Pattern';
+      case PuzzleType.Sequence: return 'Sequence';
+      case PuzzleType.Rewiring: return 'Rewiring';
+      case PuzzleType.Decryption: return 'Decryption';
+      default: return 'Unknown';
+    }
+  };
+  
   // Get color for skill type
   const getSkillTypeColor = (type: SkillType) => {
     switch (type) {
@@ -153,6 +166,18 @@ const MultiPathPuzzle: React.FC<MultiPathPuzzleProps> = ({
       case SkillType.Social: return 'bg-purple-700';
       case SkillType.Navigation: return 'bg-cyan-700';
       case SkillType.Combat: return 'bg-red-700';
+      default: return 'bg-slate-700';
+    }
+  };
+  
+  // Get color for puzzle type
+  const getPuzzleTypeColor = (type: PuzzleType) => {
+    switch (type) {
+      case PuzzleType.Logic: return 'bg-indigo-700';
+      case PuzzleType.Pattern: return 'bg-amber-700';
+      case PuzzleType.Sequence: return 'bg-emerald-700';
+      case PuzzleType.Rewiring: return 'bg-blue-700';
+      case PuzzleType.Decryption: return 'bg-purple-700';
       default: return 'bg-slate-700';
     }
   };
@@ -192,8 +217,8 @@ const MultiPathPuzzle: React.FC<MultiPathPuzzleProps> = ({
                 <div>
                   <CardTitle className="text-2xl">{puzzle.name}</CardTitle>
                   <CardDescription className="text-gray-400">
-                    <Badge className={`mr-2 ${getSkillTypeColor(puzzle.type)}`}>
-                      {puzzle.type}
+                    <Badge className={`mr-2 ${getPuzzleTypeColor(puzzle.type)}`}>
+                      {getPuzzleTypeName(puzzle.type)}
                     </Badge>
                     Difficulty: {Array(puzzle.difficulty).fill('★').join('')}
                   </CardDescription>
@@ -456,14 +481,14 @@ const MultiPathPuzzle: React.FC<MultiPathPuzzleProps> = ({
                 <div className="mr-4">
                   <p className="text-xs text-gray-400">Health</p>
                   <div className="flex items-center">
-                    <Progress value={(character.health / character.maxHealth) * 100} className="w-24 h-2 bg-gray-700" indicatorClassName="bg-red-500" />
+                    <Progress value={(character.health / character.maxHealth) * 100} className={cn("w-24 h-2 bg-gray-700")} />
                     <span className="ml-2 text-xs text-gray-400">{character.health}/{character.maxHealth}</span>
                   </div>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400">Energy</p>
                   <div className="flex items-center">
-                    <Progress value={(character.energy / character.maxEnergy) * 100} className="w-24 h-2 bg-gray-700" indicatorClassName="bg-blue-500" />
+                    <Progress value={(character.energy / character.maxEnergy) * 100} className={cn("w-24 h-2 bg-gray-700")} />
                     <span className="ml-2 text-xs text-gray-400">{character.energy}/{character.maxEnergy}</span>
                   </div>
                 </div>
