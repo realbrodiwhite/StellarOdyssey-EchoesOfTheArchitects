@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useParty } from '@/lib/stores/useParty';
+import { useParty, type PartyState } from '@/lib/stores/useParty';
 import PartyMemberCard from './PartyMemberCard';
 import { Button } from '../ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
