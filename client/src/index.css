@@ -498,11 +498,11 @@ canvas {
   height: min(135px, 19vw); /* Maintain aspect ratio */
   transform: translate(-50%, -50%) scale(0.7) perspective(800px);
   z-index: 1004;
-  animation: shipWarpRealistic 15s forwards, shipRubberBand 25s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation: shipWarpRealistic 20s forwards, shipRubberBand 28s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   will-change: transform, filter, opacity;
   filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.8)) drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.5));
   transform-origin: center center;
-  transition: transform 2.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 3s cubic-bezier(0.25, 1, 0.25, 1);
   transform-style: preserve-3d;
   backface-visibility: hidden;
   perspective-origin: center;
@@ -660,13 +660,13 @@ canvas {
   
   /* First glint of light as ship approaches from far distance */
   2% {
-    transform: translate(160%, 165%) scale(0.2) rotate(16deg) perspective(900px) rotateY(-16deg) rotateX(4deg);
+    transform: translate(160%, 165%) scale(0.18) rotate(17deg) perspective(900px) rotateY(-17deg) rotateX(4.5deg);
     filter: brightness(0.75) blur(0.8px);
   }
   
-  /* Ship begins to take recognizable form from distance */
+  /* Ship begins to take recognizable form from distance - smoother approach */
   4% {
-    transform: translate(140%, 150%) scale(0.25) rotate(15deg) perspective(900px) rotateY(-15deg) rotateX(3deg);
+    transform: translate(140%, 150%) scale(0.22) rotate(16deg) perspective(900px) rotateY(-15deg) rotateX(4deg);
     filter: brightness(0.8) blur(0.6px);
   }
   
