@@ -670,58 +670,64 @@ canvas {
     filter: brightness(0.8) blur(0.6px);
   }
   
-  /* Ship definitely visible, entering from bottom-right with natural arc */
+  /* Ship definitely visible, entering from bottom-right with natural arc - smoother transition */
   6% {
-    transform: translate(120%, 130%) scale(0.3) rotate(13deg) perspective(900px) rotateY(-14deg) rotateX(2deg);
-    filter: brightness(0.85) blur(0.5px);
+    transform: translate(120%, 130%) scale(0.26) rotate(14deg) perspective(900px) rotateY(-14deg) rotateX(3deg);
+    filter: brightness(0.82) blur(0.5px);
   }
   
-  /* Ship begins proper entry, banking naturally toward entry vector */
+  /* Ship begins proper entry, more gradual banking toward entry vector */
   8% {
-    transform: translate(90%, 110%) scale(0.35) rotate(12deg) perspective(850px) rotateY(-12deg) rotateX(3deg);
-    filter: brightness(0.9) blur(0.4px);
+    transform: translate(105%, 115%) scale(0.3) rotate(12deg) perspective(850px) rotateY(-13deg) rotateX(2.5deg);
+    filter: brightness(0.87) blur(0.4px);
   }
   
-  /* Ship begins to enter the scene - pitched up as approaching */
+  /* Ship approaches more smoothly - more fluid motion path */
   10% {
-    transform: translate(60%, 90%) scale(0.45) rotate(10deg) perspective(850px) rotateY(-10deg) rotateX(4deg);
-    filter: brightness(0.95) blur(0.3px);
+    transform: translate(85%, 100%) scale(0.35) rotate(10deg) perspective(850px) rotateY(-11deg) rotateX(2deg);
+    filter: brightness(0.92) blur(0.3px);
   }
   
-  /* Continues approach with slight banking - more deliberate motion */
+  /* Continues approach with slight banking - more deliberately smooth motion */
   13% {
-    transform: translate(40%, 70%) scale(0.52) rotate(8deg) perspective(850px) rotateY(-8deg) rotateX(6deg);
+    transform: translate(60%, 80%) scale(0.42) rotate(8deg) perspective(850px) rotateY(-9deg) rotateX(1.5deg);
+    filter: brightness(0.95);
+  }
+  
+  /* Ship gaining more presence on screen - smoother banking motion */
+  16% {
+    transform: translate(40%, 60%) scale(0.5) rotate(6deg) perspective(825px) rotateY(-6deg) rotateX(1deg);
+    filter: brightness(0.98);
+  }
+  
+  /* Approaching main screen area - more gradual leveling out */
+  18% {
+    transform: translate(20%, 40%) scale(0.58) rotate(4deg) perspective(825px) rotateY(-3deg) rotateX(0.5deg);
     filter: brightness(1);
   }
   
-  /* Ship gaining more presence on screen - banking motion continues */
-  16% {
-    transform: translate(20%, 50%) scale(0.6) rotate(5deg) perspective(825px) rotateY(-5deg) rotateX(8deg);
-  }
-  
-  /* Approaching main screen area - beginning to level out */
-  18% {
-    transform: translate(0%, 30%) scale(0.7) rotate(3deg) perspective(825px) rotateY(-2deg) rotateX(9deg);
-  }
-  
-  /* Nearing center, banking toward viewer with more dramatic perspective */
+  /* Nearing center with fluid motion - less abrupt banking */
   20% {
-    transform: translate(-15%, 10%) scale(0.85) rotate(1deg) perspective(800px) rotateY(0deg) rotateX(8deg);
+    transform: translate(0%, 20%) scale(0.67) rotate(2deg) perspective(800px) rotateY(-1deg) rotateX(0deg);
+    filter: brightness(1.02);
   }
   
-  /* Close fly-by - pitched down slightly, large and close to viewer */
+  /* Close fly-by - smoother approach with gradual pitch change */
   23% {
-    transform: translate(-25%, -15%) scale(1.05) rotate(-1deg) perspective(800px) rotateY(3deg) rotateX(-5deg);
+    transform: translate(-15%, 0%) scale(0.8) rotate(0deg) perspective(800px) rotateY(0deg) rotateX(-2deg);
+    filter: brightness(1.04);
   }
   
-  /* Maximum close approach - nearly filling the view */
+  /* Getting closer - more gradual approach to maximum size */
   25% {
-    transform: translate(-30%, -30%) scale(1.15) rotate(-2deg) perspective(800px) rotateY(5deg) rotateX(-12deg);
+    transform: translate(-20%, -10%) scale(0.9) rotate(-1deg) perspective(800px) rotateY(2deg) rotateX(-3deg);
+    filter: brightness(1.06);
   }
   
-  /* Banking right as it moves past viewer - smooth transition */
+  /* Smooth banking motion as ship moves past - less extreme motions */
   28% {
-    transform: translate(-20%, -40%) scale(1.1) rotate(-4deg) perspective(800px) rotateY(9deg) rotateX(-10deg);
+    transform: translate(-25%, -20%) scale(0.95) rotate(-2deg) perspective(800px) rotateY(4deg) rotateX(-4deg);
+    filter: brightness(1.08);
   }
   
   /* Continuing banking motion as ship passes by */
