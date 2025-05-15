@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import { Location, GameState, Faction } from '../types';
 import { gameLocations } from '../data/locations';
+import { generateExplorationPoints } from '../utils/explorationGenerator';
+
+// Merged game locations including both predefined and procedurally generated ones
+let allGameLocations: Location[] = [...gameLocations];
+
+// Keep track of exploration points separately for easy access
+let explorationPoints: Location[] = [];
 
 interface StoryState {
   gameState: GameState;
@@ -11,6 +18,12 @@ interface StoryState {
   getVisitedLocations: () => string[];
   getDiscoveredLocations: () => string[];
   canTravelTo: (locationId: string) => boolean;
+  
+  // Exploration management
+  generateExplorationPoints: (seed?: number) => Location[];
+  getExplorationPoints: () => Location[];
+  getAvailableLocations: () => Location[];
+  discoverNearbyExplorationPoints: (currentLocationId: string, chance?: number) => string[];
   
   // Reputation management
   getFactionReputation: (faction: Faction) => number;
@@ -61,11 +74,11 @@ export const useStory = create<StoryState>((set, get) => ({
   // Getters
   getCurrentLocation: () => {
     const { currentLocation } = get().gameState;
-    return gameLocations.find(loc => loc.id === currentLocation);
+    return allGameLocations.find(loc => loc.id === currentLocation);
   },
   
   getLocationById: (id: string) => {
-    return gameLocations.find(loc => loc.id === id);
+    return allGameLocations.find(loc => loc.id === id);
   },
   
   getVisitedLocations: () => {
@@ -84,6 +97,59 @@ export const useStory = create<StoryState>((set, get) => ({
     // 1. The location is directly connected to current location
     // 2. The player has high navigation skill (would need to be implemented)
     return currentLocation.connections.includes(locationId);
+  },
+  
+  // Exploration Management
+  generateExplorationPoints: (seed = Date.now()) => {
+    // Generate new exploration points based on existing locations
+    explorationPoints = generateExplorationPoints(gameLocations, {
+      baseSeed: seed,
+      baseRegions: Array.from(new Set(gameLocations.map(loc => loc.region || "Unknown"))),
+      densityFactor: 0.7,
+      generateConnections: true
+    });
+    
+    // Update all game locations to include both predefined and procedural
+    allGameLocations = [...gameLocations, ...explorationPoints];
+    
+    return explorationPoints;
+  },
+  
+  getExplorationPoints: () => {
+    // If we haven't generated exploration points yet, do it now with default settings
+    if (explorationPoints.length === 0) {
+      return get().generateExplorationPoints();
+    }
+    
+    return explorationPoints;
+  },
+  
+  getAvailableLocations: () => {
+    // Return all locations that the player has discovered
+    const discoveredIds = get().gameState.discoveredLocations;
+    return allGameLocations.filter(loc => discoveredIds.includes(loc.id));
+  },
+  
+  discoverNearbyExplorationPoints: (currentLocationId: string, chance = 0.5) => {
+    const currentLocation = get().getLocationById(currentLocationId);
+    if (!currentLocation) return [];
+    
+    // Get connected locations that are exploration points and not yet discovered
+    const nearbyPoints = currentLocation.connections
+      .map(id => explorationPoints.find(loc => loc.id === id))
+      .filter(loc => loc && !get().gameState.discoveredLocations.includes(loc.id)) as Location[];
+    
+    // Randomly discover some of these points based on chance
+    const discoveredPoints: string[] = [];
+    nearbyPoints.forEach(point => {
+      // Use a basic random chance for discovery
+      if (Math.random() < chance) {
+        get().discoverLocation(point.id);
+        discoveredPoints.push(point.id);
+      }
+    });
+    
+    return discoveredPoints;
   },
   
   getFactionReputation: (faction: Faction) => {
