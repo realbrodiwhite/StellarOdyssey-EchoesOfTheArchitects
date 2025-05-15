@@ -94,31 +94,118 @@ canvas {
   width: 100vw; /* Full viewport width */
   height: 100vh; /* Full viewport height */
   z-index: 1001;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 90px 40px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 160px 120px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 230px 50px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 270px 100px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 330px 180px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 400px 70px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 460px 130px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 520px 60px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 580px 180px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 620px 40px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 660px 90px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 700px 150px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 760px 30px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 800px 110px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 850px 60px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 920px 170px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 950px 40px, #fff, rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 990px 100px, #fff, rgba(0, 0, 0, 0));
-  background-repeat: repeat;
-  background-size: min(1000px, 100vw) min(200px, 50vh); /* Responsive background size */
+  background: linear-gradient(125deg, #000 0%, #000B18 40%, #001933 70%, #000B18 90%, #000 100%);
+  overflow: hidden;
+  perspective: 500px;
+  transform-style: preserve-3d;
   will-change: transform;
-  animation: twinkling 50s linear infinite;
+}
+
+/* Layer 1: Closest, brightest stars */
+.stars-background::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.9), rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.95), rgba(0, 0, 0, 0)),
+    radial-gradient(1.5px 1.5px at 90px 40px, rgba(240, 248, 255, 0.9), rgba(0, 0, 0, 0)),
+    radial-gradient(2.5px 2.5px at 160px 120px, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 230px 50px, rgba(255, 255, 255, 0.85), rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 270px 100px, rgba(230, 240, 255, 0.9), rgba(0, 0, 0, 0)),
+    radial-gradient(1.5px 1.5px at 330px 180px, rgba(255, 255, 255, 0.9), rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 400px 70px, rgba(210, 230, 255, 0.95), rgba(0, 0, 0, 0)),
+    radial-gradient(3px 3px at 460px 130px, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 520px 60px, rgba(255, 255, 255, 0.9), rgba(0, 0, 0, 0));
+  background-repeat: repeat;
+  background-size: 1000px 400px;
+  opacity: 0.7;
+  will-change: transform;
+  animation: twinkling 40s linear infinite, starsParallax 20s linear infinite;
+  transform: translateZ(-10px);
+}
+
+/* Layer 2: Medium distance stars */
+.stars-background::after {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-image: 
+    radial-gradient(1.5px 1.5px at 620px 40px, rgba(255, 255, 255, 0.8), rgba(0, 0, 0, 0)),
+    radial-gradient(1.2px 1.2px at 660px 90px, rgba(220, 235, 255, 0.85), rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 700px 150px, rgba(255, 255, 255, 0.75), rgba(0, 0, 0, 0)),
+    radial-gradient(1.8px 1.8px at 760px 30px, rgba(200, 220, 255, 0.9), rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 800px 110px, rgba(255, 255, 255, 0.8), rgba(0, 0, 0, 0)),
+    radial-gradient(1.4px 1.4px at 850px 60px, rgba(230, 240, 255, 0.85), rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 920px 170px, rgba(200, 215, 255, 0.7), rgba(0, 0, 0, 0)),
+    radial-gradient(1.2px 1.2px at 950px 40px, rgba(255, 255, 255, 0.75), rgba(0, 0, 0, 0)),
+    radial-gradient(1.6px 1.6px at 990px 100px, rgba(220, 230, 255, 0.85), rgba(0, 0, 0, 0));
+  background-repeat: repeat;
+  background-size: 1200px 600px;
+  opacity: 0.5;
+  will-change: transform;
+  animation: twinkling 60s linear infinite, starsMiddleParallax 40s linear infinite;
+  transform: translateZ(-50px);
+}
+
+/* Additional distant, small stars */
+.stars-layer-distant {
+  position: absolute;
+  width: 300%;
+  height: 300%;
+  top: -100%;
+  left: -100%;
+  background-image: 
+    radial-gradient(0.8px 0.8px at 120px 220px, rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0)),
+    radial-gradient(0.6px 0.6px at 250px 150px, rgba(210, 220, 255, 0.5), rgba(0, 0, 0, 0)),
+    radial-gradient(0.7px 0.7px at 350px 250px, rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0)),
+    radial-gradient(0.5px 0.5px at 450px 320px, rgba(200, 210, 255, 0.5), rgba(0, 0, 0, 0)),
+    radial-gradient(0.6px 0.6px at 550px 180px, rgba(255, 255, 255, 0.45), rgba(0, 0, 0, 0)),
+    radial-gradient(0.4px 0.4px at 650px 300px, rgba(220, 225, 255, 0.5), rgba(0, 0, 0, 0)),
+    radial-gradient(0.7px 0.7px at 750px 220px, rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0)),
+    radial-gradient(0.5px 0.5px at 850px 280px, rgba(200, 210, 255, 0.45), rgba(0, 0, 0, 0)),
+    radial-gradient(0.6px 0.6px at 950px 200px, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0));
+  background-repeat: repeat;
+  background-size: 1500px 800px;
+  opacity: 0.4;
+  will-change: transform;
+  animation: twinkling 80s linear infinite, starsDistantParallax 60s linear infinite;
+  transform: translateZ(-100px);
+  z-index: 1001;
+  pointer-events: none;
+}
+
+@keyframes starsParallax {
+  0% {
+    transform: translateX(0) translateY(0) translateZ(-10px);
+  }
+  100% {
+    transform: translateX(-400px) translateY(-100px) translateZ(-10px);
+  }
+}
+
+@keyframes starsMiddleParallax {
+  0% {
+    transform: translateX(0) translateY(0) translateZ(-50px);
+  }
+  100% {
+    transform: translateX(-300px) translateY(-80px) translateZ(-50px);
+  }
+}
+
+@keyframes starsDistantParallax {
+  0% {
+    transform: translateX(0) translateY(0) translateZ(-100px);
+  }
+  100% {
+    transform: translateX(-200px) translateY(-60px) translateZ(-100px);
+  }
 }
 
 @keyframes twinkling {
@@ -359,8 +446,49 @@ canvas {
   z-index: 1004;
   animation: shipWarpRealistic 15s forwards;
   will-change: transform;
-  filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.8));
+  filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.8)) drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.5));
   transform-origin: center center;
+  transform-style: preserve-3d;
+}
+
+.svg-ship-container::before {
+  content: '';
+  position: absolute;
+  top: 35%;
+  left: 15%;
+  width: 40%;
+  height: 40%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0.3;
+  z-index: 1005;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.svg-ship-container::after {
+  content: '';
+  position: absolute;
+  bottom: 40%;
+  right: 35%;
+  width: 25%;
+  height: 25%;
+  background: radial-gradient(circle, rgba(100, 180, 255, 0.9) 0%, rgba(100, 180, 255, 0) 80%);
+  opacity: 0.5;
+  z-index: 1006;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: engineGlow 2s infinite alternate;
+}
+
+@keyframes engineGlow {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
 }
 
 .svg-spaceship {
@@ -369,120 +497,140 @@ canvas {
   display: block;
   max-width: 100%;
   object-fit: contain;
+  filter: contrast(1.2) saturate(1.1);
 }
 
 @keyframes shipWarpRealistic {
   /* Ship starts from right side, far away */
   0% {
-    transform: translate(150%, -50%) scale(0.1);
+    transform: translate(150%, -50%) scale(0.1) perspective(800px) rotateY(15deg);
     opacity: 0;
     filter: drop-shadow(0 0 5px rgba(100, 180, 255, 0.3));
   }
   
   /* Ship approaches from right, becoming visible */
   5% {
-    transform: translate(120%, -50%) scale(0.2);
+    transform: translate(120%, -52%) scale(0.2) perspective(800px) rotateY(10deg);
     opacity: 0.5;
     filter: drop-shadow(0 0 8px rgba(100, 180, 255, 0.4));
   }
   
-  /* Ship gets closer, continuing approach */
+  /* Ship gets closer, continuing approach - slightly above center */
   10% {
-    transform: translate(80%, -50%) scale(0.3);
+    transform: translate(80%, -48%) scale(0.35) perspective(800px) rotateY(5deg);
     opacity: 0.8;
     filter: drop-shadow(0 0 10px rgba(100, 180, 255, 0.5));
   }
   
-  /* Ship approaching, slowing down slightly */
+  /* Ship approaching, small vertical movement for realism */
   15% {
-    transform: translate(40%, -50%) scale(0.4);
+    transform: translate(40%, -51%) scale(0.5) perspective(800px) rotateY(2deg);
     opacity: 1;
     filter: drop-shadow(0 0 12px rgba(100, 180, 255, 0.6));
   }
   
-  /* Ship reaches center area */
+  /* Ship reaches center area - at maximum size (closest to viewer) */
   20% {
-    transform: translate(0%, -50%) scale(0.6);
+    transform: translate(0%, -50%) scale(0.7) perspective(800px) rotateY(0deg);
     filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.7));
   }
   
-  /* Ship moves smoothly left (first segment) */
+  /* Ship moves smoothly left - begins to get smaller as if moving away */
   25% {
-    transform: translate(-10%, -50%) scale(0.65);
+    transform: translate(-10%, -49%) scale(0.65) perspective(800px) rotateY(-2deg);
     filter: drop-shadow(0 0 16px rgba(105, 185, 255, 0.71));
   }
   
+  /* Continuing movement with slight vertical variation */
   30% {
-    transform: translate(-15%, -50%) scale(0.7);
+    transform: translate(-15%, -51%) scale(0.68) perspective(800px) rotateY(-3deg);
     filter: drop-shadow(0 0 17px rgba(110, 190, 255, 0.72));
   }
   
-  /* Ship continues smooth movement */
+  /* Ship moves slightly out then back in (z-axis movement simulation) */
+  35% {
+    transform: translate(-18%, -50%) scale(0.64) perspective(800px) rotateY(-1deg);
+    filter: drop-shadow(0 0 18px rgba(115, 195, 255, 0.74));
+  }
+  
+  /* Ship continues movement - coming closer again */
   40% {
-    transform: translate(-20%, -50%) scale(0.75);
+    transform: translate(-20%, -48%) scale(0.72) perspective(800px) rotateY(1deg);
     filter: drop-shadow(0 0 19px rgba(120, 200, 255, 0.75));
   }
   
-  /* Travel straight for a bit */
-  50% {
-    transform: translate(-25%, -50%) scale(0.8);
-    filter: drop-shadow(0 0 20px rgba(130, 210, 255, 0.8));
+  /* Travel with slight pitch and distance variations */
+  45% {
+    transform: translate(-22%, -52%) scale(0.76) perspective(800px) rotateY(2deg) rotateX(1deg);
+    filter: drop-shadow(0 0 20px rgba(125, 205, 255, 0.77));
   }
   
-  /* Ship continues smooth travel */
+  /* Closer approach - maximum size in this segment */
+  50% {
+    transform: translate(-25%, -50%) scale(0.85) perspective(800px) rotateY(0deg) rotateX(0deg);
+    filter: drop-shadow(0 0 22px rgba(130, 210, 255, 0.8));
+  }
+  
+  /* Ship slightly tilts and moves away from viewer */
+  55% {
+    transform: translate(-28%, -49%) scale(0.78) perspective(800px) rotateY(-1deg) rotateX(-1deg);
+    filter: drop-shadow(0 0 23px rgba(140, 220, 255, 0.84));
+  }
+  
+  /* Ship continues smooth travel - preparing for warp */
   60% {
-    transform: translate(-30%, -50%) scale(0.85);
+    transform: translate(-30%, -50%) scale(0.82) perspective(800px) rotateY(0deg) rotateX(0deg);
     filter: drop-shadow(0 0 25px rgba(150, 230, 255, 0.9));
   }
   
   /* Ship begins to engage main engines - start of warp effect */
   65% {
-    transform: translate(-40%, -50%) scale(0.85);
+    transform: translate(-40%, -50%) scale(0.85) perspective(800px);
     filter: drop-shadow(0 0 27px rgba(155, 230, 255, 0.92));
   }
   
   /* Ship begins acceleration with blue effect */
   70% {
-    transform: translate(-80%, -50%) scale(0.8);
+    transform: translate(-80%, -50%) scale(0.8) perspective(800px);
     filter: drop-shadow(0 0 29px rgba(160, 235, 255, 0.95));
   }
   
   /* Rapid acceleration - much faster movement when blue effect is visible */
   75% {
-    transform: translate(-130%, -50%) scale(0.75);
+    transform: translate(-130%, -50%) scale(0.75) perspective(800px);
     filter: drop-shadow(0 0 31px rgba(165, 238, 255, 0.97));
   }
   
   /* Ship reaches maximum velocity during warp */
   80% {
-    transform: translate(-180%, -50%) scale(0.7);
+    transform: translate(-180%, -50%) scale(0.7) perspective(800px);
     filter: drop-shadow(0 0 33px rgba(170, 240, 255, 0.98));
   }
   
   /* Ship at full warp speed */
   85% {
-    transform: translate(-230%, -50%) scale(0.6);
+    transform: translate(-230%, -50%) scale(0.6) perspective(800px);
     filter: drop-shadow(0 0 35px rgba(175, 243, 255, 1));
     opacity: 0.9;
   }
   
   /* Ship continues at high speed */
   90% {
-    transform: translate(-260%, -50%) scale(0.5);
+    transform: translate(-260%, -50%) scale(0.5) perspective(800px);
     opacity: 0.6;
     filter: drop-shadow(0 0 25px rgba(160, 220, 255, 0.7));
   }
   
   /* Ship nearly gone */
   95% {
-    transform: translate(-290%, -50%) scale(0.3);
+    transform: translate(-290%, -50%) scale(0.3) perspective(800px);
     opacity: 0.3;
     filter: drop-shadow(0 0 15px rgba(140, 200, 255, 0.5));
   }
   
   /* Complete disappearance */
   100% {
-    transform: translate(-320%, -50%) scale(0.1);
+    transform: translate(-320%, -50%) scale(0.1) perspective(800px);
     opacity: 0;
     filter: drop-shadow(0 0 0px rgba(120, 180, 255, 0));
   }

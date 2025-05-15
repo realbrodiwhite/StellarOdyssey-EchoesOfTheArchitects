@@ -33,8 +33,9 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
   if (type === 'intro') {
     return (
       <div className="space-scene-container" onClick={handleSkip}>
-        {/* Stars background with CSS-generated stars */}
+        {/* Multi-layered stars background with CSS-generated stars */}
         <div className="stars-background"></div>
+        <div className="stars-layer-distant"></div>
         
         {/* Planet scene that pans down */}
         <div className="planet-scene">
