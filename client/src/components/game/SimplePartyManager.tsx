@@ -4,7 +4,7 @@ import { useParty } from '@/lib/stores/useParty';
 import PartyMemberCard from './PartyMemberCard';
 import { Button } from '../ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { CharacterClass, SkillType, PartyMember } from '@/lib/types';
+import { CharacterClass, SkillType, PartyMember, Skill } from '@/lib/types';
 import { X, Plus, Shield, Sword, Brain, Star } from 'lucide-react';
 
 interface SimplePartyManagerProps {
@@ -127,7 +127,7 @@ const SimplePartyManager: React.FC<SimplePartyManagerProps> = ({ onClose }) => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {activePartyMembers.map((member) => (
+                {activePartyMembers.map((member: PartyMember) => (
                   <div key={member.id} className="relative">
                     <PartyMemberCard 
                       partyMember={member} 
@@ -157,10 +157,10 @@ const SimplePartyManager: React.FC<SimplePartyManagerProps> = ({ onClose }) => {
                     <div className="text-xl font-bold text-white flex items-center gap-2">
                       <Sword className="h-5 w-5 text-red-400" />
                       {/* Calculate based on combat skills and abilities */}
-                      {activePartyMembers.reduce((sum, member) => {
+                      {activePartyMembers.reduce((sum: number, member: PartyMember) => {
                         // Simple calculation for demo
-                        return sum + (member.skills?.filter(s => s.type === SkillType.Combat)
-                          .reduce((acc, s) => acc + s.level, 0) || 0);
+                        return sum + (member.skills?.filter((s: any) => s.type === SkillType.Combat)
+                          .reduce((acc: number, s: any) => acc + s.level, 0) || 0);
                       }, 0)}
                     </div>
                   </div>
@@ -169,9 +169,9 @@ const SimplePartyManager: React.FC<SimplePartyManagerProps> = ({ onClose }) => {
                     <div className="text-sm text-gray-400">Technical Skill</div>
                     <div className="text-xl font-bold text-white flex items-center gap-2">
                       <Brain className="h-5 w-5 text-yellow-400" />
-                      {activePartyMembers.reduce((sum, member) => {
-                        return sum + (member.skills?.filter(s => s.type === SkillType.Technical)
-                          .reduce((acc, s) => acc + s.level, 0) || 0);
+                      {activePartyMembers.reduce((sum: number, member: PartyMember) => {
+                        return sum + (member.skills?.filter((s: any) => s.type === SkillType.Technical)
+                          .reduce((acc: number, s: any) => acc + s.level, 0) || 0);
                       }, 0)}
                     </div>
                   </div>
@@ -180,9 +180,9 @@ const SimplePartyManager: React.FC<SimplePartyManagerProps> = ({ onClose }) => {
                     <div className="text-sm text-gray-400">Social Skills</div>
                     <div className="text-xl font-bold text-white flex items-center gap-2">
                       <Shield className="h-5 w-5 text-blue-400" />
-                      {activePartyMembers.reduce((sum, member) => {
-                        return sum + (member.skills?.filter(s => s.type === SkillType.Social)
-                          .reduce((acc, s) => acc + s.level, 0) || 0);
+                      {activePartyMembers.reduce((sum: number, member: PartyMember) => {
+                        return sum + (member.skills?.filter((s: any) => s.type === SkillType.Social)
+                          .reduce((acc: number, s: any) => acc + s.level, 0) || 0);
                       }, 0)}
                     </div>
                   </div>
