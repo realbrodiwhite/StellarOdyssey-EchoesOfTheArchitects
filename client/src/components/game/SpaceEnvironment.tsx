@@ -132,7 +132,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
           // Add mission completion dialogue
           if (activeCompanion) {
             addDialogue(
-              DialogueType.Mission, 
+              DialogueType.Advice, 
               "Mission Accomplished! You've successfully docked at Proxima Outpost. Check in with the station commander for your next assignment.",
               { event: "mission_complete" }
             );

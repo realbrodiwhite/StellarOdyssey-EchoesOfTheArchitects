@@ -289,6 +289,10 @@ const StarMap: React.FC<StarMapProps> = ({ onClose, onSelectLocation }) => {
               const isDiscovered = story.gameState.discoveredLocations.includes(location.id);
               const isVisited = story.gameState.visitedLocations.includes(location.id);
               const canTravelTo = currentLocation && story.canTravelTo(location.id);
+              // Highlight the space station if it's the player's first mission
+              const isFirstMission = location.id === "frontier_outpost" && 
+                                     currentLocation?.id === "ship" && 
+                                     !story.gameState.visitedLocations.includes("frontier_outpost");
               
               // Special styling based on location status
               const locationColor = getLocationColor(location.type);
@@ -301,6 +305,7 @@ const StarMap: React.FC<StarMapProps> = ({ onClose, onSelectLocation }) => {
                     locationColor,
                     isSelected ? "ring-4 ring-white" : "",
                     isCurrentLocation ? "ring-4 ring-yellow-400" : "",
+                    isFirstMission ? "ring-4 ring-blue-500 animate-pulse" : "",
                     !isDiscovered ? "opacity-50" : "",
                     !canTravelTo ? "grayscale" : ""
                   )}
@@ -393,6 +398,17 @@ const StarMap: React.FC<StarMapProps> = ({ onClose, onSelectLocation }) => {
                 </div>
                 
                 <p className="text-sm text-gray-300">{selectedLocation.description}</p>
+                
+                {/* Mission Objective */}
+                {selectedLocation.id === "frontier_outpost" && 
+                 currentLocation?.id === "ship" && 
+                 !story.gameState.visitedLocations.includes("frontier_outpost") && (
+                  <div className="my-2 p-2 bg-blue-900 bg-opacity-50 border border-blue-500 rounded animate-pulse">
+                    <p className="text-sm font-bold text-blue-300">
+                      MISSION OBJECTIVE: Dock at this station
+                    </p>
+                  </div>
+                )}
                 
                 {/* Environmental Effects */}
                 {selectedLocation.environmentEffects && selectedLocation.environmentEffects.length > 0 && (
