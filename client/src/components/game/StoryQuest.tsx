@@ -16,7 +16,7 @@ interface StoryQuestProps {
 const StoryQuest: React.FC<StoryQuestProps> = ({ questId, onClose, onComplete }) => {
   const { getQuest, getCurrentStage, getAvailableChoices, canChooseOption, makeChoice } = useStarQuest();
   const { selectedCharacter } = useCharacter();
-  const { playSoundEffect } = useAudio();
+  const audioState = useAudio();
   
   const [quest, setQuest] = useState<Quest | undefined>(undefined);
   const [currentStage, setCurrentStage] = useState<StoryStage | undefined>(undefined);

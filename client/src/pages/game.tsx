@@ -10,6 +10,7 @@ import GameUI from "../components/game/GameUI";
 import Combat from "../components/game/Combat";
 import Puzzle from "../components/game/Puzzle";
 import SpaceTransition from "../components/game/SpaceTransition";
+import StarQuestManager from "../components/game/StarQuestManager";
 import { Controls } from "../lib/types";
 
 // Define controls for keyboard input
@@ -184,6 +185,9 @@ const Game = () => {
   return (
     <div className="w-full h-full">
       {renderGameComponent()}
+      
+      {/* Star Quest story system that activates during gameplay */}
+      {gameState === 'game' && <StarQuestManager />}
     </div>
   );
 };
