@@ -1,377 +1,443 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { Character, Skill, SkillType, Item, Ability, Gender } from "../types";
-import { characterTemplates } from "../data/characters";
-import { expandedCharacterTemplates } from "../data/expanded-characters";
-import { generateCoreSkills } from "../data/skills";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { v4 as uuidv4 } from 'uuid';
+import { Character, CharacterClass, Gender, Skill, Item, Ability, SkillType } from '../types';
 
 interface CharacterState {
-  selectedCharacter: Character | null;
+  character: Character;
   
-  // Character selection and management
-  selectCharacter: (characterOrClass: Character | string | any) => void;
-  resetCharacter: () => void;
-  updateCharacter: (updates: Partial<Character>) => void;
-  
-  // Stats and progression
-  gainExperience: (amount: number) => void;
-  levelUp: () => void;
-  improveSkill: (skillId: string) => boolean;
-  
-  // Health and energy
-  takeDamage: (amount: number) => void;
-  heal: (amount: number) => void;
+  // Character management
+  initializeCharacter: (template: Partial<Character>) => void;
+  gainExperience: (amount: number) => boolean;
+  gainHealth: (amount: number) => void;
+  loseHealth: (amount: number) => void;
+  gainEnergy: (amount: number) => void;
   useEnergy: (amount: number) => boolean;
-  restoreEnergy: (amount: number) => void;
   
-  // Abilities
+  // Skills management
+  improveSkill: (skillId: string) => boolean;
+  addSkill: (skill: Omit<Skill, 'id'>) => void;
+  
+  // Inventory management
+  addItem: (item: Omit<Item, 'id'>) => void;
+  removeItem: (itemId: string) => boolean;
+  useItem: (itemId: string) => boolean;
+  
+  // Abilities management
+  addAbility: (ability: Omit<Ability, 'id'>) => void;
   useAbility: (abilityId: string) => boolean;
-  updateCooldowns: () => void;
+  cooldownAbilities: () => void;
   
-  // Character status checks
-  isDead: () => boolean;
-  canUseAbility: (abilityId: string) => boolean;
-  hasSkillLevel: (skillType: SkillType, level: number) => boolean;
+  // Reset
+  resetCharacter: () => void;
 }
 
 // Experience needed for each level
-const experienceRequirements = [0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700, 3300];
+const experienceThresholds = [
+  0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700, 
+  3250, 3850, 4500, 5200, 6000, 6900, 7900, 9000, 10200, 11500
+];
+
+// Starting character template
+const newCharacter: Character = {
+  id: '1',
+  name: 'Player',
+  class: CharacterClass.Pilot,
+  description: 'A skilled ship pilot with experience navigating through dangerous territories.',
+  skills: [
+    {
+      id: 'skill_navigation',
+      name: 'Navigation',
+      type: SkillType.Navigation,
+      level: 2,
+      description: 'Ability to plot efficient courses and navigate hazardous regions.',
+      maxLevel: 5
+    },
+    {
+      id: 'skill_piloting',
+      name: 'Piloting',
+      type: SkillType.Navigation,
+      level: 3,
+      description: 'Expertise in handling various spacecraft under different conditions.',
+      maxLevel: 5
+    },
+    {
+      id: 'skill_technical',
+      name: 'Technical Aptitude',
+      type: SkillType.Technical,
+      level: 1,
+      description: 'Basic understanding of ship systems and technical components.',
+      maxLevel: 5
+    }
+  ],
+  health: 100,
+  maxHealth: 100,
+  energy: 100,
+  maxEnergy: 100,
+  level: 1,
+  experience: 0,
+  inventory: [],
+  abilities: [
+    {
+      id: 'ability_evasive',
+      name: 'Evasive Maneuvers',
+      description: 'Execute a series of complex flight patterns to avoid incoming danger.',
+      energyCost: 30,
+      cooldown: 3,
+      currentCooldown: 0,
+      requiredSkill: { type: SkillType.Navigation, level: 2 }
+    }
+  ],
+  gender: Gender.Male,
+  credits: 200,
+  shield: 50,
+  maxShield: 50
+};
 
 export const useCharacter = create<CharacterState>()(
   persist(
     (set, get) => ({
-      selectedCharacter: null,
+      character: { ...newCharacter },
       
-      selectCharacter: (characterOrClass) => {
-        console.log("Selecting character:", characterOrClass);
+      initializeCharacter: (template) => {
+        const templateWithDefaults = {
+          ...newCharacter,
+          ...template,
+          id: uuidv4()
+        };
         
-        // Check if we're receiving a full Character object or just a class
-        if (typeof characterOrClass === 'object' && characterOrClass !== null) {
-          // It's a full Character object from expanded templates
-          const character = characterOrClass as Character;
-          
-          // Generate the common core skills every character should have
-          const coreSkills = generateCoreSkills();
-          
-          // Create a map of existing skill types to avoid duplicating similar skills
-          const existingSkillTypes = new Map();
-          character.skills.forEach(skill => {
-            const key = `${skill.type}-${skill.name}`;
-            existingSkillTypes.set(key, true);
-          });
-          
-          // Filter out core skills that would duplicate existing skills
-          const filteredCoreSkills = coreSkills.filter(coreSkill => {
-            const key = `${coreSkill.type}-${coreSkill.name}`;
-            return !existingSkillTypes.has(key);
-          });
-          
-          // Combine character-specific skills with filtered core skills
-          const combinedSkills = [...character.skills, ...filteredCoreSkills];
-          
-          const selectedCharacter = { 
-            ...character,
-            skills: combinedSkills
-          };
-          
-          console.log("Setting selected character from expanded templates:", selectedCharacter);
-          
-          set({ selectedCharacter });
-          return;
-        }
-        
-        // Handle legacy method (receiving just class name/enum)
-        const characterClass = characterOrClass;
-        console.log("Selecting character with class:", characterClass);
-        
-        // First try to find in expanded templates
-        let template;
-        
-        // Try expanded templates first
-        if (expandedCharacterTemplates.length > 0) {
-          if (typeof characterClass === 'string') {
-            template = expandedCharacterTemplates.find(c => c.class.toString() === characterClass && c.gender === Gender.Male);
-          } else {
-            // If it's an enum value, compare directly
-            template = expandedCharacterTemplates.find(c => c.class === characterClass && c.gender === Gender.Male);
-          }
-        }
-        
-        // Fall back to original templates if needed
-        if (!template) {
-          if (typeof characterClass === 'string') {
-            template = characterTemplates.find(c => c.class.toString() === characterClass);
-          } else {
-            // If it's an enum value, compare directly
-            template = characterTemplates.find(c => c.class === characterClass);
-          }
-        }
-        
-        console.log("Found template:", template);
-        
-        if (template) {
-          // Generate the common core skills every character should have
-          const coreSkills = generateCoreSkills();
-          
-          // Create a map of existing skill types to avoid duplicating similar skills
-          const existingSkillTypes = new Map();
-          template.skills.forEach(skill => {
-            const key = `${skill.type}-${skill.name}`;
-            existingSkillTypes.set(key, true);
-          });
-          
-          // Filter out core skills that would duplicate existing skills
-          const filteredCoreSkills = coreSkills.filter(coreSkill => {
-            const key = `${coreSkill.type}-${coreSkill.name}`;
-            return !existingSkillTypes.has(key);
-          });
-          
-          // Combine character-specific skills with filtered core skills
-          const combinedSkills = [...template.skills, ...filteredCoreSkills];
-          
-          const selectedCharacter = { 
-            ...template,
-            skills: combinedSkills,
-            // Ensure gender is set if using original templates 
-            gender: template.gender || Gender.Male
-          };
-          
-          console.log("Setting selected character:", selectedCharacter);
-          
-          set({ selectedCharacter });
-        }
-      },
-      
-      resetCharacter: () => {
-        set({ selectedCharacter: null });
-      },
-      
-      updateCharacter: (updates) => {
-        const character = get().selectedCharacter;
-        if (!character) return;
-        
-        set({
-          selectedCharacter: {
-            ...character,
-            ...updates
-          }
-        });
+        set({ character: templateWithDefaults });
+        console.log(`Character initialized: ${templateWithDefaults.name}`);
       },
       
       gainExperience: (amount) => {
-        const character = get().selectedCharacter;
-        if (!character) return;
+        const { character } = get();
+        const currentExp = character.experience + amount;
+        const currentLevel = character.level;
         
-        const newExperience = character.experience + amount;
-        set({
-          selectedCharacter: {
-            ...character,
-            experience: newExperience
-          }
-        });
-        
-        // Check if level up is available
-        if (character.level < 10 && newExperience >= experienceRequirements[character.level]) {
-          get().levelUp();
-        }
-      },
-      
-      levelUp: () => {
-        const character = get().selectedCharacter;
-        if (!character || character.level >= 10) return;
-        
-        set({
-          selectedCharacter: {
-            ...character,
-            level: character.level + 1,
-            maxHealth: character.maxHealth + 10,
-            health: character.health + 10,
-            maxEnergy: character.maxEnergy + 5,
-            energy: character.energy + 5
-          }
-        });
-      },
-      
-      improveSkill: (skillId) => {
-        const character = get().selectedCharacter;
-        if (!character) return false;
-        
-        const updatedSkills = character.skills.map(skill => {
-          if (skill.id === skillId && skill.level < skill.maxLevel) {
-            return { ...skill, level: skill.level + 1 };
-          }
-          return skill;
-        });
-        
-        // Check if any skill was actually improved
-        const skillImproved = updatedSkills.some(
-          (skill, idx) => skill.level !== character.skills[idx].level
-        );
-        
-        if (skillImproved) {
-          set({
-            selectedCharacter: {
-              ...character,
-              skills: updatedSkills
-            }
-          });
-          return true;
+        let newLevel = currentLevel;
+        // Check if character leveled up
+        while (newLevel < experienceThresholds.length && currentExp >= experienceThresholds[newLevel]) {
+          newLevel++;
         }
         
-        return false;
+        const leveledUp = newLevel > currentLevel;
+        
+        // Update character
+        set(state => ({
+          character: {
+            ...state.character,
+            experience: currentExp,
+            level: newLevel,
+            // If leveled up, increase stats
+            maxHealth: leveledUp ? state.character.maxHealth + 10 : state.character.maxHealth,
+            health: leveledUp ? state.character.maxHealth + 10 : state.character.health,
+            maxEnergy: leveledUp ? state.character.maxEnergy + 5 : state.character.maxEnergy,
+            energy: leveledUp ? state.character.maxEnergy + 5 : state.character.energy,
+          }
+        }));
+        
+        if (leveledUp) {
+          console.log(`Character leveled up to ${newLevel}!`);
+        }
+        
+        return leveledUp;
       },
       
-      takeDamage: (amount) => {
-        const character = get().selectedCharacter;
-        if (!character) return;
+      gainHealth: (amount) => {
+        const { character } = get();
+        const newHealth = Math.min(character.health + amount, character.maxHealth);
         
-        const newHealth = Math.max(0, character.health - amount);
-        set({
-          selectedCharacter: {
-            ...character,
+        set(state => ({
+          character: {
+            ...state.character,
             health: newHealth
           }
-        });
+        }));
+        
+        console.log(`Character gained ${amount} health. Current: ${newHealth}/${character.maxHealth}`);
       },
       
-      heal: (amount) => {
-        const character = get().selectedCharacter;
-        if (!character) return;
+      loseHealth: (amount) => {
+        const { character } = get();
         
-        const newHealth = Math.min(character.maxHealth, character.health + amount);
-        set({
-          selectedCharacter: {
-            ...character,
-            health: newHealth
+        // First apply damage to shield if available
+        let remainingDamage = amount;
+        let newShield = character.shield || 0;
+        
+        if (newShield > 0) {
+          if (newShield >= remainingDamage) {
+            newShield -= remainingDamage;
+            remainingDamage = 0;
+          } else {
+            remainingDamage -= newShield;
+            newShield = 0;
           }
-        });
+        }
+        
+        // Apply remaining damage to health
+        const newHealth = Math.max(character.health - remainingDamage, 0);
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            health: newHealth,
+            shield: newShield
+          }
+        }));
+        
+        console.log(`Character lost ${amount} health (${amount - remainingDamage} absorbed by shield). Current: ${newHealth}/${character.maxHealth}, Shield: ${newShield}`);
+      },
+      
+      gainEnergy: (amount) => {
+        const { character } = get();
+        const newEnergy = Math.min(character.energy + amount, character.maxEnergy);
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            energy: newEnergy
+          }
+        }));
+        
+        console.log(`Character gained ${amount} energy. Current: ${newEnergy}/${character.maxEnergy}`);
       },
       
       useEnergy: (amount) => {
-        const character = get().selectedCharacter;
-        if (!character || character.energy < amount) return false;
+        const { character } = get();
         
-        set({
-          selectedCharacter: {
-            ...character,
-            energy: character.energy - amount
+        if (character.energy < amount) {
+          console.log(`Not enough energy. Required: ${amount}, Current: ${character.energy}`);
+          return false;
+        }
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            energy: state.character.energy - amount
           }
-        });
+        }));
+        
+        console.log(`Character used ${amount} energy. Remaining: ${character.energy - amount}`);
+        return true;
+      },
+      
+      improveSkill: (skillId) => {
+        const { character } = get();
+        const skillIndex = character.skills.findIndex(skill => skill.id === skillId);
+        
+        if (skillIndex === -1) {
+          console.log(`Skill not found: ${skillId}`);
+          return false;
+        }
+        
+        const skill = character.skills[skillIndex];
+        
+        if (skill.level >= skill.maxLevel) {
+          console.log(`Skill already at max level: ${skill.name}`);
+          return false;
+        }
+        
+        // Update skill
+        const updatedSkills = [...character.skills];
+        updatedSkills[skillIndex] = {
+          ...skill,
+          level: skill.level + 1
+        };
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            skills: updatedSkills
+          }
+        }));
+        
+        console.log(`Improved skill: ${skill.name} to level ${skill.level + 1}`);
+        return true;
+      },
+      
+      addSkill: (skillTemplate) => {
+        const skill: Skill = {
+          ...skillTemplate,
+          id: `skill_${uuidv4()}`
+        };
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            skills: [...state.character.skills, skill]
+          }
+        }));
+        
+        console.log(`Added new skill: ${skill.name}`);
+      },
+      
+      addItem: (itemTemplate) => {
+        const item: Item = {
+          ...itemTemplate,
+          id: `item_${uuidv4()}`
+        };
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            inventory: [...state.character.inventory, item]
+          }
+        }));
+        
+        console.log(`Added item to inventory: ${item.name}`);
+      },
+      
+      removeItem: (itemId) => {
+        const { character } = get();
+        const itemIndex = character.inventory.findIndex(item => item.id === itemId);
+        
+        if (itemIndex === -1) {
+          console.log(`Item not found: ${itemId}`);
+          return false;
+        }
+        
+        const updatedInventory = character.inventory.filter(item => item.id !== itemId);
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            inventory: updatedInventory
+          }
+        }));
+        
+        console.log(`Removed item from inventory: ${character.inventory[itemIndex].name}`);
+        return true;
+      },
+      
+      useItem: (itemId) => {
+        const { character } = get();
+        const itemIndex = character.inventory.findIndex(item => item.id === itemId);
+        
+        if (itemIndex === -1) {
+          console.log(`Item not found: ${itemId}`);
+          return false;
+        }
+        
+        const item = character.inventory[itemIndex];
+        
+        if (!item.usable) {
+          console.log(`Item cannot be used: ${item.name}`);
+          return false;
+        }
+        
+        // Apply item effects (this would be expanded based on item types)
+        console.log(`Using item: ${item.name}`);
+        
+        // Remove item from inventory if it's consumed
+        const updatedInventory = [...character.inventory];
+        
+        if (item.quantity > 1) {
+          updatedInventory[itemIndex] = {
+            ...item,
+            quantity: item.quantity - 1
+          };
+        } else {
+          updatedInventory.splice(itemIndex, 1);
+        }
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            inventory: updatedInventory
+          }
+        }));
         
         return true;
       },
       
-      restoreEnergy: (amount) => {
-        const character = get().selectedCharacter;
-        if (!character) return;
+      addAbility: (abilityTemplate) => {
+        const ability: Ability = {
+          ...abilityTemplate,
+          id: `ability_${uuidv4()}`
+        };
         
-        const newEnergy = Math.min(character.maxEnergy, character.energy + amount);
-        set({
-          selectedCharacter: {
-            ...character,
-            energy: newEnergy
+        set(state => ({
+          character: {
+            ...state.character,
+            abilities: [...state.character.abilities, ability]
           }
-        });
+        }));
+        
+        console.log(`Added new ability: ${ability.name}`);
       },
       
       useAbility: (abilityId) => {
-        const character = get().selectedCharacter;
-        if (!character) return false;
+        const { character } = get();
+        const abilityIndex = character.abilities.findIndex(ability => ability.id === abilityId);
         
-        const ability = character.abilities.find(a => a.id === abilityId);
-        if (!ability) return false;
+        if (abilityIndex === -1) {
+          console.log(`Ability not found: ${abilityId}`);
+          return false;
+        }
+        
+        const ability = character.abilities[abilityIndex];
         
         // Check if ability is on cooldown
-        if (ability.currentCooldown > 0) return false;
+        if (ability.currentCooldown > 0) {
+          console.log(`Ability on cooldown: ${ability.name}`);
+          return false;
+        }
         
         // Check if character has enough energy
-        if (character.energy < ability.energyCost) return false;
-        
-        // Check if character has required skill level
-        if (ability.requiredSkill && 
-            !get().hasSkillLevel(ability.requiredSkill.type, ability.requiredSkill.level)) {
+        if (character.energy < ability.energyCost) {
+          console.log(`Not enough energy for ability: ${ability.name}`);
           return false;
         }
         
-        // Use energy and put ability on cooldown
-        const updatedAbilities = character.abilities.map(a => {
-          if (a.id === abilityId) {
-            return { ...a, currentCooldown: a.cooldown };
-          }
-          return a;
-        });
+        // Use energy
+        const newEnergy = character.energy - ability.energyCost;
         
-        set({
-          selectedCharacter: {
-            ...character,
-            energy: character.energy - ability.energyCost,
+        // Set ability on cooldown
+        const updatedAbilities = [...character.abilities];
+        updatedAbilities[abilityIndex] = {
+          ...ability,
+          currentCooldown: ability.cooldown
+        };
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            energy: newEnergy,
             abilities: updatedAbilities
           }
-        });
+        }));
         
+        console.log(`Used ability: ${ability.name}`);
         return true;
       },
       
-      updateCooldowns: () => {
-        const character = get().selectedCharacter;
-        if (!character) return;
+      cooldownAbilities: () => {
+        const { character } = get();
         
-        // Update ability cooldowns
-        const updatedAbilities = character.abilities.map(ability => {
-          if (ability.currentCooldown > 0) {
-            return { ...ability, currentCooldown: ability.currentCooldown - 1 };
+        const updatedAbilities = character.abilities.map(ability => ({
+          ...ability,
+          currentCooldown: Math.max(0, ability.currentCooldown - 1)
+        }));
+        
+        set(state => ({
+          character: {
+            ...state.character,
+            abilities: updatedAbilities
           }
-          return ability;
-        });
-        
-        // Passively restore a small amount of energy each turn (standard for all character types)
-        const passiveEnergyRegen = 2; // 2 energy per turn
-        const newEnergy = Math.min(character.maxEnergy, character.energy + passiveEnergyRegen);
-        
-        set({
-          selectedCharacter: {
-            ...character,
-            abilities: updatedAbilities,
-            energy: newEnergy
-          }
-        });
+        }));
       },
       
-      isDead: () => {
-        const character = get().selectedCharacter;
-        return character ? character.health <= 0 : false;
-      },
-      
-      canUseAbility: (abilityId) => {
-        const character = get().selectedCharacter;
-        if (!character) return false;
-        
-        const ability = character.abilities.find(a => a.id === abilityId);
-        if (!ability) return false;
-        
-        // Check cooldown and energy
-        if (ability.currentCooldown > 0 || character.energy < ability.energyCost) return false;
-        
-        // Check required skill level
-        if (ability.requiredSkill && 
-            !get().hasSkillLevel(ability.requiredSkill.type, ability.requiredSkill.level)) {
-          return false;
-        }
-        
-        return true;
-      },
-      
-      hasSkillLevel: (skillType, level) => {
-        const character = get().selectedCharacter;
-        if (!character) return false;
-        
-        const skill = character.skills.find(s => s.type === skillType);
-        return skill ? skill.level >= level : false;
+      resetCharacter: () => {
+        set({ character: { ...newCharacter } });
+        console.log('Character reset to default');
       }
     }),
     {
-      name: "character-storage", // name of the item in localStorage
-      partialize: (state) => ({ selectedCharacter: state.selectedCharacter }), // only store selected character
+      name: 'character-storage',
+      partialize: (state) => ({ character: state.character })
     }
   )
 );
+
+export default useCharacter;

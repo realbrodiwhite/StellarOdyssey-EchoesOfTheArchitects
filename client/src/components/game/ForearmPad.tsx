@@ -94,10 +94,17 @@ const ForearmPad: React.FC<ForearmPadProps> = ({ onClose }) => {
               key={tab.id}
               onClick={() => {
                 setActiveTab(tab.id);
+                
+                // Handle special tabs
                 if (tab.id === 'companion') {
                   setShowCompanionChat(true);
+                  setShowStoryRecord(false);
+                } else if (tab.id === 'story') {
+                  setShowStoryRecord(true);
+                  setShowCompanionChat(false);
                 } else {
                   setShowCompanionChat(false);
+                  setShowStoryRecord(false);
                 }
               }}
               className={`flex items-center px-4 py-2 text-sm ${
@@ -178,6 +185,36 @@ const ForearmPad: React.FC<ForearmPadProps> = ({ onClose }) => {
                 </div>
               </div>
             </div>
+          )}
+          
+          {/* Missions Tab */}
+          {activeTab === 'missions' && (
+            <div className="h-full">
+              <h3 className="text-blue-300 font-semibold mb-4">Star Quest Missions</h3>
+              <div className="max-h-80 overflow-auto">
+                <StarQuestManager onQuestComplete={() => {}} />
+              </div>
+            </div>
+          )}
+          
+          {/* Story Tab */}
+          {activeTab === 'story' && !showStoryRecord && (
+            <div className="h-full">
+              <h3 className="text-blue-300 font-semibold mb-4">Journey Records</h3>
+              <p className="text-gray-300 mb-4">
+                Access your complete mission history, journey log, and faction relationships.
+              </p>
+              <button 
+                onClick={() => setShowStoryRecord(true)}
+                className="w-full bg-blue-900 hover:bg-blue-800 text-white py-2 rounded-md transition"
+              >
+                View Full Story Record
+              </button>
+            </div>
+          )}
+          
+          {showStoryRecord && (
+            <StoryRecord onClose={() => setShowStoryRecord(false)} />
           )}
           
           {activeTab === 'alerts' && (
