@@ -301,44 +301,50 @@ canvas {
   }
   
   /* Subtle engine glow begins as thrusters engage */
-  70% {
-    transform: translate(-50%, -50%) scale(0.05);
-    opacity: 0.15;
+  68% {
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 0.2;
   }
   
   /* Engine glow intensifies as main engines engage */
+  70% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0.4;
+  }
+  
+  /* Rapid acceleration - blue effect grows dramatically */
   75% {
-    transform: translate(-50%, -50%) scale(0.1);
-    opacity: 0.3;
-  }
-  
-  /* Propulsion effects become visible as ship accelerates */
-  80% {
-    transform: translate(-50%, -50%) scale(0.5);
-    opacity: 0.5;
-  }
-  
-  /* Engine exhaust expands as ship reaches high velocity */
-  85% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.6;
-  }
-  
-  /* Maximum engine burn creates visible distortion */
-  90% {
-    transform: translate(-50%, -50%) scale(1.5);
+    transform: translate(-50%, -50%) scale(0.8);
     opacity: 0.7;
   }
   
-  /* Engine effects start to fade as ship moves away */
+  /* Propulsion effects become highly visible as ship accelerates to warp */
+  80% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.85;
+  }
+  
+  /* Engine exhaust expands dramatically as ship reaches maximum velocity */
+  85% {
+    transform: translate(-50%, -50%) scale(1.8);
+    opacity: 0.9;
+  }
+  
+  /* Maximum engine burn creates intense blue distortion */
+  90% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0.8;
+  }
+  
+  /* Engine effects start to fade as ship moves away at very high speed */
   95% {
-    transform: translate(-50%, -50%) scale(2);
+    transform: translate(-50%, -50%) scale(3);
     opacity: 0.4;
   }
   
   /* Effects dissipate completely */
   100% {
-    transform: translate(-50%, -50%) scale(2.5);
+    transform: translate(-50%, -50%) scale(3.5);
     opacity: 0;
   }
 }
@@ -400,119 +406,83 @@ canvas {
     filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.7));
   }
   
-  /* Begin first barrel roll sequence - using rotateZ for proper barrel roll */
-  23% {
-    transform: translate(-8%, -50%) scale(0.63) rotateZ(90deg);
+  /* Ship moves smoothly left (first segment) */
+  25% {
+    transform: translate(-10%, -50%) scale(0.65);
     filter: drop-shadow(0 0 16px rgba(105, 185, 255, 0.71));
   }
   
-  26% {
-    transform: translate(-12%, -50%) scale(0.65) rotateZ(180deg);
+  30% {
+    transform: translate(-15%, -50%) scale(0.7);
     filter: drop-shadow(0 0 17px rgba(110, 190, 255, 0.72));
   }
   
-  29% {
-    transform: translate(-14%, -50%) scale(0.68) rotateZ(270deg);
-    filter: drop-shadow(0 0 18px rgba(115, 195, 255, 0.74));
-  }
-  
-  /* Complete first barrel roll */
-  32% {
-    transform: translate(-18%, -50%) scale(0.7) rotateZ(360deg);
+  /* Ship continues smooth movement */
+  40% {
+    transform: translate(-20%, -50%) scale(0.75);
     filter: drop-shadow(0 0 19px rgba(120, 200, 255, 0.75));
   }
   
   /* Travel straight for a bit */
-  40% {
-    transform: translate(-22%, -50%) scale(0.8) rotateZ(0deg);
+  50% {
+    transform: translate(-25%, -50%) scale(0.8);
     filter: drop-shadow(0 0 20px rgba(130, 210, 255, 0.8));
   }
   
-  /* Begin second barrel roll */
-  43% {
-    transform: translate(-20%, -50%) scale(0.82) rotateZ(90deg);
-    filter: drop-shadow(0 0 21px rgba(135, 215, 255, 0.81));
-  }
-  
-  46% {
-    transform: translate(-18%, -50%) scale(0.84) rotateZ(180deg);
-    filter: drop-shadow(0 0 22px rgba(140, 220, 255, 0.83));
-  }
-  
-  49% {
-    transform: translate(-16%, -50%) scale(0.86) rotateZ(270deg);
-    filter: drop-shadow(0 0 23px rgba(145, 225, 255, 0.85));
-  }
-  
-  /* Complete second barrel roll */
-  52% {
-    transform: translate(-14%, -50%) scale(0.88) rotateZ(360deg);
-    filter: drop-shadow(0 0 24px rgba(150, 230, 255, 0.87));
-  }
-  
-  /* Ship stabilizes briefly before launching */
+  /* Ship continues smooth travel */
   60% {
-    transform: translate(-10%, -50%) scale(0.9) rotateZ(0deg);
+    transform: translate(-30%, -50%) scale(0.85);
     filter: drop-shadow(0 0 25px rgba(150, 230, 255, 0.9));
   }
   
-  /* Ship begins to engage main engines */
+  /* Ship begins to engage main engines - start of warp effect */
   65% {
-    transform: translate(-25%, -50%) scale(0.85);
+    transform: translate(-40%, -50%) scale(0.85);
     filter: drop-shadow(0 0 27px rgba(155, 230, 255, 0.92));
   }
   
-  /* Ship accelerates */
+  /* Ship begins acceleration with blue effect */
   70% {
-    transform: translate(-50%, -50%) scale(0.8);
+    transform: translate(-80%, -50%) scale(0.8);
     filter: drop-shadow(0 0 29px rgba(160, 235, 255, 0.95));
   }
   
-  /* Ship begins final barrel roll while accelerating */
-  73% {
-    transform: translate(-70%, -50%) scale(0.75) rotateZ(90deg);
+  /* Rapid acceleration - much faster movement when blue effect is visible */
+  75% {
+    transform: translate(-130%, -50%) scale(0.75);
     filter: drop-shadow(0 0 31px rgba(165, 238, 255, 0.97));
   }
   
-  76% {
-    transform: translate(-90%, -50%) scale(0.7) rotateZ(180deg);
+  /* Ship reaches maximum velocity during warp */
+  80% {
+    transform: translate(-180%, -50%) scale(0.7);
     filter: drop-shadow(0 0 33px rgba(170, 240, 255, 0.98));
   }
   
-  79% {
-    transform: translate(-110%, -50%) scale(0.65) rotateZ(270deg);
-    filter: drop-shadow(0 0 35px rgba(175, 243, 255, 1));
-  }
-  
-  /* Complete final barrel roll at high speed */
-  82% {
-    transform: translate(-130%, -50%) scale(0.6) rotateZ(360deg);
-    filter: drop-shadow(0 0 35px rgba(180, 245, 255, 1));
-  }
-  
-  /* Ship continues speeding away */
+  /* Ship at full warp speed */
   85% {
-    transform: translate(-160%, -50%) scale(0.5) rotateZ(0deg);
-    opacity: 0.8;
-    filter: drop-shadow(0 0 30px rgba(170, 235, 255, 0.9));
+    transform: translate(-230%, -50%) scale(0.6);
+    filter: drop-shadow(0 0 35px rgba(175, 243, 255, 1));
+    opacity: 0.9;
   }
   
+  /* Ship continues at high speed */
   90% {
-    transform: translate(-200%, -50%) scale(0.4);
-    opacity: 0.5;
+    transform: translate(-260%, -50%) scale(0.5);
+    opacity: 0.6;
     filter: drop-shadow(0 0 25px rgba(160, 220, 255, 0.7));
   }
   
   /* Ship nearly gone */
   95% {
-    transform: translate(-250%, -50%) scale(0.2);
-    opacity: 0.2;
+    transform: translate(-290%, -50%) scale(0.3);
+    opacity: 0.3;
     filter: drop-shadow(0 0 15px rgba(140, 200, 255, 0.5));
   }
   
   /* Complete disappearance */
   100% {
-    transform: translate(-300%, -50%) scale(0.1);
+    transform: translate(-320%, -50%) scale(0.1);
     opacity: 0;
     filter: drop-shadow(0 0 0px rgba(120, 180, 255, 0));
   }

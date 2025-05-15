@@ -11,12 +11,11 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
   const [isActive, setIsActive] = useState(true);
   
   useEffect(() => {
-    // Set timeout to match the total animation duration
-    // Extended to at least 15 seconds for a more immersive experience
+    // Set timeout to match the total animation duration for a smooth transition
     const animationTimer = setTimeout(() => {
       setIsActive(false);
       onComplete();
-    }, 16000); // Extended to 16 seconds to include barrel rolls and longer flight path
+    }, 15000); // 15 seconds for the full smooth flight path with faster warp sequence
     
     return () => clearTimeout(animationTimer);
   }, [onComplete]);
