@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 import puzzleTemplates from '@/lib/data/puzzle-templates';
 import { PuzzleType } from '@/lib/types';
 import MultiPathPuzzle from './MultiPathPuzzle';
+import ArtifactPuzzleView from './ArtifactPuzzleView';
 import { 
   CircuitBoard, 
   Compass, 
