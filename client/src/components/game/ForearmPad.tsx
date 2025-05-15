@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAchievements } from '@/lib/stores/useAchievements';
 import CompanionChat from './CompanionChat';
-import { Layers, AlertCircle, BarChart3, Zap, Award, Bot } from 'lucide-react';
+import StarQuestManager from './StarQuestManager';
+import StoryRecord from './StoryRecord';
+import { Layers, AlertCircle, BarChart3, Zap, Award, Bot, Map, BookOpen } from 'lucide-react';
 
 interface ForearmPadProps {
   onClose: () => void;
@@ -11,6 +13,7 @@ interface ForearmPadProps {
 const ForearmPad: React.FC<ForearmPadProps> = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState<string>('status');
   const [showCompanionChat, setShowCompanionChat] = useState(false);
+  const [showStoryRecord, setShowStoryRecord] = useState(false);
   
   const { hasUnlockedCompanionAI, achievements } = useAchievements();
   
@@ -18,6 +21,8 @@ const ForearmPad: React.FC<ForearmPadProps> = ({ onClose }) => {
   const tabs = [
     { id: 'status', label: 'Status', icon: <BarChart3 size={18} /> },
     { id: 'systems', label: 'Systems', icon: <Layers size={18} /> },
+    { id: 'missions', label: 'Missions', icon: <Map size={18} /> },
+    { id: 'story', label: 'Story', icon: <BookOpen size={18} /> },
     { id: 'alerts', label: 'Alerts', icon: <AlertCircle size={18} /> },
     { id: 'achievements', label: 'Achievements', icon: <Award size={18} /> }
   ];

@@ -1,316 +1,163 @@
 import { create } from 'zustand';
-import { Location, GameState, Faction } from '../types';
-import { gameLocations } from '../data/locations';
-import { generateExplorationPoints } from '../utils/explorationGenerator';
+import { persist } from 'zustand/middleware';
+import { Faction } from '../types';
 
-// Merged game locations including both predefined and procedurally generated ones
-let allGameLocations: Location[] = [...gameLocations];
-
-// Keep track of exploration points separately for easy access
-let explorationPoints: Location[] = [];
-
-interface StoryState {
-  gameState: GameState;
+export interface StoryState {
+  // Faction reputation data
+  factionReputation: Record<Faction, number>;
   
-  // Getters
-  getCurrentLocation: () => Location | undefined;
-  getLocationById: (id: string) => Location | undefined;
-  getVisitedLocations: () => string[];
-  getDiscoveredLocations: () => string[];
-  canTravelTo: (locationId: string) => boolean;
+  // World state flags
+  worldFlags: string[];
+  storyProgress: Record<string, number>;
   
-  // Exploration management
-  generateExplorationPoints: (seed?: number) => Location[];
-  getExplorationPoints: () => Location[];
-  getAvailableLocations: () => Location[];
-  discoverNearbyExplorationPoints: (currentLocationId: string, chance?: number) => string[];
+  // Player decisions history
+  decisions: {
+    id: string;
+    description: string;
+    timestamp: number;
+    effects: string[];
+  }[];
   
-  // Reputation management
+  // Management functions
   getFactionReputation: (faction: Faction) => number;
-  
-  // Setters
-  moveToLocation: (locationId: string) => boolean;
-  completePuzzle: (puzzleId: string) => void;
-  defeatEnemy: (enemyId: string) => void;
-  setQuestProgress: (questId: string, data: any) => void;
-  setStoryFlag: (flag: string, value: boolean) => void;
-  discoverLocation: (locationId: string) => void;
   changeFactionReputation: (faction: Faction, amount: number) => void;
-  
-  // Internal placeholders (these will be replaced with getters)
-  _tempVisitedLocations: any[];
-  _tempDiscoveredLocations: any[];
+  hasFlag: (flag: string) => boolean;
+  setFlag: (flag: string) => void;
+  removeFlag: (flag: string) => void;
+  addDecision: (description: string, effects: string[]) => void;
+  getStoryProgress: (storyline: string) => number;
+  advanceStoryProgress: (storyline: string, amount?: number) => void;
+  setStoryProgress: (storyline: string, progress: number) => void;
+  resetStory: () => void;
 }
 
-export const useStory = create<StoryState>((set, get) => ({
-  gameState: {
-    currentLocation: "ship", // Start on the player's ship
-    completedPuzzles: [],
-    defeatedEnemies: [],
-    visitedLocations: ["ship"], // Start with the ship as visited
-    discoveredLocations: ["ship", "frontier_outpost"], // Know about the ship and the nearby outpost
-    questProgress: {},
-    storyFlags: {
-      // Initial story flags, if any
-      hasMetCaptain: false,
-      discoveredArtifact: false
-    },
-    worldState: {
-      factionReputation: {
-        [Faction.Alliance]: 0,
-        [Faction.Syndicate]: -10,
-        [Faction.Settlers]: 0,
-        [Faction.Mystics]: 0,
-        [Faction.Independent]: 0,
-        [Faction.VoidEntity]: -20
-      }
-    },
-    currentGameTime: 0,
-    gameStartTime: Date.now(),
-    totalPlayTime: 0,
-    decisions: []
-  },
-  
-  // Getters
-  getCurrentLocation: () => {
-    const { currentLocation } = get().gameState;
-    return allGameLocations.find(loc => loc.id === currentLocation);
-  },
-  
-  getLocationById: (id: string) => {
-    return allGameLocations.find(loc => loc.id === id);
-  },
-  
-  getVisitedLocations: () => {
-    return get().gameState.visitedLocations;
-  },
-  
-  getDiscoveredLocations: () => {
-    return get().gameState.discoveredLocations;
-  },
-  
-  canTravelTo: (locationId: string) => {
-    const currentLocation = get().getCurrentLocation();
-    if (!currentLocation) return false;
-    
-    // Can travel if either:
-    // 1. The location is directly connected to current location
-    // 2. The player has high navigation skill (would need to be implemented)
-    return currentLocation.connections.includes(locationId);
-  },
-  
-  // Exploration Management
-  generateExplorationPoints: (seed = Date.now()) => {
-    // Generate new exploration points based on existing locations
-    explorationPoints = generateExplorationPoints(gameLocations, {
-      baseSeed: seed,
-      baseRegions: Array.from(new Set(gameLocations.map(loc => loc.region || "Unknown"))),
-      densityFactor: 0.7,
-      generateConnections: true
-    });
-    
-    // Update all game locations to include both predefined and procedural
-    allGameLocations = [...gameLocations, ...explorationPoints];
-    
-    return explorationPoints;
-  },
-  
-  getExplorationPoints: () => {
-    // If we haven't generated exploration points yet, do it now with default settings
-    if (explorationPoints.length === 0) {
-      return get().generateExplorationPoints();
-    }
-    
-    return explorationPoints;
-  },
-  
-  getAvailableLocations: () => {
-    // Return all locations that the player has discovered
-    const discoveredIds = get().gameState.discoveredLocations;
-    return allGameLocations.filter(loc => discoveredIds.includes(loc.id));
-  },
-  
-  discoverNearbyExplorationPoints: (currentLocationId: string, chance = 0.5) => {
-    const currentLocation = get().getLocationById(currentLocationId);
-    if (!currentLocation) return [];
-    
-    // Get connected locations that are exploration points and not yet discovered
-    const nearbyPoints = currentLocation.connections
-      .map(id => explorationPoints.find(loc => loc.id === id))
-      .filter(loc => loc && !get().gameState.discoveredLocations.includes(loc.id)) as Location[];
-    
-    // Randomly discover some of these points based on chance
-    const discoveredPoints: string[] = [];
-    nearbyPoints.forEach(point => {
-      // Use a basic random chance for discovery
-      if (Math.random() < chance) {
-        get().discoverLocation(point.id);
-        discoveredPoints.push(point.id);
-      }
-    });
-    
-    return discoveredPoints;
-  },
-  
-  getFactionReputation: (faction: Faction) => {
-    const { worldState } = get().gameState;
-    return worldState.factionReputation[faction] || 0;
-  },
-  
-  // Derived properties
-  get visitedLocations() {
-    return get().gameState.visitedLocations;
-  },
-  
-  get discoveredLocations() {
-    return get().gameState.discoveredLocations;
-  },
-  
-  // Setters
-  moveToLocation: (locationId: string) => {
-    const currentLocation = get().getCurrentLocation();
-    
-    // Ensure the location exists
-    const targetLocation = get().getLocationById(locationId);
-    if (!targetLocation) {
-      console.error(`Location with ID "${locationId}" not found`);
-      return false;
-    }
-    
-    // Check if the location is connected to the current one
-    if (currentLocation && !currentLocation.connections.includes(locationId)) {
-      console.error(`Cannot travel to location "${locationId}" - not connected to current location`);
-      return false;
-    }
-    
-    // Add to visited locations if not already visited
-    let visitedLocations = get().gameState.visitedLocations;
-    if (!visitedLocations.includes(locationId)) {
-      visitedLocations = [...visitedLocations, locationId];
-    }
-    
-    // Move to the location
-    set(state => ({
-      gameState: {
-        ...state.gameState,
-        currentLocation: locationId,
-        visitedLocations
-      }
-    }));
-    
-    // Discover connected locations
-    const newlyDiscoveredLocations = targetLocation.connections.filter(
-      connectedId => !get().gameState.discoveredLocations.includes(connectedId)
-    );
-    
-    if (newlyDiscoveredLocations.length > 0) {
-      set(state => ({
-        gameState: {
-          ...state.gameState,
-          discoveredLocations: [
-            ...state.gameState.discoveredLocations,
-            ...newlyDiscoveredLocations
-          ]
-        }
-      }));
-    }
-    
-    console.log(`Moved to location: ${targetLocation.name}`);
-    return true;
-  },
-  
-  completePuzzle: (puzzleId: string) => {
-    set(state => ({
-      gameState: {
-        ...state.gameState,
-        completedPuzzles: [...state.gameState.completedPuzzles, puzzleId]
-      }
-    }));
-  },
-  
-  defeatEnemy: (enemyId: string) => {
-    set(state => ({
-      gameState: {
-        ...state.gameState,
-        defeatedEnemies: [...state.gameState.defeatedEnemies, enemyId]
-      }
-    }));
-  },
-  
-  setQuestProgress: (questId: string, data: any) => {
-    set(state => ({
-      gameState: {
-        ...state.gameState,
-        questProgress: {
-          ...state.gameState.questProgress,
-          [questId]: {
-            ...state.gameState.questProgress[questId],
-            ...data
-          }
-        }
-      }
-    }));
-  },
-  
-  setStoryFlag: (flag: string, value: boolean) => {
-    set(state => ({
-      gameState: {
-        ...state.gameState,
-        storyFlags: {
-          ...state.gameState.storyFlags,
-          [flag]: value
-        }
-      }
-    }));
-  },
-  
-  discoverLocation: (locationId: string) => {
-    if (get().gameState.discoveredLocations.includes(locationId)) {
-      return; // Already discovered
-    }
-    
-    set(state => ({
-      gameState: {
-        ...state.gameState,
-        discoveredLocations: [...state.gameState.discoveredLocations, locationId]
-      }
-    }));
-  },
-  
-  changeFactionReputation: (faction: Faction, amount: number) => {
-    set(state => ({
-      gameState: {
-        ...state.gameState,
-        worldState: {
-          ...state.gameState.worldState,
+const initialFactionReputations: Record<Faction, number> = {
+  [Faction.Alliance]: 0,
+  [Faction.Syndicate]: 0,
+  [Faction.Settlers]: 0,
+  [Faction.Mystics]: 0,
+  [Faction.Independent]: 0,
+  [Faction.VoidEntity]: -10, // Start slightly negative with mysterious factions
+};
+
+export const useStory = create<StoryState>()(
+  persist(
+    (set, get) => ({
+      factionReputation: { ...initialFactionReputations },
+      worldFlags: [],
+      storyProgress: {},
+      decisions: [],
+      
+      getFactionReputation: (faction: Faction) => {
+        return get().factionReputation[faction] || 0;
+      },
+      
+      changeFactionReputation: (faction: Faction, amount: number) => {
+        const currentRep = get().factionReputation[faction] || 0;
+        const newRep = Math.min(Math.max(currentRep + amount, -100), 100); // Clamp between -100 and 100
+        
+        set(state => ({
           factionReputation: {
-            ...state.gameState.worldState.factionReputation,
-            [faction]: (state.gameState.worldState.factionReputation[faction] || 0) + amount
+            ...state.factionReputation,
+            [faction]: newRep
+          }
+        }));
+        
+        console.log(`${faction} reputation changed by ${amount} to ${newRep}`);
+        
+        // Apply effects on other factions based on relationships
+        // For example, gaining reputation with Alliance might reduce Syndicate rep
+        if (amount > 0) {
+          if (faction === Faction.Alliance) {
+            get().changeFactionReputation(Faction.Syndicate, Math.floor(-amount/3));
+          } else if (faction === Faction.Syndicate) {
+            get().changeFactionReputation(Faction.Alliance, Math.floor(-amount/3));
+          } else if (faction === Faction.VoidEntity) {
+            get().changeFactionReputation(Faction.Mystics, Math.floor(-amount/2));
           }
         }
+      },
+      
+      hasFlag: (flag: string) => {
+        return get().worldFlags.includes(flag);
+      },
+      
+      setFlag: (flag: string) => {
+        if (!get().worldFlags.includes(flag)) {
+          set(state => ({
+            worldFlags: [...state.worldFlags, flag]
+          }));
+          console.log(`Set story flag: ${flag}`);
+        }
+      },
+      
+      removeFlag: (flag: string) => {
+        set(state => ({
+          worldFlags: state.worldFlags.filter(f => f !== flag)
+        }));
+        console.log(`Removed story flag: ${flag}`);
+      },
+      
+      addDecision: (description: string, effects: string[]) => {
+        const decision = {
+          id: `decision_${Date.now()}`,
+          description,
+          timestamp: Date.now(),
+          effects
+        };
+        
+        set(state => ({
+          decisions: [...state.decisions, decision]
+        }));
+        console.log(`Decision recorded: ${description}`);
+      },
+      
+      getStoryProgress: (storyline: string) => {
+        return get().storyProgress[storyline] || 0;
+      },
+      
+      advanceStoryProgress: (storyline: string, amount: number = 1) => {
+        const current = get().storyProgress[storyline] || 0;
+        
+        set(state => ({
+          storyProgress: {
+            ...state.storyProgress,
+            [storyline]: current + amount
+          }
+        }));
+        console.log(`Advanced '${storyline}' storyline by ${amount}`);
+      },
+      
+      setStoryProgress: (storyline: string, progress: number) => {
+        set(state => ({
+          storyProgress: {
+            ...state.storyProgress,
+            [storyline]: progress
+          }
+        }));
+        console.log(`Set '${storyline}' storyline progress to ${progress}`);
+      },
+      
+      resetStory: () => {
+        set({
+          factionReputation: { ...initialFactionReputations },
+          worldFlags: [],
+          storyProgress: {},
+          decisions: []
+        });
+        console.log('Story state reset');
       }
-    }));
-    
-    console.log(`Reputation with ${faction} changed by ${amount}`);
-  },
-  
-  // Use any other property names to avoid conflicts
-  _tempVisitedLocations: [],
-  _tempDiscoveredLocations: []
-}));
+    }),
+    {
+      name: 'story-storage',
+      partialize: (state) => ({
+        factionReputation: state.factionReputation,
+        worldFlags: state.worldFlags,
+        storyProgress: state.storyProgress,
+        decisions: state.decisions
+      })
+    }
+  )
+);
 
-// Update the state store to add the getters we need
-const storeAPI = useStory.getState();
-
-// Define the required properties as getters
-Object.defineProperties(storeAPI, {
-  visitedLocations: {
-    get: function() { return this.gameState.visitedLocations; }
-  },
-  discoveredLocations: {
-    get: function() { return this.gameState.discoveredLocations; }
-  }
-});
-
-// Initialize exploration points at startup
-useStory.getState().generateExplorationPoints();
+export default useStory;

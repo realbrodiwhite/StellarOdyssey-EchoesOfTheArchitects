@@ -1,172 +1,179 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useStarQuest } from '@/lib/stores/useStarQuest';
-import { useCharacter } from '@/lib/stores/useCharacter';
-import { useAudio } from '@/lib/stores/useAudio';
+import useStarQuest from '@/lib/stores/useStarQuest';
+import { MissionTemplate } from '@/lib/data/mission-pool';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
-import { StoryChoice, Quest, StoryStage } from '@/lib/data/star-quest';
 
 interface StoryQuestProps {
-  questId: string;
+  questId?: string;
   onClose?: () => void;
   onComplete?: () => void;
 }
 
-const StoryQuest: React.FC<StoryQuestProps> = ({ questId, onClose, onComplete }) => {
-  const { getQuest, getCurrentStage, getAvailableChoices, canChooseOption, makeChoice } = useStarQuest();
-  const { selectedCharacter } = useCharacter();
-  const audioState = useAudio();
+const StoryQuest: React.FC<StoryQuestProps> = ({ 
+  questId,
+  onClose, 
+  onComplete 
+}) => {
+  const { 
+    getCurrentMission, 
+    startMission, 
+    completeMission, 
+    getMissionById,
+    hasFlag
+  } = useStarQuest();
   
-  const [quest, setQuest] = useState<Quest | undefined>(undefined);
-  const [currentStage, setCurrentStage] = useState<StoryStage | undefined>(undefined);
-  const [availableChoices, setAvailableChoices] = useState<StoryChoice[]>([]);
-  const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
-  const [showAnimation, setShowAnimation] = useState(false);
-  const [showChoices, setShowChoices] = useState(false);
+  const [choiceId, setChoiceId] = useState<string | null>(null);
+  const [showOutcome, setShowOutcome] = useState(false);
+  const [outcomeId, setOutcomeId] = useState<string | null>(null);
+  const [currentMission, setCurrentMission] = useState<MissionTemplate | null>(null);
   
-  // Load quest data
+  // Initialize the mission
   useEffect(() => {
-    const currentQuest = getQuest(questId);
-    if (currentQuest) {
-      setQuest(currentQuest);
-      
-      // Get the current stage
-      const stage = getCurrentStage(questId);
-      setCurrentStage(stage);
-      
-      // Get available choices
-      setAvailableChoices(getAvailableChoices(questId));
-    }
-  }, [questId, getQuest, getCurrentStage, getAvailableChoices]);
-  
-  // Animate text appearance
-  useEffect(() => {
-    if (currentStage) {
-      setShowAnimation(true);
-      
-      // After text animation, show choices
-      const timer = setTimeout(() => {
-        setShowChoices(true);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [currentStage]);
-  
-  const handleChoiceSelect = (choiceId: string) => {
-    setSelectedChoiceId(choiceId);
-  };
-  
-  const handleChoiceConfirm = () => {
-    if (!selectedChoiceId) return;
-    
-    // Play a success sound if available
-    if (useAudio.getState().successSound) {
-      useAudio.getState().playSuccess();
+    // If a specific questId is provided, use that
+    if (questId) {
+      const mission = getMissionById(questId);
+      if (mission) {
+        setCurrentMission(mission);
+        return;
+      }
     }
     
-    const success = makeChoice(questId, selectedChoiceId);
-    if (success) {
-      // Reset animation states
-      setShowAnimation(false);
-      setShowChoices(false);
-      
-      // Update the stage and choices
-      setTimeout(() => {
-        const updatedStage = getCurrentStage(questId);
-        
-        // If we still have a stage, update it
-        if (updatedStage) {
-          setCurrentStage(updatedStage);
-          setAvailableChoices(getAvailableChoices(questId));
-          setSelectedChoiceId(null);
-        } else {
-          // No more stages, quest must be complete
-          if (onComplete) {
-            onComplete();
-          }
-        }
-      }, 500);
+    // Otherwise use the current active mission
+    const activeMission = getCurrentMission();
+    setCurrentMission(activeMission);
+    
+    // If no mission is active or provided, start the first mission
+    if (!activeMission && !questId) {
+      // Default to first mission
+      startMission('distress_signal');
+      const firstMission = getCurrentMission();
+      setCurrentMission(firstMission);
     }
-  };
+  }, [questId, getCurrentMission, getMissionById, startMission]);
   
-  if (!quest || !currentStage) {
+  // No mission available
+  if (!currentMission) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
-        <Card className="w-full max-w-xl p-6 bg-gray-900 text-white">
-          <h2 className="text-2xl font-bold text-center mb-4">Loading Quest...</h2>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
+        <Card className="w-full max-w-2xl bg-gray-900 text-white">
+          <div className="p-6">
+            <h2 className="text-xl font-bold mb-4">No Mission Available</h2>
+            <p>There are no active missions at this time. Check back later or speak with contacts at various locations.</p>
+            <div className="mt-4 flex justify-end">
+              <Button onClick={onClose}>Close</Button>
+            </div>
+          </div>
         </Card>
       </div>
     );
   }
   
+  // Handle making a choice
+  const handleChoice = (choice: { id: string, outcome: string }) => {
+    setChoiceId(choice.id);
+    setOutcomeId(choice.outcome);
+    setShowOutcome(true);
+  };
+  
+  // Handle completing the mission
+  const handleComplete = () => {
+    if (choiceId && outcomeId) {
+      completeMission(choiceId, outcomeId);
+      
+      if (onComplete) {
+        onComplete();
+      } else if (onClose) {
+        onClose();
+      }
+    }
+  };
+  
+  // Get the outcome text if a choice has been made
+  const getOutcomeText = () => {
+    if (!outcomeId || !currentMission) return null;
+    
+    const outcome = currentMission.outcomes.find(o => o.id === outcomeId);
+    return outcome?.text || null;
+  };
+  
+  // Check if a choice has requirements and if they're met
+  const canChoose = (choice: { id: string; text: string; requiredFlags?: string[]; outcome: string }) => {
+    // Check for required flags
+    if (choice.requiredFlags && choice.requiredFlags.length > 0) {
+      if (!choice.requiredFlags.every((flag: string) => hasFlag(flag))) {
+        return false;
+      }
+    }
+    
+    // We'll add more checks later (items, faction reputation, etc.)
+    return true;
+  };
+  
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-75 p-4">
-      <Card className="w-full max-w-xl bg-gray-900 shadow-lg overflow-hidden">
-        <div className="bg-blue-900 p-4">
-          <h2 className="text-2xl font-bold text-white">{quest.title}</h2>
-          <p className="text-blue-200 text-sm">{currentStage.title}</p>
-        </div>
-        
-        <div className="p-6 bg-gray-800 min-h-[200px]">
-          <AnimatePresence mode="wait">
-            {showAnimation && (
-              <motion.div
-                className="text-gray-200 text-base"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {currentStage.description}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-        
-        <AnimatePresence>
-          {showChoices && (
-            <motion.div
-              className="p-4 bg-gray-900 space-y-3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-            >
-              <h3 className="text-lg font-medium text-blue-300 mb-2">Your Decision:</h3>
-              
-              <div className="space-y-2">
-                {availableChoices.map((choice) => (
-                  <div
-                    key={choice.id}
-                    className={`p-3 border rounded-md cursor-pointer transition-all ${
-                      selectedChoiceId === choice.id
-                        ? 'border-blue-500 bg-blue-900 bg-opacity-50'
-                        : 'border-gray-700 hover:border-blue-400 bg-gray-800'
-                    }`}
-                    onClick={() => handleChoiceSelect(choice.id)}
-                  >
-                    <p className="text-gray-200">{choice.text}</p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={showOutcome ? 'outcome' : 'mission'}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.2 }}
+          className="w-full max-w-2xl"
+        >
+          <Card className="bg-gray-900 text-white overflow-hidden">
+            <div className="p-6">
+              {!showOutcome ? (
+                <>
+                  <h2 className="text-2xl font-bold mb-2">{currentMission.title}</h2>
+                  <p className="text-gray-300 mb-6">{currentMission.description}</p>
+                  
+                  <h3 className="text-lg font-semibold mb-3">Options:</h3>
+                  <div className="space-y-3">
+                    {currentMission.choices.map(choice => (
+                      <Button
+                        key={choice.id}
+                        onClick={() => handleChoice(choice)}
+                        className="w-full justify-start text-left p-4 h-auto"
+                        disabled={!canChoose(choice)}
+                        variant={canChoose(choice) ? "default" : "outline"}
+                      >
+                        {choice.text}
+                        {!canChoose(choice) && (
+                          <span className="ml-2 text-red-400 text-sm">(Requirements not met)</span>
+                        )}
+                      </Button>
+                    ))}
                   </div>
-                ))}
-              </div>
-              
-              <div className="pt-4 flex justify-center">
-                <Button
-                  variant="default"
-                  size="lg"
-                  disabled={!selectedChoiceId}
-                  onClick={handleChoiceConfirm}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2"
-                >
-                  Confirm Decision
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </Card>
+                  
+                  {onClose && (
+                    <div className="mt-6 flex justify-end">
+                      <Button 
+                        variant="outline" 
+                        onClick={onClose}
+                      >
+                        Close
+                      </Button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <h2 className="text-xl font-bold mb-4">Outcome</h2>
+                  <div className="bg-gray-800 p-4 rounded-md mb-6">
+                    <p className="text-gray-200">{getOutcomeText()}</p>
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <Button onClick={handleComplete}>Continue</Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </Card>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };
