@@ -39,6 +39,7 @@ const EmergencyEncounter = ({ onComplete }: EmergencyEncounterProps) => {
   useEffect(() => {
     // Play alarm sound when the encounter starts
     playAlarm();
+    console.log("Emergency encounter started - playing alarm sound");
     
     // Show the autopilot button after a delay
     const timer = setTimeout(() => {
@@ -46,6 +47,7 @@ const EmergencyEncounter = ({ onComplete }: EmergencyEncounterProps) => {
       setDialogText("CRITICAL ALERT: Ship under attack!");
       setDialogDetails("Warp field collapsed. Multiple hostile vessels detected using stolen military tech!");
       playExplosion();
+      console.log("Playing explosion sound effect");
     }, 3000);
     
     return () => {

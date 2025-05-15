@@ -23,6 +23,7 @@ import ForearmPad from "./ForearmPad";
 import TechnicalPuzzle from "./TechnicalPuzzle";
 import SaveLoadMenu from "./SaveLoadMenu";
 import EmergencyEncounter from "./EmergencyEncounter";
+import ShipLaunchAnimation from "./ShipLaunchAnimation";
 
 interface SpaceEnvironmentProps {
   onEnterCombat: () => void;
@@ -95,25 +96,8 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
       // Don't handle keypresses during transitions
       if (isTransitioning) return;
       
-      // Track first player input for pirate ambush timer (113 seconds)
-      if (firstInputTime === null) {
-        console.log("First player input detected! Starting 113-second countdown to pirate ambush.");
-        const currentTime = Date.now();
-        setFirstInputTime(currentTime);
-        
-        // Schedule pirate ambush after exactly 113 seconds from first input
-        if (!pirateAmbushScheduled) {
-          setPirateAmbushScheduled(true);
-          
-          const ambushTimer = setTimeout(() => {
-            console.log("113 seconds passed! Triggering pirate ambush!");
-            setShowEmergencyEncounter(true);
-          }, 113000); // 113 seconds in milliseconds
-          
-          // Return cleanup function to cancel timer if component unmounts
-          return () => clearTimeout(ambushTimer);
-        }
-      }
+      // Emergency encounter is now triggered immediately on component mount
+      // No need for the 113-second timer
       
       if (e.key === "n" || e.key === "N") {
         toggleNavigationConsole();
@@ -134,7 +118,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isTransitioning, showStarMap, showNavigationConsole, toggleNavigationConsole, firstInputTime, pirateAmbushScheduled]);
+  }, [isTransitioning, showStarMap, showNavigationConsole, toggleNavigationConsole]);
   
   const toggleStarMap = () => {
     setShowStarMap(prev => !prev);
@@ -152,10 +136,6 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
       achievements.completeAchievement(emergencyAchievement.id);
       console.log("Emergency Response achievement completed!");
     }
-    
-    // Reset the first input timer
-    setFirstInputTime(null);
-    setPirateAmbushScheduled(false);
     
     // Resume normal travel to the destination
     console.log("Emergency encounter completed, continuing travel");
