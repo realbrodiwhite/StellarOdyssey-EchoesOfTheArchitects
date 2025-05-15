@@ -9,7 +9,7 @@ interface CharacterState {
   selectedCharacter: Character | null;
   
   // Character selection and management
-  selectCharacter: (characterClass: string | any) => void;
+  selectCharacter: (characterOrClass: Character | string | any) => void;
   resetCharacter: () => void;
   updateCharacter: (updates: Partial<Character>) => void;
   
@@ -42,16 +42,69 @@ export const useCharacter = create<CharacterState>()(
     (set, get) => ({
       selectedCharacter: null,
       
-      selectCharacter: (characterClass) => {
+      selectCharacter: (characterOrClass) => {
+        console.log("Selecting character:", characterOrClass);
+        
+        // Check if we're receiving a full Character object or just a class
+        if (typeof characterOrClass === 'object' && characterOrClass !== null) {
+          // It's a full Character object from expanded templates
+          const character = characterOrClass as Character;
+          
+          // Generate the common core skills every character should have
+          const coreSkills = generateCoreSkills();
+          
+          // Create a map of existing skill types to avoid duplicating similar skills
+          const existingSkillTypes = new Map();
+          character.skills.forEach(skill => {
+            const key = `${skill.type}-${skill.name}`;
+            existingSkillTypes.set(key, true);
+          });
+          
+          // Filter out core skills that would duplicate existing skills
+          const filteredCoreSkills = coreSkills.filter(coreSkill => {
+            const key = `${coreSkill.type}-${coreSkill.name}`;
+            return !existingSkillTypes.has(key);
+          });
+          
+          // Combine character-specific skills with filtered core skills
+          const combinedSkills = [...character.skills, ...filteredCoreSkills];
+          
+          const selectedCharacter = { 
+            ...character,
+            skills: combinedSkills
+          };
+          
+          console.log("Setting selected character from expanded templates:", selectedCharacter);
+          
+          set({ selectedCharacter });
+          return;
+        }
+        
+        // Handle legacy method (receiving just class name/enum)
+        const characterClass = characterOrClass;
         console.log("Selecting character with class:", characterClass);
         
-        // Check if characterClass is an enum value or a string
+        // First try to find in expanded templates
         let template;
-        if (typeof characterClass === 'string') {
-          template = characterTemplates.find(c => c.class.toString() === characterClass);
-        } else {
-          // If it's an enum value, compare directly
-          template = characterTemplates.find(c => c.class === characterClass);
+        
+        // Try expanded templates first
+        if (expandedCharacterTemplates.length > 0) {
+          if (typeof characterClass === 'string') {
+            template = expandedCharacterTemplates.find(c => c.class.toString() === characterClass && c.gender === Gender.Male);
+          } else {
+            // If it's an enum value, compare directly
+            template = expandedCharacterTemplates.find(c => c.class === characterClass && c.gender === Gender.Male);
+          }
+        }
+        
+        // Fall back to original templates if needed
+        if (!template) {
+          if (typeof characterClass === 'string') {
+            template = characterTemplates.find(c => c.class.toString() === characterClass);
+          } else {
+            // If it's an enum value, compare directly
+            template = characterTemplates.find(c => c.class === characterClass);
+          }
         }
         
         console.log("Found template:", template);
@@ -78,7 +131,9 @@ export const useCharacter = create<CharacterState>()(
           
           const selectedCharacter = { 
             ...template,
-            skills: combinedSkills
+            skills: combinedSkills,
+            // Ensure gender is set if using original templates 
+            gender: template.gender || Gender.Male
           };
           
           console.log("Setting selected character:", selectedCharacter);
