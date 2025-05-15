@@ -15,7 +15,7 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
     const animationTimer = setTimeout(() => {
       setIsActive(false);
       onComplete();
-    }, 16500); // 16.5 seconds for the enhanced flight path with dynamic warp sequence
+    }, 17500); // 17.5 seconds for the enhanced flight path with more realistic spaceship entry/exit
     
     return () => clearTimeout(animationTimer);
   }, [onComplete]);

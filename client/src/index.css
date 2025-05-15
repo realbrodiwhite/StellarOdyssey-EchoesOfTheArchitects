@@ -1417,9 +1417,9 @@ canvas {
   }
   
   /* Ship begins to pass by - pronounced correction from overshoot */
-  25% {
-    transform: translate(-12%, -49%) scale(0.72) perspective(1200px) rotateY(-3deg) rotateX(-1deg);
-    filter: drop-shadow(0 0 20px rgba(140, 215, 255, 0.85));
+  27% {
+    transform: translate(-8%, -49.5%) scale(0.73) perspective(1200px) rotateY(-2deg) rotateX(-0.5deg);
+    filter: drop-shadow(0 0 19px rgba(135, 212, 255, 0.82)) brightness(1.09);
   }
   
   /* Continuing movement with exaggerated rubber band physics */
