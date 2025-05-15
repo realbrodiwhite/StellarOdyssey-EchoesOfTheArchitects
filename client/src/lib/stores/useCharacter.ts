@@ -10,6 +10,7 @@ interface CharacterState {
   // Character selection and management
   selectCharacter: (characterClass: string | any) => void;
   resetCharacter: () => void;
+  updateCharacter: (updates: Partial<Character>) => void;
   
   // Stats and progression
   gainExperience: (amount: number) => void;
@@ -87,6 +88,18 @@ export const useCharacter = create<CharacterState>()(
       
       resetCharacter: () => {
         set({ selectedCharacter: null });
+      },
+      
+      updateCharacter: (updates) => {
+        const character = get().selectedCharacter;
+        if (!character) return;
+        
+        set({
+          selectedCharacter: {
+            ...character,
+            ...updates
+          }
+        });
       },
       
       gainExperience: (amount) => {
