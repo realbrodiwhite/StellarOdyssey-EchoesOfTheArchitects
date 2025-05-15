@@ -175,7 +175,7 @@ canvas {
   background-size: 1500px 800px;
   opacity: 0.4;
   will-change: transform;
-  animation: twinkling 80s linear infinite, starsDistantParallax 8s ease-in-out infinite;
+  animation: twinkling 80s linear infinite, starsDistantParallax 18s ease-in-out infinite;
   transform: translateZ(-100px);
   z-index: 1001;
   pointer-events: none;
@@ -194,14 +194,32 @@ canvas {
   0% {
     transform: translateX(5%) translateY(3%) translateZ(-50px);
   }
-  25% {
-    transform: translateX(-7%) translateY(-5%) translateZ(-50px);
+  10% {
+    transform: translateX(2%) translateY(0%) translateZ(-50px);
+  }
+  20% {
+    transform: translateX(-2%) translateY(-2%) translateZ(-50px);
+  }
+  30% {
+    transform: translateX(-5%) translateY(-4%) translateZ(-50px);
+  }
+  40% {
+    transform: translateX(-7%) translateY(-2%) translateZ(-50px);
   }
   50% {
-    transform: translateX(-12%) translateY(4%) translateZ(-50px);
+    transform: translateX(-8%) translateY(1%) translateZ(-50px);
   }
-  75% {
-    transform: translateX(8%) translateY(-7%) translateZ(-50px);
+  60% {
+    transform: translateX(-6%) translateY(3%) translateZ(-50px);
+  }
+  70% {
+    transform: translateX(-2%) translateY(4%) translateZ(-50px);
+  }
+  80% {
+    transform: translateX(2%) translateY(3%) translateZ(-50px);
+  }
+  90% {
+    transform: translateX(4%) translateY(1%) translateZ(-50px);
   }
   100% {
     transform: translateX(5%) translateY(3%) translateZ(-50px);
@@ -212,14 +230,32 @@ canvas {
   0% {
     transform: translateX(3%) translateY(2%) translateZ(-100px);
   }
-  25% {
-    transform: translateX(-4%) translateY(-3%) translateZ(-100px);
+  10% {
+    transform: translateX(2%) translateY(0%) translateZ(-100px);
+  }
+  20% {
+    transform: translateX(0%) translateY(-1%) translateZ(-100px);
+  }
+  30% {
+    transform: translateX(-2%) translateY(-2%) translateZ(-100px);
+  }
+  40% {
+    transform: translateX(-3%) translateY(-1%) translateZ(-100px);
   }
   50% {
-    transform: translateX(-6%) translateY(2%) translateZ(-100px);
+    transform: translateX(-4%) translateY(0%) translateZ(-100px);
   }
-  75% {
-    transform: translateX(5%) translateY(-4%) translateZ(-100px);
+  60% {
+    transform: translateX(-3%) translateY(1%) translateZ(-100px);
+  }
+  70% {
+    transform: translateX(-1%) translateY(2%) translateZ(-100px);
+  }
+  80% {
+    transform: translateX(1%) translateY(2%) translateZ(-100px);
+  }
+  90% {
+    transform: translateX(2%) translateY(1%) translateZ(-100px);
   }
   100% {
     transform: translateX(3%) translateY(2%) translateZ(-100px);
@@ -462,7 +498,7 @@ canvas {
   height: min(135px, 19vw); /* Maintain aspect ratio */
   transform: translate(-50%, -50%) scale(0.7);
   z-index: 1004;
-  animation: shipWarpRealistic 15s forwards, shipRubberBand 15s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+  animation: shipWarpRealistic 15s forwards, shipRubberBand 18s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   will-change: transform, filter, opacity;
   filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.8)) drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.5));
   transform-origin: center center;
@@ -564,49 +600,66 @@ canvas {
 }
 
 @keyframes shipRubberBand {
-  /* Starting position - moderately off-center */
+  /* These positions create a smooth path with consistent motion */
+  
+  /* Starting position - offset from center */
   0% {
-    transform: translate(-65%, -58%) rotate(2deg);
+    transform: translate(-60%, -55%) rotate(1deg);
   }
   
-  /* Ship drifts far to upper right - up to 60% off center */
-  12% {
-    transform: translate(-20%, -35%) rotate(-3deg);
+  /* Gradual drift to upper right corner */
+  10% {
+    transform: translate(-45%, -40%) rotate(0deg);
   }
   
-  /* Begin very slow transition back - still far from center */
-  24% {
-    transform: translate(-30%, -40%) rotate(1.5deg);
+  /* Continue drifting right - up to 60% off center */
+  20% {
+    transform: translate(-25%, -35%) rotate(-1deg);
   }
   
-  /* Continue slow drift across screen */
-  36% {
-    transform: translate(-95%, -65%) rotate(-2.5deg);
+  /* Hold briefly at far right position */
+  25% {
+    transform: translate(-20%, -38%) rotate(-1.5deg);
   }
   
-  /* Reaching maximum left drift - up to 60% off center */
-  48% {
-    transform: translate(-110%, -60%) rotate(1.8deg);
+  /* Begin slow transition across - smoother curve */
+  35% {
+    transform: translate(-35%, -45%) rotate(-0.5deg);
   }
   
-  /* Begin slow return from far left */
-  60% {
-    transform: translate(-90%, -45%) rotate(-1.2deg);
+  /* Cross center with smooth movement */
+  45% {
+    transform: translate(-55%, -52%) rotate(0.5deg);
   }
   
-  /* Swing toward upper position */
-  72% {
-    transform: translate(-40%, -25%) rotate(2.2deg);
+  /* Continue to far left - up to 60% off center */
+  55% {
+    transform: translate(-75%, -58%) rotate(1deg);
   }
   
-  /* Drift to upper right again */
-  84% {
-    transform: translate(-25%, -30%) rotate(-1.5deg);
+  /* Maximum left position */
+  65% {
+    transform: translate(-90%, -60%) rotate(1.5deg);
   }
   
-  /* Return to starting off-center position for loop */
+  /* Hold briefly at maximum left position */
+  70% {
+    transform: translate(-85%, -55%) rotate(1deg);
+  }
+  
+  /* Begin gentle return */
+  80% {
+    transform: translate(-70%, -50%) rotate(0.5deg);
+  }
+  
+  /* Continue smooth return */
+  90% {
+    transform: translate(-55%, -52%) rotate(0deg);
+  }
+  
+  /* Return to original position for seamless loop */
   100% {
-    transform: translate(-65%, -58%) rotate(2deg);
+    transform: translate(-60%, -55%) rotate(1deg);
   }
 }
 
@@ -811,25 +864,59 @@ canvas {
     filter: blur(4px) brightness(1.1) hue-rotate(5deg);
     background: linear-gradient(
       to left, 
-      rgba(160, 220, 255, 0.95),
-      rgba(140, 200, 255, 0.75) 30%, 
-      rgba(120, 180, 255, 0.55) 60%, 
+      rgba(170, 225, 255, 0.95),
+      rgba(150, 210, 255, 0.8) 25%, 
+      rgba(130, 195, 255, 0.65) 50%, 
+      rgba(110, 180, 255, 0.5) 75%,
       rgba(100, 160, 255, 0) 100%
     );
   }
   
-  /* Pre-warp acceleration - thrust significantly increases - hotter blue */
+  /* Pre-warp acceleration phase 1 - smoother transition */
+  56% {
+    opacity: 0.65;
+    width: 50%;
+    height: 33%;
+    filter: blur(4.5px) brightness(1.15) hue-rotate(0deg);
+    background: linear-gradient(
+      to left, 
+      rgba(180, 230, 255, 0.95),
+      rgba(160, 215, 255, 0.8) 25%, 
+      rgba(140, 200, 255, 0.65) 50%,
+      rgba(120, 185, 255, 0.5) 75%, 
+      rgba(110, 170, 255, 0) 100%
+    );
+  }
+  
+  /* Pre-warp acceleration phase 2 - thrust significantly increases - hotter blue */
   62% {
     opacity: 0.7;
     width: 60%;
     height: 35%;
-    filter: blur(5px) brightness(1.2) hue-rotate(0deg);
+    filter: blur(5px) brightness(1.2) hue-rotate(-5deg);
     background: linear-gradient(
       to left, 
-      rgba(170, 230, 255, 0.95),
-      rgba(150, 210, 255, 0.8) 30%, 
-      rgba(130, 190, 255, 0.6) 60%, 
+      rgba(190, 235, 255, 0.95),
+      rgba(170, 225, 255, 0.85) 25%, 
+      rgba(150, 210, 255, 0.7) 50%,
+      rgba(130, 195, 255, 0.55) 75%, 
       rgba(110, 170, 255, 0) 100%
+    );
+  }
+  
+  /* Pre-warp acceleration phase 3 - final preparation for warp jump */
+  66% {
+    opacity: 0.8;
+    width: 80%;
+    height: 40%;
+    filter: blur(6px) brightness(1.3) hue-rotate(-10deg) saturate(1.1);
+    background: linear-gradient(
+      to left, 
+      rgba(210, 240, 255, 0.97),
+      rgba(190, 230, 255, 0.9) 25%, 
+      rgba(170, 220, 255, 0.75) 50%,
+      rgba(150, 210, 255, 0.6) 75%, 
+      rgba(130, 190, 255, 0) 100%
     );
   }
   
