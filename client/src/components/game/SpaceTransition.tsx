@@ -15,7 +15,7 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
     const animationTimer = setTimeout(() => {
       setIsActive(false);
       onComplete();
-    }, 15000); // 15 seconds for the full smooth flight path with faster warp sequence
+    }, 16500); // 16.5 seconds for the enhanced flight path with dynamic warp sequence
     
     return () => clearTimeout(animationTimer);
   }, [onComplete]);
@@ -99,6 +99,8 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
           <div className="engine-glow"></div>
           <div className="engine-glow-secondary"></div>
           <div className="engine-exhaust"></div>
+          <div className="engine-exhaust-outer"></div>
+          <div className="ship-shield-effect"></div>
           <img 
             src="/images/spaceship-fixed.svg" 
             alt="Spaceship" 
