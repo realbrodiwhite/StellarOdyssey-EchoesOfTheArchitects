@@ -440,54 +440,159 @@ canvas {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: min(240px, 35vw); /* Responsive width based on viewport width */
-  height: min(120px, 18vw); /* Maintain aspect ratio */
+  width: min(270px, 38vw); /* Slightly larger responsive width */
+  height: min(135px, 19vw); /* Maintain aspect ratio */
   transform: translate(-50%, -50%) scale(0.7);
   z-index: 1004;
   animation: shipWarpRealistic 15s forwards;
-  will-change: transform;
+  will-change: transform, filter, opacity;
   filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.8)) drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.5));
   transform-origin: center center;
   transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
+/* Main hull highlight effect */
 .svg-ship-container::before {
   content: '';
   position: absolute;
-  top: 35%;
-  left: 15%;
-  width: 40%;
-  height: 40%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
-  opacity: 0.3;
+  top: 28%;
+  left: 12%;
+  width: 45%;
+  height: 38%;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0.35;
+  z-index: 1005;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transform: rotate(-5deg) skew(-10deg);
+}
+
+/* Secondary hull highlight */
+.svg-ship-container::after {
+  content: '';
+  position: absolute;
+  top: 56%;
+  left: 32%;
+  width: 28%;
+  height: 25%;
+  background: radial-gradient(ellipse, rgba(220, 240, 255, 0.8) 0%, rgba(220, 240, 255, 0.1) 40%, rgba(220, 240, 255, 0) 70%);
+  opacity: 0.25;
   z-index: 1005;
   pointer-events: none;
   mix-blend-mode: screen;
 }
 
-.svg-ship-container::after {
-  content: '';
+/* Engine glow effect */
+.engine-glow {
   position: absolute;
   bottom: 40%;
-  right: 35%;
-  width: 25%;
-  height: 25%;
-  background: radial-gradient(circle, rgba(100, 180, 255, 0.9) 0%, rgba(100, 180, 255, 0) 80%);
-  opacity: 0.5;
+  right: 5%;
+  width: 28%;
+  height: 28%;
+  background: radial-gradient(ellipse, rgba(50, 170, 255, 0.95) 0%, rgba(90, 180, 255, 0.6) 30%, rgba(100, 180, 255, 0) 80%);
+  opacity: 0.7;
   z-index: 1006;
   pointer-events: none;
   mix-blend-mode: screen;
-  animation: engineGlow 2s infinite alternate;
+  filter: blur(2px);
+  animation: engineGlow 1.5s infinite alternate;
+  transform-origin: center right;
+}
+
+/* Secondary engine glow */
+.engine-glow-secondary {
+  position: absolute;
+  bottom: 45%;
+  right: 3%;
+  width: 15%;
+  height: 18%;
+  background: radial-gradient(ellipse, rgba(200, 240, 255, 1) 0%, rgba(130, 210, 255, 0.7) 20%, rgba(100, 180, 255, 0) 70%);
+  opacity: 0.9;
+  z-index: 1007;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  filter: blur(1px);
+  animation: engineGlowSecondary 2.5s infinite alternate-reverse;
+  transform-origin: center right;
+}
+
+/* Engine exhaust trail effect that gets more intense during warp */
+.engine-exhaust {
+  position: absolute;
+  top: 50%;
+  right: -10%;
+  width: 40%;
+  height: 30%;
+  transform: translateY(-50%);
+  background: linear-gradient(to left, rgba(140, 220, 255, 0.9), rgba(100, 180, 255, 0.6) 30%, rgba(80, 150, 255, 0.3) 60%, rgba(60, 120, 255, 0) 100%);
+  opacity: 0;
+  z-index: 1003;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  filter: blur(3px);
+  animation: engineExhaust 15s forwards;
 }
 
 @keyframes engineGlow {
   0% {
-    opacity: 0.3;
-    transform: scale(0.95);
+    opacity: 0.5;
+    transform: scale(0.92) translateX(-2px);
+    filter: blur(2px) brightness(0.9);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(0.96) translateX(-1px);
+    filter: blur(2.5px) brightness(1);
   }
   100% {
-    opacity: 0.6;
+    opacity: 0.8;
+    transform: scale(1) translateX(0);
+    filter: blur(3px) brightness(1.1);
+  }
+}
+
+@keyframes engineGlowSecondary {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.9);
+    filter: blur(1px) brightness(0.95);
+  }
+  50% {
+    opacity: 0.85;
     transform: scale(1.05);
+    filter: blur(1.5px) brightness(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: blur(2px) brightness(1.15);
+  }
+}
+
+@keyframes engineExhaust {
+  0% {
+    opacity: 0;
+    width: 10%;
+  }
+  62% {
+    opacity: 0.2;
+    width: 20%;
+  }
+  70% {
+    opacity: 0.7;
+    width: 80%;
+    filter: blur(4px);
+  }
+  85% {
+    opacity: 0.9;
+    width: 120%;
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 0;
+    width: 150%;
+    filter: blur(8px);
   }
 }
 
@@ -497,140 +602,205 @@ canvas {
   display: block;
   max-width: 100%;
   object-fit: contain;
-  filter: contrast(1.2) saturate(1.1);
+  filter: contrast(1.2) saturate(1.15) brightness(1.05);
 }
 
 @keyframes shipWarpRealistic {
   /* Ship starts from right side, far away */
   0% {
-    transform: translate(150%, -50%) scale(0.1) perspective(800px) rotateY(15deg);
+    transform: translate(150%, -50%) scale(0.1) perspective(1200px) rotateY(22deg) rotateX(5deg);
     opacity: 0;
-    filter: drop-shadow(0 0 5px rgba(100, 180, 255, 0.3));
+    filter: drop-shadow(0 0 5px rgba(100, 180, 255, 0.3)) blur(1px);
   }
   
-  /* Ship approaches from right, becoming visible */
-  5% {
-    transform: translate(120%, -52%) scale(0.2) perspective(800px) rotateY(10deg);
+  /* Ship approaches from right, becoming visible with realistic perspective */
+  3% {
+    transform: translate(135%, -52%) scale(0.15) perspective(1200px) rotateY(18deg) rotateX(3deg);
+    opacity: 0.3;
+    filter: drop-shadow(0 0 6px rgba(100, 180, 255, 0.35)) blur(0.8px);
+  }
+  
+  /* Ship continues approaching with more detailed motion */
+  6% {
+    transform: translate(120%, -51%) scale(0.2) perspective(1200px) rotateY(14deg) rotateX(2deg);
     opacity: 0.5;
-    filter: drop-shadow(0 0 8px rgba(100, 180, 255, 0.4));
+    filter: drop-shadow(0 0 8px rgba(100, 180, 255, 0.4)) blur(0.6px);
   }
   
-  /* Ship gets closer, continuing approach - slightly above center */
+  /* Ship gets closer, continuing approach - with slight tilt variation */
   10% {
-    transform: translate(80%, -48%) scale(0.35) perspective(800px) rotateY(5deg);
+    transform: translate(100%, -49%) scale(0.25) perspective(1200px) rotateY(11deg) rotateX(1deg);
+    opacity: 0.6;
+    filter: drop-shadow(0 0 9px rgba(100, 180, 255, 0.45)) blur(0.4px);
+  }
+  
+  /* Ship approaches more, becoming clearer */
+  13% {
+    transform: translate(80%, -50%) scale(0.32) perspective(1200px) rotateY(7deg) rotateX(0.5deg);
     opacity: 0.8;
-    filter: drop-shadow(0 0 10px rgba(100, 180, 255, 0.5));
+    filter: drop-shadow(0 0 10px rgba(100, 180, 255, 0.5)) blur(0.2px);
+  }
+  
+  /* Ship continues approach with more subtle movements */
+  16% {
+    transform: translate(60%, -48%) scale(0.4) perspective(1200px) rotateY(5deg) rotateX(-0.5deg);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 11px rgba(100, 180, 255, 0.55));
   }
   
   /* Ship approaching, small vertical movement for realism */
-  15% {
-    transform: translate(40%, -51%) scale(0.5) perspective(800px) rotateY(2deg);
+  18% {
+    transform: translate(40%, -51%) scale(0.48) perspective(1200px) rotateY(3deg) rotateX(1deg);
     opacity: 1;
     filter: drop-shadow(0 0 12px rgba(100, 180, 255, 0.6));
   }
   
-  /* Ship reaches center area - at maximum size (closest to viewer) */
+  /* Ship nears center, growing larger as if coming closer */
   20% {
-    transform: translate(0%, -50%) scale(0.7) perspective(800px) rotateY(0deg);
-    filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.7));
+    transform: translate(20%, -50%) scale(0.55) perspective(1200px) rotateY(1deg) rotateX(0deg);
+    filter: drop-shadow(0 0 13px rgba(105, 185, 255, 0.65));
   }
   
-  /* Ship moves smoothly left - begins to get smaller as if moving away */
+  /* Ship reaches center area - at maximum size (closest to viewer) */
+  22% {
+    transform: translate(0%, -50%) scale(0.7) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    filter: drop-shadow(0 0 15px rgba(110, 190, 255, 0.7));
+  }
+  
+  /* Ship begins to pass by - starting to move left */
   25% {
-    transform: translate(-10%, -49%) scale(0.65) perspective(800px) rotateY(-2deg);
-    filter: drop-shadow(0 0 16px rgba(105, 185, 255, 0.71));
+    transform: translate(-10%, -49%) scale(0.68) perspective(1200px) rotateY(-2deg) rotateX(-0.5deg);
+    filter: drop-shadow(0 0 16px rgba(115, 195, 255, 0.72));
   }
   
-  /* Continuing movement with slight vertical variation */
-  30% {
-    transform: translate(-15%, -51%) scale(0.68) perspective(800px) rotateY(-3deg);
-    filter: drop-shadow(0 0 17px rgba(110, 190, 255, 0.72));
+  /* Continuing movement with slight vertical and perspective variation */
+  28% {
+    transform: translate(-15%, -51%) scale(0.65) perspective(1200px) rotateY(-3deg) rotateX(0.5deg);
+    filter: drop-shadow(0 0 17px rgba(120, 200, 255, 0.74));
   }
   
-  /* Ship moves slightly out then back in (z-axis movement simulation) */
-  35% {
-    transform: translate(-18%, -50%) scale(0.64) perspective(800px) rotateY(-1deg);
-    filter: drop-shadow(0 0 18px rgba(115, 195, 255, 0.74));
+  /* Ship moves "behind" viewer slightly (z-axis movement simulation) */
+  32% {
+    transform: translate(-18%, -50%) scale(0.62) perspective(1200px) rotateY(-4deg) rotateX(-1deg);
+    filter: drop-shadow(0 0 18px rgba(125, 205, 255, 0.76));
   }
   
-  /* Ship continues movement - coming closer again */
+  /* Ship changes course slightly - subtle natural movement */
+  36% {
+    transform: translate(-21%, -48%) scale(0.64) perspective(1200px) rotateY(-2deg) rotateX(-1.5deg);
+    filter: drop-shadow(0 0 19px rgba(130, 210, 255, 0.78));
+  }
+  
+  /* Ship continues movement - coming closer to viewer again */
   40% {
-    transform: translate(-20%, -48%) scale(0.72) perspective(800px) rotateY(1deg);
-    filter: drop-shadow(0 0 19px rgba(120, 200, 255, 0.75));
+    transform: translate(-24%, -49%) scale(0.69) perspective(1200px) rotateY(0deg) rotateX(-1deg);
+    filter: drop-shadow(0 0 20px rgba(135, 215, 255, 0.8));
   }
   
-  /* Travel with slight pitch and distance variations */
-  45% {
-    transform: translate(-22%, -52%) scale(0.76) perspective(800px) rotateY(2deg) rotateX(1deg);
-    filter: drop-shadow(0 0 20px rgba(125, 205, 255, 0.77));
+  /* Travel with slight pitch and distance variations - more realistic flight path */
+  43% {
+    transform: translate(-26%, -52%) scale(0.73) perspective(1200px) rotateY(2deg) rotateX(1deg);
+    filter: drop-shadow(0 0 21px rgba(140, 220, 255, 0.82));
   }
   
-  /* Closer approach - maximum size in this segment */
+  /* Continuing with natural-looking slight adjustments */
+  46% {
+    transform: translate(-28%, -51%) scale(0.77) perspective(1200px) rotateY(3deg) rotateX(0.5deg);
+    filter: drop-shadow(0 0 22px rgba(145, 225, 255, 0.84));
+  }
+  
+  /* Closer approach - natural movement sequence */
   50% {
-    transform: translate(-25%, -50%) scale(0.85) perspective(800px) rotateY(0deg) rotateX(0deg);
-    filter: drop-shadow(0 0 22px rgba(130, 210, 255, 0.8));
+    transform: translate(-30%, -50%) scale(0.82) perspective(1200px) rotateY(1deg) rotateX(0deg);
+    filter: drop-shadow(0 0 23px rgba(150, 230, 255, 0.86));
   }
   
-  /* Ship slightly tilts and moves away from viewer */
-  55% {
-    transform: translate(-28%, -49%) scale(0.78) perspective(800px) rotateY(-1deg) rotateX(-1deg);
-    filter: drop-shadow(0 0 23px rgba(140, 220, 255, 0.84));
+  /* Ship moves slightly in 3D space - simulating natural flight */
+  53% {
+    transform: translate(-32%, -48%) scale(0.8) perspective(1200px) rotateY(-1deg) rotateX(-1deg);
+    filter: drop-shadow(0 0 24px rgba(155, 235, 255, 0.88));
   }
   
-  /* Ship continues smooth travel - preparing for warp */
+  /* Ship slightly tilts and adjusts position - realistic movement */
+  56% {
+    transform: translate(-34%, -49%) scale(0.83) perspective(1200px) rotateY(-2deg) rotateX(-0.5deg);
+    filter: drop-shadow(0 0 25px rgba(160, 240, 255, 0.9));
+  }
+  
+  /* Ship aligns for warp preparation - settling into position */
   60% {
-    transform: translate(-30%, -50%) scale(0.82) perspective(800px) rotateY(0deg) rotateX(0deg);
-    filter: drop-shadow(0 0 25px rgba(150, 230, 255, 0.9));
+    transform: translate(-36%, -50%) scale(0.85) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    filter: drop-shadow(0 0 27px rgba(165, 243, 255, 0.92));
   }
   
-  /* Ship begins to engage main engines - start of warp effect */
-  65% {
-    transform: translate(-40%, -50%) scale(0.85) perspective(800px);
-    filter: drop-shadow(0 0 27px rgba(155, 230, 255, 0.92));
+  /* Ship begins to engage main engines - start of warp preparation */
+  63% {
+    transform: translate(-40%, -50%) scale(0.84) perspective(1200px) rotateY(0deg) rotateX(0.5deg);
+    filter: drop-shadow(0 0 30px rgba(170, 245, 255, 0.94));
   }
   
-  /* Ship begins acceleration with blue effect */
+  /* Engine power increases - initial acceleration */
+  66% {
+    transform: translate(-50%, -50%) scale(0.83) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    filter: drop-shadow(0 0 35px rgba(175, 247, 255, 0.96));
+  }
+  
+  /* Ship begins warp acceleration with blue effect intensifying */
   70% {
-    transform: translate(-80%, -50%) scale(0.8) perspective(800px);
-    filter: drop-shadow(0 0 29px rgba(160, 235, 255, 0.95));
+    transform: translate(-80%, -50%) scale(0.8) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    filter: drop-shadow(0 0 40px rgba(180, 250, 255, 0.98));
   }
   
-  /* Rapid acceleration - much faster movement when blue effect is visible */
-  75% {
-    transform: translate(-130%, -50%) scale(0.75) perspective(800px);
-    filter: drop-shadow(0 0 31px rgba(165, 238, 255, 0.97));
+  /* Rapid acceleration - much faster movement when blue effect is maximized */
+  74% {
+    transform: translate(-120%, -50%) scale(0.77) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    filter: drop-shadow(0 0 45px rgba(185, 252, 255, 1));
+  }
+  
+  /* Extreme acceleration - ship streaking through space */
+  78% {
+    transform: translate(-160%, -50%) scale(0.73) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    filter: drop-shadow(0 0 50px rgba(190, 254, 255, 1));
   }
   
   /* Ship reaches maximum velocity during warp */
-  80% {
-    transform: translate(-180%, -50%) scale(0.7) perspective(800px);
-    filter: drop-shadow(0 0 33px rgba(170, 240, 255, 0.98));
+  82% {
+    transform: translate(-200%, -50%) scale(0.68) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    filter: drop-shadow(0 0 55px rgba(195, 255, 255, 1));
+    opacity: 0.95;
   }
   
-  /* Ship at full warp speed */
-  85% {
-    transform: translate(-230%, -50%) scale(0.6) perspective(800px);
-    filter: drop-shadow(0 0 35px rgba(175, 243, 255, 1));
+  /* Ship at full warp speed - extreme velocity */
+  86% {
+    transform: translate(-240%, -50%) scale(0.58) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    filter: drop-shadow(0 0 60px rgba(200, 255, 255, 1));
     opacity: 0.9;
   }
   
-  /* Ship continues at high speed */
+  /* Ship continues at extreme speed - starting to fade in distance */
   90% {
-    transform: translate(-260%, -50%) scale(0.5) perspective(800px);
-    opacity: 0.6;
-    filter: drop-shadow(0 0 25px rgba(160, 220, 255, 0.7));
+    transform: translate(-280%, -50%) scale(0.45) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    opacity: 0.7;
+    filter: drop-shadow(0 0 45px rgba(180, 245, 255, 0.85));
   }
   
-  /* Ship nearly gone */
-  95% {
-    transform: translate(-290%, -50%) scale(0.3) perspective(800px);
-    opacity: 0.3;
-    filter: drop-shadow(0 0 15px rgba(140, 200, 255, 0.5));
+  /* Ship nearly gone - diminishing in distance rapidly */
+  94% {
+    transform: translate(-320%, -50%) scale(0.3) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    opacity: 0.4;
+    filter: drop-shadow(0 0 30px rgba(160, 230, 255, 0.7));
   }
   
-  /* Complete disappearance */
+  /* Ship almost disappeared into the distance */
+  97% {
+    transform: translate(-340%, -50%) scale(0.15) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    opacity: 0.2;
+    filter: drop-shadow(0 0 15px rgba(140, 210, 255, 0.5));
+  }
+  
+  /* Complete disappearance after warp */
   100% {
-    transform: translate(-320%, -50%) scale(0.1) perspective(800px);
+    transform: translate(-360%, -50%) scale(0.05) perspective(1200px) rotateY(0deg) rotateX(0deg);
     opacity: 0;
     filter: drop-shadow(0 0 0px rgba(120, 180, 255, 0));
   }

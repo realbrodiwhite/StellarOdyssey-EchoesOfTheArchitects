@@ -69,8 +69,9 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
   // For character selection transition
   return (
     <div className="space-scene-container" onClick={handleSkip}>
-      {/* Stars background with CSS-generated stars */}
+      {/* Multi-layered stars background with CSS-generated stars */}
       <div className="stars-background"></div>
+      <div className="stars-layer-distant"></div>
       
       {/* For transition to character selection, do a different animation */}
       <div className="warp-scene">
@@ -95,6 +96,9 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
         <div className="warp-effect"></div>
         
         <div className="svg-ship-container">
+          <div className="engine-glow"></div>
+          <div className="engine-glow-secondary"></div>
+          <div className="engine-exhaust"></div>
           <img 
             src="/images/spaceship-fixed.svg" 
             alt="Spaceship" 
