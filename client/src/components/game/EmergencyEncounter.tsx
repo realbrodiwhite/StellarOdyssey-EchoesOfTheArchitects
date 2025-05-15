@@ -5,6 +5,9 @@ import { useGame } from "../../lib/stores/useGame";
 import { useStory } from "../../lib/stores/useStory";
 import { useAchievements } from "../../lib/stores/useAchievements";
 
+// Import starry background
+import Stars from "./Stars";
+
 interface EmergencyEncounterProps {
   onComplete: () => void;
 }

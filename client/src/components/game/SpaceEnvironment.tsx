@@ -57,6 +57,8 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   
   // Emergency pirate encounter system
   const [showEmergencyEncounter, setShowEmergencyEncounter] = useState(false);
+  const [firstInputTime, setFirstInputTime] = useState<number | null>(null);
+  const [pirateAmbushScheduled, setPirateAmbushScheduled] = useState(false);
   
   // Companion and achievement systems
   const { activeCompanion, getRandomDialogue, addDialogue } = useCompanion();
@@ -74,7 +76,9 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     }
   }, [currentLocation?.id]);
   
-  // Trigger pirate ambush if player is traveling to the frontier outpost
+  // This effect is no longer needed as we're using the 113-second timer instead
+  // We're keeping the code commented for reference
+  /*
   useEffect(() => {
     if (targetLocationId === "frontier_outpost" && isTransitioning && mode === "flying" && !showEmergencyEncounter) {
       // Wait a bit to let the flight animation start, then trigger the pirate ambush
@@ -85,12 +89,33 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
       return () => clearTimeout(pirateAmbushTimer);
     }
   }, [targetLocationId, isTransitioning, mode, showEmergencyEncounter]);
+  */
   
   // Handle keyboard input for opening navigation console and star map
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       // Don't handle keypresses during transitions
       if (isTransitioning) return;
+      
+      // Track first player input for pirate ambush timer (113 seconds)
+      if (firstInputTime === null) {
+        console.log("First player input detected! Starting 113-second countdown to pirate ambush.");
+        const currentTime = Date.now();
+        setFirstInputTime(currentTime);
+        
+        // Schedule pirate ambush after exactly 113 seconds from first input
+        if (!pirateAmbushScheduled) {
+          setPirateAmbushScheduled(true);
+          
+          const ambushTimer = setTimeout(() => {
+            console.log("113 seconds passed! Triggering pirate ambush!");
+            setShowEmergencyEncounter(true);
+          }, 113000); // 113 seconds in milliseconds
+          
+          // Return cleanup function to cancel timer if component unmounts
+          return () => clearTimeout(ambushTimer);
+        }
+      }
       
       if (e.key === "n" || e.key === "N") {
         toggleNavigationConsole();
@@ -111,7 +136,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isTransitioning, showStarMap, showNavigationConsole, toggleNavigationConsole]);
+  }, [isTransitioning, showStarMap, showNavigationConsole, toggleNavigationConsole, firstInputTime, pirateAmbushScheduled]);
   
   const toggleStarMap = () => {
     setShowStarMap(prev => !prev);
@@ -121,6 +146,18 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const handleEmergencyComplete = () => {
     setShowEmergencyEncounter(false);
     setCurrentObjective("Mission: Continue to Proxima Outpost to deliver cargo");
+    
+    // Complete the "Emergency Response" achievement
+    const achievements = useAchievements.getState();
+    const emergencyAchievement = achievements.achievements.find(a => a.name === "Emergency Response");
+    if (emergencyAchievement && !emergencyAchievement.completed) {
+      achievements.completeAchievement(emergencyAchievement.id);
+      console.log("Emergency Response achievement completed!");
+    }
+    
+    // Reset the first input timer
+    setFirstInputTime(null);
+    setPirateAmbushScheduled(false);
     
     // Resume normal travel to the destination
     console.log("Emergency encounter completed, continuing travel");

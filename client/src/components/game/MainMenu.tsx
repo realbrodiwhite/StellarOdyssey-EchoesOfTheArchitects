@@ -126,7 +126,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.8 }}
       >
-        © 2023 Cosmic Odyssey
+        © 2025 Brodi Branded
       </motion.div>
     </div>
   );
