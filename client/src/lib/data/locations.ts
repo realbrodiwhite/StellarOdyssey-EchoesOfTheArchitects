@@ -1,220 +1,192 @@
-import { Location, LocationType } from "../types";
-import { v4 as uuidv4 } from "uuid";
-
-// Note: This is just the location data structure
-// Actual enemies and puzzles would be referenced from their respective data files
+import { Location, LocationType, Faction } from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
 export const gameLocations: Location[] = [
-  // CHAPTER 1 - THE NEW FRONTIER
+  // Starting point
   {
-    id: "ship",
-    name: "The Odyssey",
+    id: 'ship',
+    name: 'Your Ship',
     type: LocationType.Ship,
-    description: "Your advanced spacecraft, equipped with state-of-the-art technology. It serves as your mobile home and base of operations.",
+    description: 'Your trusty starship, a modified light freighter with upgraded systems. It serves as both transportation and home base for your adventures.',
     encounters: {
-      puzzles: ["system_diagnosis"]
+      puzzles: []
     },
-    connections: ["frontier_outpost"],
-    items: ["basic_repair_kit", "emergency_rations"],
-    region: "Alliance Territory"
+    connections: ['frontier_outpost'],
+    discovered: true
   },
+  
+  // Prologue locations
   {
-    id: "frontier_outpost",
-    name: "Proxima Outpost",
-    type: LocationType.Station,
-    description: "The Alliance's furthest frontier outpost, a hub for explorers and traders. The station shows signs of recent conflict.",
-    encounters: {
-      enemies: ["rogue_drone", "syndicate_spy"],
-      puzzles: ["communications_repair"]
-    },
-    connections: ["ship", "mining_colony", "debris_field"],
-    items: ["frontier_map", "basic_medkit"],
-    region: "Frontier Space"
-  },
-  {
-    id: "mining_colony",
-    name: "New Titan",
-    type: LocationType.Planet,
-    description: "A struggling mining colony plagued by Syndicate raids. The settlers eye newcomers with suspicion and hope.",
-    encounters: {
-      enemies: ["syndicate_marauder", "security_mech"],
-      puzzles: ["resource_allocation"]
-    },
-    connections: ["frontier_outpost", "ancient_ruins", "smuggler_haven"],
-    items: ["mining_equipment", "rare_mineral_sample"],
-    region: "Frontier Space"
-  },
-  {
-    id: "debris_field",
-    name: "Proxima Graveyard",
-    type: LocationType.Space,
-    description: "A vast field of shipwrecks and debris from an ancient space battle. Scavengers search for valuable technology among the dangers.",
-    encounters: {
-      enemies: ["scavenger_drone", "void_lurker"],
-      puzzles: ["salvage_operation"]
-    },
-    connections: ["frontier_outpost", "derelict_station"],
-    items: ["salvaged_tech", "navigation_data"],
-    region: "Frontier Space"
-  },
-
-  // CHAPTER 2 - ANCIENT SECRETS
-  {
-    id: "ancient_ruins",
-    name: "Voidtouched Remnants",
-    type: LocationType.Planet,
-    description: "Mysterious ruins of an ancient civilization. Strange energy signatures emanate from deep within the structure.",
-    encounters: {
-      enemies: ["guardian_construct", "energy_entity"],
-      puzzles: ["relic_activation"]
-    },
-    connections: ["mining_colony", "temple_entrance"],
-    items: ["ancient_tablet", "energy_crystal"],
-    region: "Uncharted Territory"
-  },
-  {
-    id: "temple_entrance",
-    name: "Celestial Gateway",
-    type: LocationType.Planet,
-    description: "A massive stone doorway carved into a mountain. Intricate symbols glow with pulsating energy.",
-    encounters: {
-      enemies: ["temple_guardian", "mystic_zealot"],
-      puzzles: ["doorway_cipher"]
-    },
-    connections: ["ancient_ruins", "inner_sanctum"],
-    region: "Uncharted Territory"
-  },
-  {
-    id: "inner_sanctum",
-    name: "Chamber of Ascension",
-    type: LocationType.Planet,
-    description: "The heart of the ancient temple, containing the civilization's most advanced technology and darkest secrets.",
-    encounters: {
-      enemies: ["ascended_guardian"],
-      puzzles: ["stellar_key", "consciousness_transfer"]
-    },
-    connections: ["temple_entrance"],
-    items: ["artifact_shard"],
-    region: "Uncharted Territory"
-  },
-
-  // CHAPTER 3 - POWER PLAY
-  {
-    id: "derelict_station",
-    name: "Abandoned Research Facility",
+    id: 'proxima_derelict',
+    name: 'Derelict Alliance Vessel',
     type: LocationType.Derelict,
-    description: "An Alliance research station showing signs of a violent struggle. The facility's logs speak of a breakthrough discovery.",
+    description: 'A damaged Alliance research vessel drifting silently in space. Life support systems are failing, and there are signs of a struggle throughout the ship.',
     encounters: {
-      enemies: ["mutated_researcher", "security_system"],
-      puzzles: ["data_recovery"]
+      enemies: ['scavenger_drone'],
+      puzzles: ['power_restoration']
     },
-    connections: ["debris_field", "syndicate_base"],
-    items: ["research_logs", "experimental_weapon"],
-    region: "Contested Space"
+    items: ['encrypted_data_core', 'emergency_supplies', 'alliance_insignia'],
+    connections: ['ship', 'frontier_outpost'],
+    region: 'Proxima System',
+    controlledBy: Faction.Alliance,
+    dangerLevel: 4,
+    ambientSound: 'ambient_derelict'
   },
+  
+  // Main locations
   {
-    id: "syndicate_base",
-    name: "Eclipse Point",
+    id: 'frontier_outpost',
+    name: 'Frontier Outpost',
     type: LocationType.Station,
-    description: "A heavily fortified Syndicate stronghold disguised as a trading post. Only the trusted are allowed in the inner chambers.",
+    description: 'A bustling space station at the edge of Alliance space. It serves as a trade hub and security checkpoint for those traveling between settled space and the frontier.',
     encounters: {
-      enemies: ["syndicate_enforcer", "elite_guard"],
-      puzzles: ["security_bypass"]
+      npcs: ['station_commander', 'merchant', 'bounty_hunter']
     },
-    connections: ["derelict_station", "void_tear"],
-    items: ["syndicate_insignia", "contraband"],
-    region: "Syndicate Territory"
+    connections: ['ship', 'mining_colony', 'syndicate_hideout'],
+    region: 'Border Territories',
+    controlledBy: Faction.Alliance,
+    discovered: true
   },
   {
-    id: "smuggler_haven",
-    name: "Freeport",
+    id: 'mining_colony',
+    name: 'Helios Mining Colony',
+    type: LocationType.Settlement,
+    description: 'A rugged industrial outpost established on a mineral-rich asteroid. The colony provides essential resources for Alliance worlds but faces harsh working conditions.',
+    encounters: {
+      enemies: ['mining_drone', 'security_robot'],
+      npcs: ['colony_foreman', 'union_representative']
+    },
+    connections: ['frontier_outpost', 'ancient_ruins'],
+    region: 'Helios Belt',
+    controlledBy: Faction.Settlers,
+    dangerLevel: 3
+  },
+  {
+    id: 'syndicate_hideout',
+    name: 'Shadow Haven',
     type: LocationType.Station,
-    description: "A lawless space station where adventurers, criminals, and exiles gather. Information and illicit goods flow freely.",
+    description: 'A hidden space station serving as a base for Syndicate operations. Everything from illegal goods to restricted technology can be found here—for the right price.',
     encounters: {
-      enemies: ["bounty_hunter", "rival_smuggler"],
-      puzzles: ["contraband_negotiation"]
+      enemies: ['syndicate_enforcer'],
+      npcs: ['black_market_dealer', 'information_broker']
     },
-    connections: ["mining_colony", "mystic_enclave"],
-    items: ["black_market_goods", "forged_credentials"],
-    region: "Neutral Zone"
+    connections: ['frontier_outpost'],
+    region: 'Adaris Cloud',
+    controlledBy: Faction.Syndicate,
+    dangerLevel: 7,
+    unlockRequirement: {
+      reputation: { faction: Faction.Syndicate, level: -25 }
+    }
   },
-
-  // CHAPTER 4 - POINT OF NO RETURN
+  
+  // Mystery/Artifact locations
   {
-    id: "mystic_enclave",
-    name: "Eternity's Cradle",
-    type: LocationType.Derelict,
-    description: "A hidden sanctuary for those seeking to understand the ancient civilization's power. The air vibrates with energy.",
+    id: 'ancient_ruins',
+    name: 'Ancient Ruins',
+    type: LocationType.Ruins,
+    description: 'The remnants of an ancient civilization discovered on a remote planet. Strange energy signatures emanate from deep within the structure.',
     encounters: {
-      enemies: ["rogue_mystic", "void_experiment"],
-      puzzles: ["mind_trial"]
+      enemies: ['guardian_construct', 'corrupted_ai'],
+      puzzles: ['sequence_lock', 'energy_flow']
     },
-    connections: ["smuggler_haven", "alliance_headquarters"],
-    items: ["mystic_teachings", "void_essence"],
-    region: "Mystical Sanctuary"
+    connections: ['mining_colony', 'mystic_sanctuary'],
+    region: 'Uncharted Space',
+    dangerLevel: 6,
+    environmentEffects: [
+      {
+        type: 'voidEnergy',
+        severity: 2,
+        effect: 'Occasional energy surges that can interfere with equipment.'
+      }
+    ]
   },
   {
-    id: "void_tear",
-    name: "The Breach",
-    type: LocationType.Space,
-    description: "A fracture in spacetime revealing glimpses of another dimension. Reality itself seems unstable near the tear.",
+    id: 'mystic_sanctuary',
+    name: 'Sanctuary of the Veil',
+    type: LocationType.Settlement,
+    description: 'A tranquil monastery where members of the Order of the Cosmic Veil study the mysteries of the universe. Visitors are rare but welcomed if they come in peace.',
     encounters: {
-      enemies: ["void_entity", "dimensional_horror"],
-      puzzles: ["reality_anchor", "dimensional_stabilization"]
+      npcs: ['mystic_elder', 'acolyte']
     },
-    connections: ["syndicate_base", "void_nexus"],
-    region: "Void Space"
+    connections: ['ancient_ruins'],
+    region: 'Nebula Core',
+    controlledBy: Faction.Mystics,
+    dangerLevel: 2
   },
+  
+  // Alliance path
   {
-    id: "alliance_headquarters",
-    name: "Harmony Central",
+    id: 'research_station',
+    name: 'Horizon Research Station',
     type: LocationType.Station,
-    description: "The heart of Alliance operations in this sector. High-ranking officials and military personnel coordinate efforts from here.",
+    description: 'A state-of-the-art Alliance research facility where cutting-edge technology and scientific discoveries are studied under tight security.',
     encounters: {
-      enemies: ["corrupted_official", "alliance_elite"],
-      puzzles: ["political_maneuvering"]
+      npcs: ['chief_scientist', 'security_officer']
     },
-    connections: ["mystic_enclave", "orbital_defense"],
-    items: ["alliance_credentials", "classified_reports"],
-    region: "Alliance Territory"
-  },
-
-  // CHAPTER 5 - NEW DAWN
-  {
-    id: "orbital_defense",
-    name: "Guardian Array",
-    type: LocationType.Space,
-    description: "A massive orbital weapons platform designed to protect Alliance space. It's currently targeting the ancient temple.",
-    encounters: {
-      enemies: ["automated_defense", "alliance_commander"],
-      puzzles: ["targeting_override"]
-    },
-    connections: ["alliance_headquarters", "final_confrontation"],
-    region: "Alliance Territory"
+    connections: ['frontier_outpost', 'alliance_headquarters'],
+    region: 'Alliance Space',
+    controlledBy: Faction.Alliance,
+    dangerLevel: 1,
+    unlockRequirement: {
+      reputation: { faction: Faction.Alliance, level: 1 }
+    }
   },
   {
-    id: "void_nexus",
-    name: "The Convergence",
-    type: LocationType.Space,
-    description: "The epicenter of the void anomalies. Multiple realities seem to overlap in this location.",
+    id: 'alliance_headquarters',
+    name: 'Alliance Headquarters',
+    type: LocationType.Station,
+    description: 'The administrative and military center of the Galactic Alliance. Only those with proper clearance and a good standing with the Alliance can access this location.',
     encounters: {
-      enemies: ["void_amalgamation"],
-      puzzles: ["reality_navigation"]
+      npcs: ['alliance_commander', 'diplomat']
     },
-    connections: ["void_tear", "final_confrontation"],
-    items: ["void_key"],
-    region: "Void Space"
+    connections: ['research_station'],
+    region: 'Alliance Core',
+    controlledBy: Faction.Alliance,
+    dangerLevel: 1,
+    unlockRequirement: {
+      reputation: { faction: Faction.Alliance, level: 2 }
+    }
   },
+  
+  // Void Entity path
   {
-    id: "final_confrontation",
-    name: "Ascension Point",
-    type: LocationType.Planet,
-    description: "The place where all paths converge. The fate of the galaxy will be decided here.",
+    id: 'void_anomaly',
+    name: 'Void Anomaly',
+    type: LocationType.Anomaly,
+    description: 'A distortion in space where the barrier between dimensions is thin. Strange phenomena occur here, and entities not of this universe have been reported.',
     encounters: {
-      enemies: ["final_adversary", "shadow_self"],
-      puzzles: ["ultimate_choice"]
+      enemies: ['void_manifestation', 'reality_warper'],
+      puzzles: ['reality_stabilization']
     },
-    connections: ["orbital_defense", "void_nexus"],
-    region: "Convergence Point"
+    connections: ['ancient_ruins'],
+    region: 'Deep Space',
+    controlledBy: Faction.VoidEntity,
+    dangerLevel: 9,
+    environmentEffects: [
+      {
+        type: 'voidEnergy',
+        severity: 4,
+        effect: 'Reality distortions that can cause hallucinations and equipment malfunction.'
+      }
+    ],
+    unlockRequirement: {
+      flag: 'discoveredArtifact'
+    }
   }
 ];
+
+// Function to generate a unique ID for a location
+export function createLocationId(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+}
+
+// Export location lookup by ID
+export const locationLookup: Record<string, Location> = gameLocations.reduce(
+  (acc, location) => {
+    acc[location.id] = location;
+    return acc;
+  },
+  {} as Record<string, Location>
+);
+
+export default gameLocations;
