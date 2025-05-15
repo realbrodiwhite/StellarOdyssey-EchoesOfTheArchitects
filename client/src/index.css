@@ -496,7 +496,7 @@ canvas {
   left: 50%;
   width: min(270px, 38vw); /* Slightly larger responsive width */
   height: min(135px, 19vw); /* Maintain aspect ratio */
-  transform: translate(-50%, -50%) scale(0.7);
+  transform: translate(-50%, -50%) scale(0.7) perspective(800px);
   z-index: 1004;
   animation: shipWarpRealistic 15s forwards, shipRubberBand 25s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   will-change: transform, filter, opacity;
@@ -505,6 +505,7 @@ canvas {
   transition: transform 2.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-style: preserve-3d;
   backface-visibility: hidden;
+  perspective-origin: center;
 }
 
 /* Main hull highlight effect */
@@ -600,84 +601,84 @@ canvas {
 }
 
 @keyframes shipRubberBand {
-  /* Ship enters from off-screen (bottom-right) */
+  /* Ship enters from completely off-screen (bottom-right) */
   0% {
-    transform: translate(20%, 120%) scale(0.4) rotate(5deg);
+    transform: translate(150%, 150%) scale(0.3) rotate(15deg) perspective(800px) rotateY(-15deg);
   }
   
-  /* Ship moves closer and grows as it enters the scene */
+  /* Ship begins to enter the scene - pitched up as approaching */
   5% {
-    transform: translate(0%, 80%) scale(0.6) rotate(3deg);
+    transform: translate(50%, 100%) scale(0.45) rotate(10deg) perspective(800px) rotateY(-10deg) rotateX(5deg);
   }
   
-  /* Approaches center, still growing */
+  /* Continues approach - banking slightly */
   10% {
-    transform: translate(-20%, 20%) scale(0.8) rotate(1deg);
+    transform: translate(10%, 50%) scale(0.6) rotate(5deg) perspective(800px) rotateY(-5deg) rotateX(8deg);
   }
   
-  /* Near center, almost full size */
+  /* Nearing center, banking toward viewer */
   15% {
-    transform: translate(-40%, -20%) scale(0.9) rotate(0deg);
+    transform: translate(-20%, 10%) scale(0.8) rotate(2deg) perspective(800px) rotateY(0deg) rotateX(10deg);
   }
   
-  /* Continue drifting right - appears closer */
+  /* Close fly-by - pitched down, large and close to viewer */
   20% {
-    transform: translate(-25%, -35%) scale(1.1) rotate(-1deg);
+    transform: translate(-25%, -30%) scale(1.15) rotate(-2deg) perspective(800px) rotateY(5deg) rotateX(-12deg);
   }
   
-  /* Maximum right position - slightly smaller as it moves away */
+  /* Banking right as it moves past viewer */
   25% {
-    transform: translate(-15%, -38%) scale(0.95) rotate(-1.5deg);
+    transform: translate(-15%, -45%) scale(1.05) rotate(-5deg) perspective(800px) rotateY(12deg) rotateX(-8deg);
   }
   
-  /* Begin transition across - moves closer again */
+  /* Transitioning across - slight roll and pitch adjustments */
   35% {
-    transform: translate(-35%, -45%) scale(1.05) rotate(-0.5deg);
+    transform: translate(-40%, -50%) scale(1.1) rotate(-3deg) perspective(800px) rotateY(8deg) rotateX(-5deg);
   }
   
-  /* Cross center with smooth movement */
+  /* Crossing screen with dynamic movement - tilting and rolling */
   45% {
-    transform: translate(-55%, -52%) scale(1) rotate(0.5deg);
+    transform: translate(-60%, -55%) scale(1.05) rotate(0deg) perspective(800px) rotateY(0deg) rotateX(0deg);
   }
   
-  /* Continue to left - getting slightly closer */
+  /* Banking left as it approaches closest point */
   55% {
-    transform: translate(-75%, -58%) scale(1.08) rotate(1deg);
+    transform: translate(-80%, -58%) scale(1.12) rotate(3deg) perspective(800px) rotateY(-8deg) rotateX(5deg);
   }
   
-  /* Maximum left position - at closest point */
+  /* Maximum closest approach - dramatic bank and pitch */
   60% {
-    transform: translate(-90%, -60%) scale(1.15) rotate(1.2deg);
+    transform: translate(-95%, -60%) scale(1.2) rotate(5deg) perspective(800px) rotateY(-15deg) rotateX(10deg);
   }
   
-  /* Hold briefly at maximum left position */
+  /* Beginning to pitch down as it moves away */
   65% {
-    transform: translate(-100%, -50%) scale(1.1) rotate(1.5deg);
+    transform: translate(-110%, -45%) scale(1.1) rotate(8deg) perspective(800px) rotateY(-10deg) rotateX(-8deg);
   }
   
-  /* Begin moving away - getting smaller */
+  /* Nose diving as it moves away */
   70% {
-    transform: translate(-110%, -30%) scale(0.9) rotate(2deg);
+    transform: translate(-125%, -20%) scale(0.9) rotate(10deg) perspective(800px) rotateY(-5deg) rotateX(-12deg);
   }
   
-  /* Ship starts to exit screen top-left */
+  /* Ship diving out of frame top-left */
   80% {
-    transform: translate(-120%, -10%) scale(0.7) rotate(3deg);
+    transform: translate(-150%, 0%) scale(0.7) rotate(12deg) perspective(800px) rotateY(0deg) rotateX(-15deg);
   }
   
-  /* Almost off-screen */
+  /* Almost completely off-screen - pitched down severely */
   90% {
-    transform: translate(-130%, 50%) scale(0.5) rotate(4deg);
+    transform: translate(-180%, 50%) scale(0.5) rotate(15deg) perspective(800px) rotateY(5deg) rotateX(-18deg);
   }
   
-  /* Exit scene entirely */
+  /* Completely off-screen */
   95% {
-    transform: translate(-150%, 100%) scale(0.3) rotate(5deg);
+    transform: translate(-220%, 150%) scale(0.3) rotate(18deg) perspective(800px) rotateY(10deg) rotateX(-20deg);
   }
   
-  /* Loop back to start - reappear at bottom-right */
+  /* Loop back to start - transition offscreen to offscreen */
   100% {
-    transform: translate(20%, 120%) scale(0.4) rotate(5deg);
+    transform: translate(150%, 150%) scale(0.3) rotate(15deg) perspective(800px) rotateY(-15deg);
   }
 }
 
