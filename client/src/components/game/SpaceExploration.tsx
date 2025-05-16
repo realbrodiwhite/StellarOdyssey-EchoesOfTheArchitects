@@ -1049,13 +1049,16 @@ const JoystickControls = () => {
     const left = deltaX < -deadzone;
     const right = deltaX > deadzone;
     
-    // Update keyboard controls state - direct assignment
-    const keys: any = {};
-    keys.forward = forward;
-    keys.backward = backward;
-    keys.left = left;
-    keys.right = right;
-    setKeys(keys);
+    // Update keyboard controls state
+    setKeys(state => {
+      return {
+        ...state,
+        forward,
+        backward,
+        left,
+        right
+      };
+    });
   };
   
   // Handle touch end for joystick
@@ -1064,42 +1067,49 @@ const JoystickControls = () => {
     setJoystickPosition({ x: 0, y: 0 });
     
     // Reset all movement keys
-    const keys: any = {};
-    keys.forward = false;
-    keys.backward = false;
-    keys.left = false;
-    keys.right = false;
-    setKeys(keys);
+    setKeys(state => {
+      return {
+        ...state,
+        forward: false,
+        backward: false,
+        left: false,
+        right: false
+      };
+    });
   };
   
   // Handle interact button
   const handleInteractStart = () => {
     setInteractPressed(true);
-    const keys: any = {};
-    keys.interact = true;
-    setKeys(keys);
+    setKeys(state => ({
+      ...state,
+      interact: true
+    }));
   };
   
   const handleInteractEnd = () => {
     setInteractPressed(false);
-    const keys: any = {};
-    keys.interact = false;
-    setKeys(keys);
+    setKeys(state => ({
+      ...state,
+      interact: false
+    }));
   };
   
   // Handle menu button
   const handleMenuStart = () => {
     setMenuPressed(true);
-    const keys: any = {};
-    keys.menu = true;
-    setKeys(keys);
+    setKeys(state => ({
+      ...state,
+      menu: true
+    }));
   };
   
   const handleMenuEnd = () => {
     setMenuPressed(false);
-    const keys: any = {};
-    keys.menu = false;
-    setKeys(keys);
+    setKeys(state => ({
+      ...state,
+      menu: false
+    }));
   };
   
   return (
