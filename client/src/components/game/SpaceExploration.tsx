@@ -217,16 +217,26 @@ const Spaceship = () => {
         ? -Math.PI * 0.1 
         : 0;
     
-    // Smoothly interpolate rotation with improved easing
-    const rotationLerpFactor = delta * 3; // Make rotation speed consistent regardless of frame rate
+    // Ultra-smooth interpolation with cubic easing for more natural motion
+    // Increased precision with lower lerp factor for smoother transitions
+    const rotationLerpFactor = delta * 2.0; // Slower, more gradual transitions
+    
+    // Use smooth step function for more natural easing
+    const smoothStep = (x) => x * x * (3 - 2 * x);
+    const easedFactor = smoothStep(rotationLerpFactor);
+    
     setShipRotation([
-      THREE.MathUtils.lerp(shipRotation[0], rotationTarget[0], rotationLerpFactor),
-      THREE.MathUtils.lerp(shipRotation[1], rotationTarget[1], rotationLerpFactor),
-      THREE.MathUtils.lerp(shipRotation[2], targetZ, rotationLerpFactor)
+      THREE.MathUtils.lerp(shipRotation[0], rotationTarget[0], easedFactor),
+      THREE.MathUtils.lerp(shipRotation[1], rotationTarget[1], easedFactor),
+      THREE.MathUtils.lerp(shipRotation[2], targetZ, easedFactor)
     ]);
     
-    // Apply rotation to ship with subtle easing
-    ship.rotation.set(shipRotation[0], shipRotation[1], shipRotation[2]);
+    // Apply rotation to ship with precision rounding to avoid micro-jitters
+    ship.rotation.set(
+      Math.round(shipRotation[0] * 1000) / 1000,
+      Math.round(shipRotation[1] * 1000) / 1000, 
+      Math.round(shipRotation[2] * 1000) / 1000
+    );
     
     // Apply improved damping/drag to slow down when no input
     // Use frame-rate independent damping for consistent feel
@@ -480,57 +490,59 @@ const Spaceship = () => {
         </>
       )}
       
-      {/* Enhanced engine effects with improved transitions */}
-      {/* Dynamic thruster glow with color and intensity based on speed */}
+      {/* Simple engine effects that flash blue only at warp speed */}
+      {/* Dynamic thruster glow that stays yellow until warp speed */}
       <pointLight 
         position={[0, 0, 2.5]} 
-        distance={10} 
-        intensity={2 + heatIntensity * 2} 
-        color={heatIntensity > 0.5 ? "#66aaff" : "#ffaa66"} 
+        distance={8} 
+        intensity={1 + (heatIntensity > 0.9 ? 3 : 0)} 
+        color={heatIntensity > 0.9 ? "#88aaff" : "#ffcc66"} 
       />
       
-      {/* Thruster flame effect - with improved gradients and transitions */}
-      {/* Corrected thruster flames - pointing in the right direction */}
+      {/* Thruster flame effect - yellow until warp speed, then blue flash */}
       <group ref={thrusterRef} position={[0, 0, 2.5]} rotation={[Math.PI, 0, 0]}>
-        {/* Inner bright core - transitions from yellow/orange to white based on speed */}
-        <mesh position={[0, 0, 0.2]}>
-          <coneGeometry args={[0.5, 1.5 + heatIntensity * 2, 16]} />
+        {/* Inner bright core - stays yellow until high speed */}
+        <mesh position={[0, 0, 0.1]}>
+          <coneGeometry args={[0.4, 1.0 + (heatIntensity > 0.9 ? 2.0 : 0), 16]} />
           <meshBasicMaterial 
-            color={heatIntensity > 0.7 ? "#ffffff" : heatIntensity > 0.3 ? "#ffffdd" : "#ffdd66"} 
+            color={heatIntensity > 0.9 ? "#ffffff" : "#ffdd66"} 
             transparent 
             opacity={0.95} 
           />
         </mesh>
         
-        {/* Middle layer - transitions from orange to bright blue */}
-        <mesh position={[0, 0, 0.3]}>
-          <coneGeometry args={[0.7, 2.2 + heatIntensity * 3, 16]} />
+        {/* Middle layer - only gets blue at warp speed */}
+        <mesh position={[0, 0, 0.2]}>
+          <coneGeometry args={[0.5, 1.2 + (heatIntensity > 0.9 ? 3.0 : 0), 16]} />
           <meshBasicMaterial 
-            color={heatIntensity > 0.5 ? "#99eeff" : "#ffaa44"} 
+            color={heatIntensity > 0.9 ? "#bbddff" : "#ffaa44"} 
             transparent 
             opacity={0.8} 
           />
         </mesh>
         
-        {/* Outer flame - transitions from yellow to deeper blue */}
-        <mesh position={[0, 0, 0.4]}>
-          <coneGeometry args={[0.9, 3 + heatIntensity * 4, 16]} />
+        {/* Outer flame - only extends at warp speed */}
+        <mesh position={[0, 0, 0.3]}>
+          <coneGeometry args={[0.7, 1.5 + (heatIntensity > 0.9 ? 4.0 : 0), 16]} />
           <meshBasicMaterial 
-            color={heatIntensity > 0.3 ? "#3366ff" : "#ffcc22"} 
+            color={heatIntensity > 0.9 ? "#3366ff" : "#ffcc22"} 
             transparent 
-            opacity={0.6 + heatIntensity * 0.2} 
+            opacity={0.6} 
           />
         </mesh>
         
-        {/* Extra outer glow for visual effect - soft gradient effect */}
-        <mesh position={[0, 0, 0.5]}>
-          <coneGeometry args={[1.1, 3.5 + heatIntensity * 5, 16]} />
-          <meshBasicMaterial 
-            color={heatIntensity > 0.2 ? "#1133aa" : "#ff8800"} 
-            transparent 
-            opacity={0.3} 
-          />
-        </mesh>
+        {/* Flash effect that only appears during warp transition */}
+        {heatIntensity > 0.85 && heatIntensity < 0.95 && (
+          <mesh position={[0, 0, 0]}>
+            <sphereGeometry args={[3 * (1.0 - (heatIntensity - 0.85) * 10), 16, 16]} />
+            <meshBasicMaterial 
+              color="#aaddff" 
+              transparent 
+              opacity={0.7 * (1.0 - (heatIntensity - 0.85) * 10)}
+              blending={THREE.AdditiveBlending}
+            />
+          </mesh>
+        )}
       </group>
       
       {/* Dynamic exhaust particles */}
@@ -1243,12 +1255,13 @@ const SwipeControls = () => {
         }
         
         // Update controls
-        const keys: any = {};
-        keys.forward = activeRegions.forward;
-        keys.backward = activeRegions.backward;
-        keys.left = activeRegions.left;
-        keys.right = activeRegions.right;
-        setKeys(keys);
+        setKeys(state => ({
+          ...state,
+          forward: activeRegions.forward,
+          backward: activeRegions.backward,
+          left: activeRegions.left,
+          right: activeRegions.right
+        }));
       }
     }
   };
@@ -1272,42 +1285,47 @@ const SwipeControls = () => {
       });
       
       // Reset keys
-      const keys: any = {};
-      keys.forward = false;
-      keys.backward = false;
-      keys.left = false;
-      keys.right = false;
-      setKeys(keys);
+      setKeys(state => ({
+        ...state,
+        forward: false,
+        backward: false,
+        left: false,
+        right: false
+      }));
     }
   };
   
   // Handle action buttons
   const handleInteractStart = () => {
     setInteractPressed(true);
-    const keys: any = {};
-    keys.interact = true;
-    setKeys(keys);
+    setKeys(state => ({
+      ...state,
+      interact: true
+    }));
   };
   
   const handleInteractEnd = () => {
     setInteractPressed(false);
-    const keys: any = {};
-    keys.interact = false;
-    setKeys(keys);
+    setKeys(state => ({
+      ...state,
+      interact: false
+    }));
   };
   
   const handleMenuStart = () => {
     setMenuPressed(true);
-    const keys: any = {};
-    keys.menu = true;
-    setKeys(keys);
+    setKeys(state => ({
+      ...state,
+      menu: true
+    }));
   };
   
   const handleMenuEnd = () => {
     setMenuPressed(false);
-    const keys: any = {};
-    keys.menu = false;
-    setKeys(keys);
+    setKeys(state => ({
+      ...state,
+      menu: false
+    }));
   };
   
   return (
