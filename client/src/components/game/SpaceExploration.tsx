@@ -992,7 +992,7 @@ const TouchControls = () => {
 const JoystickControls = () => {
   const game = useGame();
   const controlsOpacity = game.controlsOpacity || 0.7;
-  const [, setKeys] = useKeyboardControls<Controls>();
+  const [, setKeys] = useKeyboardControls<any>();
   
   // Touch joystick state
   const [touchActive, setTouchActive] = useState(false);
@@ -1049,13 +1049,13 @@ const JoystickControls = () => {
     const left = deltaX < -deadzone;
     const right = deltaX > deadzone;
     
-    // Update keyboard controls state
-    setKeys({
-      forward, 
-      backward, 
-      left, 
-      right
-    });
+    // Update keyboard controls state - direct assignment
+    const keys: any = {};
+    keys.forward = forward;
+    keys.backward = backward;
+    keys.left = left;
+    keys.right = right;
+    setKeys(keys);
   };
   
   // Handle touch end for joystick
@@ -1064,34 +1064,42 @@ const JoystickControls = () => {
     setJoystickPosition({ x: 0, y: 0 });
     
     // Reset all movement keys
-    setKeys({
-      forward: false, 
-      backward: false, 
-      left: false, 
-      right: false
-    });
+    const keys: any = {};
+    keys.forward = false;
+    keys.backward = false;
+    keys.left = false;
+    keys.right = false;
+    setKeys(keys);
   };
   
   // Handle interact button
   const handleInteractStart = () => {
     setInteractPressed(true);
-    setKeys({ interact: true });
+    const keys: any = {};
+    keys.interact = true;
+    setKeys(keys);
   };
   
   const handleInteractEnd = () => {
     setInteractPressed(false);
-    setKeys({ interact: false });
+    const keys: any = {};
+    keys.interact = false;
+    setKeys(keys);
   };
   
   // Handle menu button
   const handleMenuStart = () => {
     setMenuPressed(true);
-    setKeys({ menu: true });
+    const keys: any = {};
+    keys.menu = true;
+    setKeys(keys);
   };
   
   const handleMenuEnd = () => {
     setMenuPressed(false);
-    setKeys({ menu: false });
+    const keys: any = {};
+    keys.menu = false;
+    setKeys(keys);
   };
   
   return (
@@ -1159,7 +1167,7 @@ const JoystickControls = () => {
 const SwipeControls = () => {
   const game = useGame();
   const controlsOpacity = game.controlsOpacity || 0.7;
-  const [, setKeys] = useKeyboardControls<Controls>();
+  const [, setKeys] = useKeyboardControls<any>();
   
   // Screen regions and active states
   const [activeRegions, setActiveRegions] = useState({
@@ -1177,7 +1185,7 @@ const SwipeControls = () => {
   const [menuPressed, setMenuPressed] = useState(false);
   
   // Handle touch start for swipe controls
-  const handleScreenTouchStart = (e: React.TouchEvent, region: string) => {
+  const handleScreenTouchStart = (e: React.TouchEvent) => {
     // Store the touch start position for this touch ID
     const touch = e.touches[0];
     setTouchStartPos({
@@ -1225,12 +1233,12 @@ const SwipeControls = () => {
         }
         
         // Update controls
-        setKeys({
-          forward: activeRegions.forward,
-          backward: activeRegions.backward,
-          left: activeRegions.left,
-          right: activeRegions.right
-        });
+        const keys: any = {};
+        keys.forward = activeRegions.forward;
+        keys.backward = activeRegions.backward;
+        keys.left = activeRegions.left;
+        keys.right = activeRegions.right;
+        setKeys(keys);
       }
     }
   };
@@ -1266,22 +1274,22 @@ const SwipeControls = () => {
   // Handle action buttons
   const handleInteractStart = () => {
     setInteractPressed(true);
-    setKeys(state => ({ ...state, interact: true }));
+    setKeys({ interact: true });
   };
   
   const handleInteractEnd = () => {
     setInteractPressed(false);
-    setKeys(state => ({ ...state, interact: false }));
+    setKeys({ interact: false });
   };
   
   const handleMenuStart = () => {
     setMenuPressed(true);
-    setKeys(state => ({ ...state, menu: true }));
+    setKeys({ menu: true });
   };
   
   const handleMenuEnd = () => {
     setMenuPressed(false);
-    setKeys(state => ({ ...state, menu: false }));
+    setKeys({ menu: false });
   };
   
   return (
