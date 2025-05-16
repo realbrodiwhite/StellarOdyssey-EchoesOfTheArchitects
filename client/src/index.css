@@ -1398,88 +1398,90 @@ canvas {
     filter: drop-shadow(0 0 12px rgba(100, 180, 255, 0.6)) brightness(1.05);
   }
   
-  /* Ship increasing speed - moving toward center */
+  /* Ship holds at center for a moment before preparing for warp */
   21% {
-    transform: translate(28%, -50.5%) scale(0.52) perspective(1200px) rotateY(2deg) rotateX(0.5deg);
+    transform: translate(0%, 0%) scale(0.5) perspective(1200px) rotateY(0deg) rotateX(0deg);
     filter: drop-shadow(0 0 12.5px rgba(103, 183, 255, 0.63)) brightness(1.06);
   }
   
-  /* Ship nears center, growing larger as coming closer - slight overcompensation */
+  /* Ship begins preparing for warp - subtle movement starting */
   22% {
-    transform: translate(19.2%, -49.8%) scale(0.55) perspective(1200px) rotateY(1deg) rotateX(0deg);
+    transform: translate(-2%, 0%) scale(0.5) perspective(1200px) rotateY(-1deg) rotateX(0deg);
     filter: drop-shadow(0 0 13px rgba(105, 185, 255, 0.65)) brightness(1.07);
   }
   
-  /* Ship accelerates toward center - smooth motion curve */
+  /* Ship engines start powering up for warp acceleration */
   24% {
-    transform: translate(8%, -50%) scale(0.65) perspective(1200px) rotateY(0.5deg) rotateX(0deg);
+    transform: translate(-5%, 0%) scale(0.5) perspective(1200px) rotateY(-2deg) rotateX(0deg);
     filter: drop-shadow(0 0 15px rgba(115, 195, 255, 0.7)) brightness(1.08);
   }
   
-  /* Ship reaches center area - dramatic overshoot showing inertia and momentum */
+  /* Ship begins accelerating to warp - starting to move left */
   26% {
-    transform: translate(-3.5%, -50.3%) scale(0.75) perspective(1200px) rotateY(0deg) rotateX(0deg);
+    transform: translate(-10%, 0%) scale(0.52) perspective(1200px) rotateY(-3deg) rotateX(0deg);
     filter: drop-shadow(0 0 18px rgba(130, 210, 255, 0.8)) brightness(1.1);
   }
   
-  /* Ship begins to pass by - pronounced correction from overshoot */
+  /* Ship warp engines fully engaged - rapid acceleration begins - blue flash starts */
   27% {
-    transform: translate(-8%, -49.5%) scale(0.73) perspective(1200px) rotateY(-2deg) rotateX(-0.5deg);
-    filter: drop-shadow(0 0 19px rgba(135, 212, 255, 0.82)) brightness(1.09);
+    transform: translate(-20%, 0%) scale(0.55) perspective(1200px) rotateY(-5deg) rotateX(0deg);
+    filter: drop-shadow(0 0 25px rgba(150, 220, 255, 0.9)) brightness(1.2);
   }
   
-  /* Continuing movement with exaggerated rubber band physics */
+  /* Ship entering warp speed - blue flash at maximum - rapid movement to left */
   28% {
-    transform: translate(-20%, -51.5%) scale(0.68) perspective(1200px) rotateY(-4deg) rotateX(1deg);
-    filter: drop-shadow(0 0 22px rgba(150, 220, 255, 0.9));
+    transform: translate(-40%, 0%) scale(0.6) perspective(1200px) rotateY(-8deg) rotateX(0deg);
+    filter: drop-shadow(0 0 35px rgba(170, 230, 255, 1.0)) brightness(1.3);
   }
   
-  /* Ship moves "behind" viewer slightly - realistic swaying movement */
+  /* Ship at full warp speed - streaking to the left rapidly */
   32% {
-    transform: translate(-17.4%, -49.7%) scale(0.62) perspective(1200px) rotateY(-4deg) rotateX(-1deg);
-    filter: drop-shadow(0 0 18px rgba(125, 205, 255, 0.76));
+    transform: translate(-80%, 0%) scale(0.65) perspective(1200px) rotateY(-10deg) rotateX(0deg);
+    filter: drop-shadow(0 0 40px rgba(190, 240, 255, 1.0)) brightness(1.4);
   }
   
-  /* Ship changes course slightly - rubber band effect during turning */
+  /* Ship approaching extreme warp velocity - almost at edge of screen */
   36% {
-    transform: translate(-22.2%, -48.3%) scale(0.64) perspective(1200px) rotateY(-2deg) rotateX(-1.5deg);
-    filter: drop-shadow(0 0 19px rgba(130, 210, 255, 0.78));
+    transform: translate(-120%, 0%) scale(0.7) perspective(1200px) rotateY(-12deg) rotateX(0deg);
+    filter: drop-shadow(0 0 50px rgba(210, 250, 255, 1.0)) brightness(1.5);
   }
   
-  /* Ship continues movement - rubber band physics as it accelerates again */
+  /* Ship reaches maximum warp - nearly off screen to the left */
   40% {
-    transform: translate(-23.3%, -49.4%) scale(0.69) perspective(1200px) rotateY(0deg) rotateX(-1deg);
-    filter: drop-shadow(0 0 20px rgba(135, 215, 255, 0.8));
+    transform: translate(-160%, 0%) scale(0.75) perspective(1200px) rotateY(-15deg) rotateX(0deg);
+    filter: drop-shadow(0 0 60px rgba(220, 255, 255, 1.0)) brightness(1.6);
   }
   
-  /* Travel with slight pitch and distance variations - more realistic flight path */
+  /* Ship at final warp speed - blue flash starting to fade as ship vanishes */
   43% {
-    transform: translate(-26%, -52%) scale(0.73) perspective(1200px) rotateY(2deg) rotateX(1deg);
-    filter: drop-shadow(0 0 21px rgba(140, 220, 255, 0.82));
+    transform: translate(-190%, 0%) scale(0.8) perspective(1200px) rotateY(-18deg) rotateX(0deg);
+    filter: drop-shadow(0 0 55px rgba(200, 240, 255, 0.95)) brightness(1.5);
   }
   
-  /* Continuing with natural-looking slight adjustments */
+  /* Ship nearly gone - just a streak of light remaining */
   46% {
-    transform: translate(-28%, -51%) scale(0.77) perspective(1200px) rotateY(3deg) rotateX(0.5deg);
-    filter: drop-shadow(0 0 22px rgba(145, 225, 255, 0.84));
+    transform: translate(-220%, 0%) scale(0.85) perspective(1200px) rotateY(-20deg) rotateX(0deg);
+    filter: drop-shadow(0 0 45px rgba(180, 230, 255, 0.9)) brightness(1.4);
   }
   
-  /* Closer approach - natural movement sequence */
+  /* Ship becomes just a blue streak - almost disappeared */
   50% {
-    transform: translate(-30%, -50%) scale(0.82) perspective(1200px) rotateY(1deg) rotateX(0deg);
-    filter: drop-shadow(0 0 23px rgba(150, 230, 255, 0.86));
+    transform: translate(-250%, 0%) scale(0.9) perspective(1200px) rotateY(-22deg) rotateX(0deg);
+    filter: drop-shadow(0 0 35px rgba(160, 210, 255, 0.8)) brightness(1.3);
   }
   
-  /* Ship moves slightly in 3D space - simulating natural flight */
+  /* Ship is basically gone - just a faint glow remains */
   53% {
-    transform: translate(-32%, -48%) scale(0.8) perspective(1200px) rotateY(-1deg) rotateX(-1deg);
-    filter: drop-shadow(0 0 24px rgba(155, 235, 255, 0.88));
+    transform: translate(-280%, 0%) scale(0.95) perspective(1200px) rotateY(-24deg) rotateX(0deg);
+    filter: drop-shadow(0 0 25px rgba(140, 190, 255, 0.7)) brightness(1.2);
+    opacity: 0.7;
   }
   
-  /* Ship slightly tilts and adjusts position - realistic movement */
+  /* Ship completely disappeared into warp space */
   56% {
-    transform: translate(-34%, -49%) scale(0.83) perspective(1200px) rotateY(-2deg) rotateX(-0.5deg);
-    filter: drop-shadow(0 0 25px rgba(160, 240, 255, 0.9));
+    transform: translate(-300%, 0%) scale(1.0) perspective(1200px) rotateY(-25deg) rotateX(0deg);
+    filter: drop-shadow(0 0 15px rgba(120, 170, 255, 0.5)) brightness(1.1);
+    opacity: 0.4;
   }
   
   /* Ship aligns for warp preparation - settling into position */
