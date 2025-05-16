@@ -13,7 +13,7 @@ import { useCompanion, DialogueType } from "@/lib/stores/useCompanion";
 import { useAchievements } from "@/lib/stores/useAchievements";
 import { useAudio } from "@/lib/stores/useAudio";
 import { useLocation } from "@/lib/stores/useLocation";
-import { Controls } from "@/lib/types";
+import { Controls, Location } from "@/lib/types";
 import { Html } from "@react-three/drei";
 import SpaceExploration from "./SpaceExploration";
 import SpaceNavigation from "./SpaceNavigation";
@@ -32,7 +32,12 @@ interface SpaceEnvironmentProps {
 }
 
 const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProps) => {
-  const { getCurrentLocation, moveToLocation } = useStory();
+  // Use location store for navigation
+  const { 
+    currentLocation: locationData, 
+    navigateToLocation 
+  } = useLocation();
+  
   const { startPuzzle } = usePuzzle();
   const { startCombat } = useCombat();
   const { 
@@ -66,8 +71,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const { hasUnlockedCompanionAI } = useAchievements();
   
   // Get location data
-  const currentLocation = getCurrentLocation();
-  const getLocationById = useStory().getLocationById;
+  const currentLocation = locationData;
   
   // Initialize first mission guidance through ship's automated system
   useEffect(() => {
