@@ -312,6 +312,7 @@ export const puzzleTemplates: PuzzleTemplate[] = [
     type: PuzzleType.Pattern,
     description: 'You\'ve discovered an alien artifact of unknown origin. Activating it could provide valuable insights into a long-extinct civilization.',
     difficulty: 4,
+    backgroundImage: '/models/alien_artifact.glb', // Special case: points to 3D model
     introText: 'The artifact is a polyhedral object covered in intricate geometric patterns. It faintly hums when touched, suggesting it contains an internal power source.',
     solutions: [
       {

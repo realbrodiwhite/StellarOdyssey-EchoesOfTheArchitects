@@ -25,6 +25,7 @@ interface PuzzleSelectorProps {
 
 const PuzzleSelector: React.FC<PuzzleSelectorProps> = ({ onClose }) => {
   const [selectedPuzzleId, setSelectedPuzzleId] = useState<string | null>(null);
+  const [showArtifactView, setShowArtifactView] = useState<boolean>(false);
   
   // Group puzzles by type
   const puzzlesByType = puzzleTemplates.reduce((acc, puzzle) => {
@@ -74,13 +75,40 @@ const PuzzleSelector: React.FC<PuzzleSelectorProps> = ({ onClose }) => {
   // Handle puzzle selection
   const handleSelectPuzzle = (puzzleId: string) => {
     setSelectedPuzzleId(puzzleId);
+    
+    // If it's the alien artifact puzzle, show 3D view first
+    if (puzzleId === 'alien_artifact_activation') {
+      setShowArtifactView(true);
+    }
   };
   
   // Handle puzzle completion
   const handlePuzzleComplete = () => {
     setSelectedPuzzleId(null);
+    setShowArtifactView(false);
   };
   
+  // Show full puzzle UI after seeing 3D preview
+  const handleStartPuzzle = (puzzleId: string) => {
+    setShowArtifactView(false);
+    setSelectedPuzzleId(puzzleId);
+  };
+  
+  // Special case: Artifact view needs to be shown before puzzle
+  if (showArtifactView && selectedPuzzleId) {
+    return (
+      <ArtifactPuzzleView 
+        puzzleId={selectedPuzzleId}
+        onClose={() => {
+          setShowArtifactView(false);
+          setSelectedPuzzleId(null);
+        }}
+        onStartPuzzle={handleStartPuzzle}
+      />
+    );
+  }
+  
+  // Regular puzzle view
   if (selectedPuzzleId) {
     return (
       <MultiPathPuzzle 
@@ -98,6 +126,18 @@ const PuzzleSelector: React.FC<PuzzleSelectorProps> = ({ onClose }) => {
           <div>
             <h2 className="text-2xl font-bold text-white">Multi-Path Puzzle System</h2>
             <p className="text-gray-400">Each puzzle can be solved in multiple ways based on your character's skills and your preferred approach.</p>
+            
+            <div className="mt-4 p-3 bg-blue-900 bg-opacity-20 border border-blue-800 rounded-md">
+              <h3 className="text-blue-300 font-medium mb-1 flex items-center">
+                <Brain className="h-4 w-4 mr-1" />
+                Strategic Puzzle Solving
+              </h3>
+              <p className="text-sm text-gray-300">
+                Different character classes excel at different puzzle solutions. Engineers and Scientists will 
+                find technical and scientific approaches easier, while Pilots excel at navigation-based solutions. 
+                Combat specialists can sometimes find forceful solutions to problems others would approach more carefully.
+              </p>
+            </div>
           </div>
           <Button variant="ghost" onClick={onClose} className="text-gray-400 hover:text-white">
             Close
@@ -121,8 +161,15 @@ const PuzzleSelector: React.FC<PuzzleSelectorProps> = ({ onClose }) => {
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Card className={`border ${getTypeColor(puzzle.type)} hover:shadow-md hover:shadow-blue-900/20 cursor-pointer h-full`} 
-                      onClick={() => handleSelectPuzzle(puzzle.id)}>
+                    <Card 
+                      className={`border ${getTypeColor(puzzle.type)} hover:shadow-md hover:shadow-blue-900/20 cursor-pointer h-full ${puzzle.id === 'alien_artifact_activation' ? 'ring-2 ring-amber-400 ring-opacity-50' : ''}`} 
+                      onClick={() => handleSelectPuzzle(puzzle.id)}
+                    >
+                      {puzzle.id === 'alien_artifact_activation' && (
+                        <div className="absolute -top-1 -right-1 bg-amber-500 text-black text-xs px-2 py-1 rounded-md font-bold">
+                          3D Model
+                        </div>
+                      )}
                       <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center space-x-2">
                           {getTypeIcon(puzzle.type)}
