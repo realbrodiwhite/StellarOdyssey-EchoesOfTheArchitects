@@ -174,6 +174,28 @@ const Spaceship = () => {
   const rotationSpeed = 0.1;
   const { playHit } = useAudio();
   
+  // Load the 3D spaceship model
+  const { scene: shipModel } = useGLTF('/models/spaceship.glb') as any;
+  
+  // Track model loading state
+  const [modelLoaded, setModelLoaded] = useState(false);
+  
+  // Handle model loading
+  useEffect(() => {
+    if (shipModel) {
+      setModelLoaded(true);
+      console.log("Spaceship model loaded successfully");
+      
+      // Scale the model appropriately - this can be adjusted based on actual model size
+      if (shipRef.current) {
+        shipRef.current.scale.set(2.5, 2.5, 2.5);
+      }
+    }
+  }, [shipModel]);
+  
+  // Preload the model to avoid hiccups
+  useGLTF.preload('/models/spaceship.glb');
+  
   useFrame((state, delta) => {
     if (!shipRef.current) return;
     
@@ -222,7 +244,7 @@ const Spaceship = () => {
     const rotationLerpFactor = delta * 2.0; // Slower, more gradual transitions
     
     // Use smooth step function for more natural easing
-    const smoothStep = (x) => x * x * (3 - 2 * x);
+    const smoothStep = (x: number): number => x * x * (3 - 2 * x);
     const easedFactor = smoothStep(rotationLerpFactor);
     
     setShipRotation([
@@ -260,19 +282,24 @@ const Spaceship = () => {
     // Update velocity state
     setVelocity(newVelocity);
     
-    // Update camera to follow ship with smooth interpolation
-    // Create target camera position - much further back for a more dramatic perspective
-    const cameraTargetPos = ship.position.clone();
-    cameraTargetPos.y += 3; // Increased height offset for better viewing angle
-    cameraTargetPos.z += 15; // Much greater distance behind
+    // *** TRUE THIRD-PERSON CAMERA ***
+    // Position camera behind and slightly above the ship
+    const cameraOffset = new THREE.Vector3(0, 2, 8); // Adjusted for better third-person view
+    const cameraPos = new THREE.Vector3();
     
-    // Smoothly move camera toward target position
-    // Use a slower lerp factor for more cinematic camera movement
-    const cameraLerpFactor = delta * 1.5; // Reduced for smoother, more gradual camera movement
-    state.camera.position.lerp(cameraTargetPos, cameraLerpFactor);
+    // Transform the offset from ship's local space to world space
+    cameraOffset.applyQuaternion(ship.quaternion);
     
-    // Look slightly ahead of the ship with interpolated forward direction
-    const lookTarget = ship.position.clone().add(forward.multiplyScalar(10));
+    // Add the transformed offset to the ship's position
+    cameraPos.copy(ship.position).add(cameraOffset);
+    
+    // Smooth camera movement
+    const cameraLerpFactor = delta * 1.5; // Smoother camera transitions
+    state.camera.position.lerp(cameraPos, cameraLerpFactor);
+    
+    // Camera looks at ship with slight offset to look ahead
+    const lookAhead = forward.clone().multiplyScalar(4); // Look ahead of ship
+    const lookTarget = ship.position.clone().add(lookAhead);
     state.camera.lookAt(lookTarget);
   });
   
@@ -377,27 +404,36 @@ const Spaceship = () => {
 
   return (
     <group ref={shipRef} position={[0, 0, 0]}>
-      {/* Simple ship shape - in production, use a real 3D model */}
-      <mesh castShadow>
-        <coneGeometry args={[1, 3, 3]} />
-        <meshStandardMaterial 
-          color={showHeatEffect ? new THREE.Color().setHSL(0.05, 1, 0.5 + (0.5 * heatIntensity)) : "#3366ff"} 
-          roughness={0.3} 
-          metalness={0.7} 
-          emissive={showHeatEffect ? new THREE.Color(1, 0.3, 0.1) : new THREE.Color(0, 0, 0)}
-          emissiveIntensity={heatIntensity * 2}
+      {/* High-fidelity spaceship model using the same design as intro ship */}
+      {modelLoaded ? (
+        // Render the actual 3D model
+        <primitive 
+          object={shipModel.clone()} 
+          castShadow 
+          receiveShadow
+          rotation={[0, Math.PI, 0]} // Adjust rotation to face forward
         />
-      </mesh>
-      <mesh position={[0, 0, 1]} castShadow>
-        <boxGeometry args={[3, 0.5, 1]} />
-        <meshStandardMaterial 
-          color={showHeatEffect ? new THREE.Color().setHSL(0.05, 1, 0.5 + (0.5 * heatIntensity)) : "#2255cc"} 
-          roughness={0.4} 
-          metalness={0.6} 
-          emissive={showHeatEffect ? new THREE.Color(1, 0.3, 0.1) : new THREE.Color(0, 0, 0)}
-          emissiveIntensity={heatIntensity * 2}
-        />
-      </mesh>
+      ) : (
+        // Fallback shape while model loads
+        <group>
+          <mesh castShadow>
+            <coneGeometry args={[1, 3, 3]} />
+            <meshStandardMaterial 
+              color="#3366ff" 
+              roughness={0.3} 
+              metalness={0.7} 
+            />
+          </mesh>
+          <mesh position={[0, 0, 1]} castShadow>
+            <boxGeometry args={[3, 0.5, 1]} />
+            <meshStandardMaterial 
+              color="#2255cc" 
+              roughness={0.4} 
+              metalness={0.6} 
+            />
+          </mesh>
+        </group>
+      )}
       
       {/* Atmospheric re-entry heat shield effect - now with softer gradients on both sides */}
       {showHeatEffect && (

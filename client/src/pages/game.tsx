@@ -131,7 +131,7 @@ const Game = () => {
           <KeyboardControls map={keyboardControls}>
             <Canvas
               shadows
-              camera={{ position: [0, 10, 15], fov: 50, near: 0.1, far: 1000 }}
+              camera={{ position: [0, 2, 8], fov: 60, near: 0.1, far: 1000 }}
               gl={{ antialias: true, alpha: false }}
             >
               <color attach="background" args={["#000000"]} />
