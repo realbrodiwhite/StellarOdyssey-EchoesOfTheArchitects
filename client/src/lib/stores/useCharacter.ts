@@ -8,6 +8,7 @@ interface CharacterState {
   
   // Character management
   initializeCharacter: (template: Partial<Character>) => void;
+  selectCharacter: (template: Partial<Character>) => void; // Added this function
   gainExperience: (amount: number) => boolean;
   gainHealth: (amount: number) => void;
   loseHealth: (amount: number) => void;
@@ -99,6 +100,7 @@ export const useCharacter = create<CharacterState>()(
     (set, get) => ({
       character: { ...newCharacter },
       
+      // Initialize a character with custom properties merged with defaults
       initializeCharacter: (template) => {
         const templateWithDefaults = {
           ...newCharacter,
@@ -426,6 +428,34 @@ export const useCharacter = create<CharacterState>()(
             abilities: updatedAbilities
           }
         }));
+      },
+      
+      // Function to select a character from a template
+      selectCharacter: (template) => {
+        console.log("Selecting character from template:", template);
+        // Generate a new UUID for the character
+        const characterId = uuidv4();
+        
+        // Create a complete character from the template, filling in any missing properties
+        const fullCharacter: Character = {
+          ...newCharacter, // Start with default values
+          ...template,     // Override with template values
+          id: characterId, // Always use a new ID
+          // Ensure critical stats are properly set or use defaults
+          health: template.health || newCharacter.health,
+          maxHealth: template.maxHealth || newCharacter.maxHealth,
+          energy: template.energy || newCharacter.energy,
+          maxEnergy: template.maxEnergy || newCharacter.maxEnergy,
+          level: template.level || 1,
+          experience: template.experience || 0,
+          // Merge or use default arrays
+          skills: template.skills || newCharacter.skills,
+          inventory: template.inventory || [],
+          abilities: template.abilities || []
+        };
+        
+        console.log("Character selected successfully:", fullCharacter);
+        set({ character: fullCharacter });
       },
       
       resetCharacter: () => {
