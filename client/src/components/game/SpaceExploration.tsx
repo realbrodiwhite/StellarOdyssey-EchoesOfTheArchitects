@@ -215,38 +215,50 @@ const Spaceship = () => {
         ? -Math.PI * 0.1 
         : 0;
     
-    // Smoothly interpolate rotation
+    // Smoothly interpolate rotation with improved easing
+    const rotationLerpFactor = delta * 3; // Make rotation speed consistent regardless of frame rate
     setShipRotation([
-      shipRotation[0] + (rotationTarget[0] - shipRotation[0]) * 0.1,
-      shipRotation[1] + (rotationTarget[1] - shipRotation[1]) * 0.1,
-      shipRotation[2] + (targetZ - shipRotation[2]) * 0.1
+      THREE.MathUtils.lerp(shipRotation[0], rotationTarget[0], rotationLerpFactor),
+      THREE.MathUtils.lerp(shipRotation[1], rotationTarget[1], rotationLerpFactor),
+      THREE.MathUtils.lerp(shipRotation[2], targetZ, rotationLerpFactor)
     ]);
     
-    // Apply rotation to ship
+    // Apply rotation to ship with subtle easing
     ship.rotation.set(shipRotation[0], shipRotation[1], shipRotation[2]);
     
-    // Apply damping/drag to slow down when no input
+    // Apply improved damping/drag to slow down when no input
+    // Use frame-rate independent damping for consistent feel
+    const dampingFactor = Math.pow(1 - deceleration, delta * 60);
     if (!keys.forward && !keys.backward && !keys.left && !keys.right) {
-      newVelocity.multiplyScalar(1 - deceleration);
+      newVelocity.multiplyScalar(dampingFactor);
     }
     
-    // Limit maximum speed
-    if (newVelocity.length() > maxSpeed) {
-      newVelocity.normalize().multiplyScalar(maxSpeed);
+    // Limit maximum speed with smooth clamping
+    const currentSpeed = newVelocity.length();
+    if (currentSpeed > maxSpeed) {
+      // Gradually reduce speed instead of hard clamping
+      const reduction = 0.95 + (0.05 * (maxSpeed / currentSpeed));
+      newVelocity.multiplyScalar(reduction);
     }
     
-    // Apply velocity to position
-    ship.position.add(newVelocity);
+    // Apply velocity to position with smoother movement
+    const smoothedVelocity = newVelocity.clone().multiplyScalar(delta * 60);
+    ship.position.add(smoothedVelocity);
     
     // Update velocity state
     setVelocity(newVelocity);
     
-    // Update camera to follow ship
-    state.camera.position.copy(ship.position);
-    state.camera.position.y += 2; // Slight height offset
-    state.camera.position.z += 8; // Distance behind
+    // Update camera to follow ship with smooth interpolation
+    // Create target camera position
+    const cameraTargetPos = ship.position.clone();
+    cameraTargetPos.y += 2; // Slight height offset
+    cameraTargetPos.z += 8; // Distance behind
     
-    // Look slightly ahead of the ship
+    // Smoothly move camera toward target position
+    const cameraLerpFactor = delta * 2.5; // Adjust for desired smoothness
+    state.camera.position.lerp(cameraTargetPos, cameraLerpFactor);
+    
+    // Look slightly ahead of the ship with interpolated forward direction
     const lookTarget = ship.position.clone().add(forward.multiplyScalar(10));
     state.camera.lookAt(lookTarget);
   });
@@ -425,28 +437,28 @@ const Spaceship = () => {
       <pointLight position={[0, 0, 2.5]} distance={8} intensity={2} color="#66aaff" />
       
       {/* Thruster flame effect */}
-      {/* Static thruster flames - fixed direction with improved appearance */}
-      <group ref={thrusterRef} position={[0, 0, 2.5]} rotation={[0, 0, 0]}>
+      {/* Corrected thruster flames - pointing in the right direction */}
+      <group ref={thrusterRef} position={[0, 0, 2.5]} rotation={[Math.PI, 0, 0]}>
         {/* Inner bright core - hot white center */}
-        <mesh position={[0, 0, 1]}>
+        <mesh position={[0, 0, 0.2]}>
           <coneGeometry args={[0.5, 1.5, 16]} />
           <meshBasicMaterial color="#ffffff" transparent opacity={0.95} />
         </mesh>
         
         {/* Middle layer - bright blue */}
-        <mesh position={[0, 0, 1.4]}>
+        <mesh position={[0, 0, 0.3]}>
           <coneGeometry args={[0.7, 2.2, 16]} />
           <meshBasicMaterial color="#99eeff" transparent opacity={0.8} />
         </mesh>
         
         {/* Outer flame - deeper blue */}
-        <mesh position={[0, 0, 1.8]}>
+        <mesh position={[0, 0, 0.4]}>
           <coneGeometry args={[0.9, 3, 16]} />
           <meshBasicMaterial color="#3366ff" transparent opacity={0.6} />
         </mesh>
         
         {/* Extra outer glow for visual effect */}
-        <mesh position={[0, 0, 2.2]}>
+        <mesh position={[0, 0, 0.5]}>
           <coneGeometry args={[1.1, 3.5, 16]} />
           <meshBasicMaterial color="#1133aa" transparent opacity={0.3} />
         </mesh>
