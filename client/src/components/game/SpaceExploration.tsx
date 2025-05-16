@@ -258,12 +258,36 @@ const Spaceship = () => {
   const [exhaustParticles, setExhaustParticles] = useState<THREE.Vector3[]>([]);
   const maxParticles = 100;
   
+  // Track atmospheric entry effect
+  const [showHeatEffect, setShowHeatEffect] = useState(false);
+  const [heatIntensity, setHeatIntensity] = useState(0);
+  
   // Animate the thruster and particles
   useFrame((state, delta) => {
     if (thrusterRef.current) {
-      // Pulsate the thruster when moving forward
+      // Get current keyboard state
       const keys = getKeys();
       const isThrusting = keys.forward;
+      const isBraking = keys.backward;
+      
+      // Calculate current speed
+      const currentSpeed = velocity.length();
+      
+      // Determine if we're in heat effect territory (very fast speed)
+      const heatThreshold = maxSpeed * 0.7;
+      if (currentSpeed > heatThreshold) {
+        // Calculate heat intensity based on speed
+        const newHeatIntensity = Math.min(1, (currentSpeed - heatThreshold) / (maxSpeed - heatThreshold));
+        setHeatIntensity(newHeatIntensity);
+        setShowHeatEffect(true);
+      } else {
+        // Gradually reduce heat effect when slowing down
+        if (heatIntensity > 0) {
+          setHeatIntensity(Math.max(0, heatIntensity - delta * 0.5));
+        } else {
+          setShowHeatEffect(false);
+        }
+      }
       
       if (isThrusting) {
         // Larger flame effect when thrusting
@@ -271,8 +295,9 @@ const Spaceship = () => {
         thrusterRef.current.scale.x = 0.8 + Math.sin(state.clock.elapsedTime * 10) * 0.1;
         thrusterRef.current.scale.y = 0.8 + Math.sin(state.clock.elapsedTime * 10) * 0.1;
         
-        // Add new exhaust particles when thrusting
-        if (Math.random() > 0.6) {
+        // Add new exhaust particles when thrusting - more particles at higher speeds
+        const particleChance = 0.6 - (currentSpeed / maxSpeed) * 0.3; // More particles at higher speeds
+        if (Math.random() > particleChance) {
           const newParticle = new THREE.Vector3(
             (Math.random() - 0.5) * 0.5,
             (Math.random() - 0.5) * 0.5,
@@ -284,6 +309,11 @@ const Spaceship = () => {
             return updated.length > maxParticles ? updated.slice(1) : updated;
           });
         }
+      } else if (isBraking) {
+        // Special braking effect (pulsed)
+        thrusterRef.current.scale.z = 0.8 + Math.sin(state.clock.elapsedTime * 30) * 0.4;
+        thrusterRef.current.scale.x = 0.7 + Math.sin(state.clock.elapsedTime * 20) * 0.2;
+        thrusterRef.current.scale.y = 0.7 + Math.sin(state.clock.elapsedTime * 20) * 0.2;
       } else {
         // Smaller idle effect when not thrusting
         thrusterRef.current.scale.z = 0.6 + Math.sin(state.clock.elapsedTime * 8) * 0.1;
@@ -294,7 +324,10 @@ const Spaceship = () => {
       // Update existing particles (move them behind the ship)
       setExhaustParticles(prev => 
         prev.map(particle => {
-          particle.z += delta * (isThrusting ? 10 : 5);
+          // Particles move faster based on current speed
+          const particleSpeed = isThrusting ? 10 + (currentSpeed / maxSpeed) * 5 : 5;
+          particle.z += delta * particleSpeed;
+          
           // Slightly spread particles outward as they move away
           particle.x += (Math.random() - 0.5) * 0.1;
           particle.y += (Math.random() - 0.5) * 0.1;
@@ -309,12 +342,70 @@ const Spaceship = () => {
       {/* Simple ship shape - in production, use a real 3D model */}
       <mesh castShadow>
         <coneGeometry args={[1, 3, 3]} />
-        <meshStandardMaterial color="#3366ff" roughness={0.3} metalness={0.7} />
+        <meshStandardMaterial 
+          color={showHeatEffect ? new THREE.Color().setHSL(0.05, 1, 0.5 + (0.5 * heatIntensity)) : "#3366ff"} 
+          roughness={0.3} 
+          metalness={0.7} 
+          emissive={showHeatEffect ? new THREE.Color(1, 0.3, 0.1) : new THREE.Color(0, 0, 0)}
+          emissiveIntensity={heatIntensity * 2}
+        />
       </mesh>
       <mesh position={[0, 0, 1]} castShadow>
         <boxGeometry args={[3, 0.5, 1]} />
-        <meshStandardMaterial color="#2255cc" roughness={0.4} metalness={0.6} />
+        <meshStandardMaterial 
+          color={showHeatEffect ? new THREE.Color().setHSL(0.05, 1, 0.5 + (0.5 * heatIntensity)) : "#2255cc"} 
+          roughness={0.4} 
+          metalness={0.6} 
+          emissive={showHeatEffect ? new THREE.Color(1, 0.3, 0.1) : new THREE.Color(0, 0, 0)}
+          emissiveIntensity={heatIntensity * 2}
+        />
       </mesh>
+      
+      {/* Atmospheric re-entry heat shield effect */}
+      {showHeatEffect && (
+        <>
+          {/* Heat glow around ship */}
+          <pointLight 
+            position={[0, 0, -1.5]} 
+            distance={6} 
+            intensity={2 * heatIntensity} 
+            color="#ff5500" 
+          />
+          
+          {/* Front heat shield plasma */}
+          <mesh position={[0, 0, -1.7]} rotation={[0, 0, state.clock.elapsedTime * 2]}>
+            <torusGeometry args={[1.2, 0.6 * heatIntensity, 16, 30]} />
+            <meshBasicMaterial color="#ff7700" transparent opacity={0.7 * heatIntensity} />
+          </mesh>
+          
+          {/* Heat particles at the front of the ship */}
+          <points position={[0, 0, -2]}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={50}
+                array={new Float32Array(Array.from({ length: 50 * 3 }, (_, i) => {
+                  const angle = (i % 50) / 50 * Math.PI * 2;
+                  const radius = 1.5 * (0.7 + Math.sin(state.clock.elapsedTime * 3 + i) * 0.3);
+                  return (i % 3 === 0) 
+                    ? Math.cos(angle) * radius 
+                    : (i % 3 === 1) 
+                    ? Math.sin(angle) * radius 
+                    : (Math.random() - 0.5) * 0.5;
+                }))}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <pointsMaterial
+              size={0.2 * heatIntensity}
+              color="#ff3300"
+              transparent
+              opacity={0.8 * heatIntensity}
+              sizeAttenuation
+            />
+          </points>
+        </>
+      )}
       
       {/* Enhanced engine effects */}
       {/* Main thruster glow */}
