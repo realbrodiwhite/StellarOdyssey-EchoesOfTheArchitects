@@ -240,10 +240,9 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
       const puzzleId = currentLocation?.encounters.puzzles?.[0];
       if (puzzleId) {
         console.log(`Starting puzzle: ${puzzleId}`);
-        const puzzleStarted = startPuzzle(puzzleId);
-        if (puzzleStarted) {
-          onEnterPuzzle();
-        }
+        startPuzzle(puzzleId);
+        // Always enter puzzle mode when we find a puzzle
+        onEnterPuzzle();
       }
     }
     

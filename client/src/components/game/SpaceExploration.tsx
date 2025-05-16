@@ -9,7 +9,7 @@ import {
 } from "@react-three/drei";
 import * as THREE from "three";
 import { Controls, LocationType } from "@/lib/types";
-import { useStory } from "@/lib/stores/useStory";
+import useLocation from "@/lib/stores/useLocation";
 import { Vector3 } from "three";
 import { useAudio } from "@/lib/stores/useAudio";
 
@@ -662,7 +662,7 @@ interface SpaceExplorationProps {
 }
 
 const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
-  const { getCurrentLocation } = useStory();
+  const { getCurrentLocation } = useLocation();
   const currentLocation = getCurrentLocation();
   const [interactables, setInteractables] = useState<Interactable[]>([]);
   const [highlightedInteractable, setHighlightedInteractable] = useState<string | null>(null);
