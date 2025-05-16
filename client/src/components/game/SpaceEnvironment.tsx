@@ -34,8 +34,10 @@ interface SpaceEnvironmentProps {
 const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProps) => {
   // Use location store for navigation
   const { 
-    currentLocation: locationData, 
-    navigateToLocation 
+    getCurrentLocation, 
+    setCurrentLocation,
+    isLocationVisited,
+    visitLocation
   } = useLocation();
   
   const { startPuzzle } = usePuzzle();
@@ -71,7 +73,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const { hasUnlockedCompanionAI } = useAchievements();
   
   // Get location data
-  const currentLocation = locationData;
+  const currentLocation = getCurrentLocation();
   
   // Initialize first mission guidance through ship's automated system
   useEffect(() => {
@@ -160,17 +162,16 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     setTargetLocationId(locationId);
     setIsTransitioning(true);
     
-    // Get the location details
-    const targetLocation = getCurrentLocation();
-    if (targetLocation) {
-      setCurrentObjective(`Traveling to ${targetLocation.name}`);
-    }
+    // Set traveling objective with just the ID for now
+    setCurrentObjective(`Traveling to ${locationId}`);
     
     // Simulate a travel delay and then move
     setTimeout(() => {
       setMode("flying");
-      // Perform the actual movement
-      const success = moveToLocation(locationId);
+      // Perform the actual movement using the new location store
+      setCurrentLocation(locationId);
+      visitLocation(locationId);
+      const success = true; // Assume success for now
       
       if (success) {
         console.log(`Successfully traveled to ${locationId}`);
