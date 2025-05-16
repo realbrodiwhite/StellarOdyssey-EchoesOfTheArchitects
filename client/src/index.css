@@ -1314,86 +1314,86 @@ canvas {
 }
 
 @keyframes shipWarpRealistic {
-  /* Ship starts from deep space - tiny distant point of light */
+  /* Ship starts from far bottom left off screen - tiny distant point of light */
   0% {
-    transform: translate(200%, -50%) scale(0.03) perspective(1300px) rotateY(30deg) rotateX(8deg);
+    transform: translate(-200%, 200%) scale(0.01) perspective(1300px) rotateY(-15deg) rotateX(-8deg);
     opacity: 0;
     filter: drop-shadow(0 0 3px rgba(80, 160, 255, 0.2)) blur(2px) brightness(0.7);
   }
   
-  /* First hint of ship approaching - slight glimmer from engines */
+  /* First hint of ship approaching from bottom left - slight glimmer from engines */
   1% {
-    transform: translate(190%, -50.5%) scale(0.05) perspective(1300px) rotateY(28deg) rotateX(7deg);
+    transform: translate(-180%, 180%) scale(0.03) perspective(1300px) rotateY(-14deg) rotateX(-7deg);
     opacity: 0.05;
     filter: drop-shadow(0 0 4px rgba(90, 170, 255, 0.25)) blur(1.8px) brightness(0.75);
   }
   
-  /* Ship becomes just visible - still a small dot with engine glow */
+  /* Ship becomes just visible - still small dot with engine glow */
   2% {
-    transform: translate(180%, -51%) scale(0.08) perspective(1250px) rotateY(25deg) rotateX(6deg);
+    transform: translate(-160%, 150%) scale(0.06) perspective(1300px) rotateY(-12deg) rotateX(-6deg);
     opacity: 0.15;
     filter: drop-shadow(0 0 5px rgba(100, 180, 255, 0.3)) blur(1.5px) brightness(0.8);
   }
   
-  /* Ship begins to take recognizable form - subtle motion on approach vector */
+  /* Ship begins to take recognizable form - moving from bottom left toward center */
   3.5% {
-    transform: translate(170%, -51.5%) scale(0.1) perspective(1250px) rotateY(23deg) rotateX(5deg);
-    opacity: 0.2;
+    transform: translate(-130%, 120%) scale(0.1) perspective(1250px) rotateY(-10deg) rotateX(-5deg);
+    opacity: 0.25;
     filter: drop-shadow(0 0 5.5px rgba(100, 180, 255, 0.32)) blur(1.2px) brightness(0.85);
   }
   
-  /* Ship approaches from right, becoming more visible with natural entry */
+  /* Ship approaching center, growing larger */
   5% {
-    transform: translate(155%, -52%) scale(0.15) perspective(1220px) rotateY(20deg) rotateX(4deg);
-    opacity: 0.3;
+    transform: translate(-100%, 80%) scale(0.15) perspective(1220px) rotateY(-8deg) rotateX(-4deg);
+    opacity: 0.4;
     filter: drop-shadow(0 0 6px rgba(100, 180, 255, 0.35)) blur(0.9px) brightness(0.9);
   }
   
-  /* Ship continues approach with gentle banking motion */
+  /* Ship continues moving toward center */
   7% {
-    transform: translate(140%, -51.2%) scale(0.18) perspective(1200px) rotateY(17deg) rotateX(3.5deg);
-    opacity: 0.4;
+    transform: translate(-80%, 60%) scale(0.2) perspective(1200px) rotateY(-7deg) rotateX(-3deg);
+    opacity: 0.5;
     filter: drop-shadow(0 0 7px rgba(100, 180, 255, 0.38)) blur(0.8px) brightness(0.92);
   }
   
-  /* Ship becoming more defined - natural motion with subtle pitch changes */
+  /* Ship moves closer to center screen */
   9% {
-    transform: translate(120%, -50.8%) scale(0.22) perspective(1200px) rotateY(15deg) rotateX(3deg);
-    opacity: 0.5;
+    transform: translate(-60%, 40%) scale(0.25) perspective(1200px) rotateY(-6deg) rotateX(-2deg);
+    opacity: 0.6;
     filter: drop-shadow(0 0 8px rgba(100, 180, 255, 0.4)) blur(0.7px) brightness(0.95);
   }
   
-  /* Ship gets closer, continuing approach with smooth trajectory */
+  /* Ship getting closer to center */
   12% {
-    transform: translate(101%, -49.2%) scale(0.28) perspective(1200px) rotateY(11deg) rotateX(1.2deg);
-    opacity: 0.65;
+    transform: translate(-40%, 20%) scale(0.3) perspective(1200px) rotateY(-5deg) rotateX(-1deg);
+    opacity: 0.7;
     filter: drop-shadow(0 0 9px rgba(100, 180, 255, 0.45)) blur(0.5px) brightness(0.98);
   }
   
-  /* Ship approaches more, becoming clearer with natural deceleration */
+  /* Ship approaching center position with gentle maneuvering */
   15% {
-    transform: translate(78.5%, -50.3%) scale(0.35) perspective(1200px) rotateY(7deg) rotateX(0.5deg);
+    transform: translate(-20%, 10%) scale(0.35) perspective(1200px) rotateY(-3deg) rotateX(-0.5deg);
     opacity: 0.8;
     filter: drop-shadow(0 0 10px rgba(100, 180, 255, 0.5)) blur(0.2px) brightness(1);
   }
   
-  /* Ship continues approach with fluid motion - entering main viewing area */
+  /* Ship almost at center position */
   18% {
-    transform: translate(61.2%, -48.8%) scale(0.42) perspective(1200px) rotateY(5deg) rotateX(-0.5deg);
+    transform: translate(-10%, 5%) scale(0.4) perspective(1200px) rotateY(-1deg) rotateX(-0.2deg);
     opacity: 0.9;
     filter: drop-shadow(0 0 11px rgba(100, 180, 255, 0.55)) brightness(1.02);
   }
   
-  /* Ship approaching with thruster adjustments - natural course correction */
+  /* Ship arrives at center with final adjustment */
   19% {
-    transform: translate(50%, -49.5%) scale(0.45) perspective(1200px) rotateY(4deg) rotateX(0deg);
+    transform: translate(-5%, 2%) scale(0.45) perspective(1200px) rotateY(0deg) rotateX(0deg);
     opacity: 0.95;
     filter: drop-shadow(0 0 11.5px rgba(100, 180, 255, 0.58)) brightness(1.04);
   }
   
-  /* Ship approaching more closely - rubber band movement showing final thruster adjustment */
+  /* Ship reaches center position - detailed view */
   20% {
-    transform: translate(38.5%, -51.2%) scale(0.48) perspective(1200px) rotateY(3deg) rotateX(1deg);
+    transform: translate(0%, 0%) scale(0.5) perspective(1200px) rotateY(0deg) rotateX(0deg);
     opacity: 1;
     filter: drop-shadow(0 0 12px rgba(100, 180, 255, 0.6)) brightness(1.05);
   }
