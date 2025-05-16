@@ -28,6 +28,14 @@ interface GameStore {
   activePointOfInterest: string | null;
   setActivePlanet: (planetId: string | null) => void;
   setActivePointOfInterest: (poiId: string | null) => void;
+  
+  // User preferences
+  mobileControlType: 'joystick' | 'swipe';
+  setMobileControlType: (type: 'joystick' | 'swipe') => void;
+  
+  // UI transparency
+  controlsOpacity: number;
+  setControlsOpacity: (opacity: number) => void;
 }
 
 export const useGame = create<GameStore>()(
@@ -38,6 +46,8 @@ export const useGame = create<GameStore>()(
     showNavigationConsole: false,
     activePlanetId: null,
     activePointOfInterest: null,
+    mobileControlType: 'joystick', // Default to joystick controls
+    controlsOpacity: 0.7, // Default opacity (70%)
     
     start: () => {
       set((state) => {
@@ -103,6 +113,20 @@ export const useGame = create<GameStore>()(
     setActivePointOfInterest: (poiId: string | null) => {
       set({ activePointOfInterest: poiId });
       console.log(`Active POI: ${poiId || "none"}`);
+    },
+    
+    // Mobile controls preference
+    setMobileControlType: (type: 'joystick' | 'swipe') => {
+      set({ mobileControlType: type });
+      console.log(`Mobile control type set to: ${type}`);
+    },
+    
+    // UI controls opacity
+    setControlsOpacity: (opacity: number) => {
+      // Ensure opacity is between 0.2 and 1.0
+      const validOpacity = Math.min(Math.max(opacity, 0.2), 1.0);
+      set({ controlsOpacity: validOpacity });
+      console.log(`Controls opacity set to: ${validOpacity}`);
     }
   }))
 );

@@ -858,9 +858,65 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
   );
 };
 
-// Touch Controls Component for Mobile Devices
+// Mobile Control Components
 const TouchControls = () => {
   const isMobile = useIsMobile();
+  const { mobileControlType, controlsOpacity, setMobileControlType } = useGame();
+  
+  // Don't render on non-mobile devices
+  if (!isMobile) return null;
+  
+  return (
+    <>
+      {/* Control switcher at the top of screen */}
+      <div className="absolute top-20 right-4 bg-gray-800 bg-opacity-60 rounded-lg p-2 z-50">
+        <div className="text-white text-xs mb-1">Control Type:</div>
+        <div className="flex gap-2">
+          <button 
+            className={`px-3 py-1 text-sm rounded-md ${
+              mobileControlType === 'joystick' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-700 text-gray-300'
+            }`}
+            onClick={() => setMobileControlType('joystick')}
+          >
+            Joystick
+          </button>
+          <button 
+            className={`px-3 py-1 text-sm rounded-md ${
+              mobileControlType === 'swipe' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-700 text-gray-300'
+            }`}
+            onClick={() => setMobileControlType('swipe')}
+          >
+            Swipe
+          </button>
+        </div>
+        
+        {/* Opacity slider */}
+        <div className="mt-2">
+          <div className="text-white text-xs mb-1">Opacity: {Math.round(controlsOpacity * 100)}%</div>
+          <input 
+            type="range" 
+            min="20" 
+            max="100" 
+            value={controlsOpacity * 100} 
+            onChange={(e) => useGame.getState().setControlsOpacity(Number(e.target.value) / 100)}
+            className="w-full"
+          />
+        </div>
+      </div>
+      
+      {/* Render appropriate control type */}
+      {mobileControlType === 'joystick' ? <JoystickControls /> : <SwipeControls />}
+    </>
+  );
+};
+
+// Joystick-style controls
+const JoystickControls = () => {
+  const { controlsOpacity } = useGame();
   const [, setKeys] = useKeyboardControls<Controls>();
   
   // Touch joystick state
@@ -965,24 +1021,23 @@ const TouchControls = () => {
     setKeys(state => ({ ...state, menu: false }));
   };
   
-  // Don't render on non-mobile devices
-  if (!isMobile) return null;
-  
   return (
     <>
       {/* Movement joystick */}
       <div className="absolute bottom-20 left-16 touch-none">
         <div 
           ref={joystickRef}
-          className="w-32 h-32 rounded-full bg-gray-800 bg-opacity-50 border-2 border-blue-500 flex items-center justify-center"
+          className="w-32 h-32 rounded-full flex items-center justify-center"
+          style={{ backgroundColor: `rgba(31, 41, 55, ${controlsOpacity})`, borderColor: `rgba(59, 130, 246, ${controlsOpacity})` }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onTouchCancel={handleTouchEnd}
         >
           <div 
-            className="w-16 h-16 rounded-full bg-blue-500 bg-opacity-70 absolute"
+            className="w-16 h-16 rounded-full absolute"
             style={{ 
+              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
               transform: `translate(${joystickPosition.x}px, ${joystickPosition.y}px)`,
               transition: touchActive ? 'none' : 'transform 0.2s ease-out'
             }}
@@ -995,9 +1050,12 @@ const TouchControls = () => {
       <div className="absolute bottom-20 right-8 flex flex-col gap-4">
         {/* Interact button */}
         <div 
-          className={`w-16 h-16 rounded-full flex items-center justify-center ${
-            interactPressed ? 'bg-yellow-600' : 'bg-yellow-500'
-          } bg-opacity-70 text-white font-bold text-lg shadow-lg`}
+          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
+          style={{ 
+            backgroundColor: interactPressed 
+              ? `rgba(217, 119, 6, ${controlsOpacity})` 
+              : `rgba(245, 158, 11, ${controlsOpacity})`
+          }}
           onTouchStart={handleInteractStart}
           onTouchEnd={handleInteractEnd}
           onTouchCancel={handleInteractEnd}
@@ -1007,9 +1065,238 @@ const TouchControls = () => {
         
         {/* Menu button */}
         <div 
-          className={`w-16 h-16 rounded-full flex items-center justify-center ${
-            menuPressed ? 'bg-purple-700' : 'bg-purple-600'
-          } bg-opacity-70 text-white font-bold text-lg shadow-lg`}
+          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
+          style={{ 
+            backgroundColor: menuPressed 
+              ? `rgba(109, 40, 217, ${controlsOpacity})` 
+              : `rgba(124, 58, 237, ${controlsOpacity})`
+          }}
+          onTouchStart={handleMenuStart}
+          onTouchEnd={handleMenuEnd}
+          onTouchCancel={handleMenuEnd}
+        >
+          ESC
+        </div>
+      </div>
+    </>
+  );
+};
+
+// Swipe-style controls 
+const SwipeControls = () => {
+  const { controlsOpacity } = useGame();
+  const [, setKeys] = useKeyboardControls<Controls>();
+  
+  // Screen regions and active states
+  const [activeRegions, setActiveRegions] = useState({
+    forward: false,
+    backward: false,
+    left: false,
+    right: false
+  });
+  
+  // Touch start positions
+  const [touchStartPos, setTouchStartPos] = useState<Record<string, { x: number, y: number }>>({});
+  
+  // Action button states
+  const [interactPressed, setInteractPressed] = useState(false);
+  const [menuPressed, setMenuPressed] = useState(false);
+  
+  // Handle touch start for swipe controls
+  const handleScreenTouchStart = (e: React.TouchEvent, region: string) => {
+    // Store the touch start position for this touch ID
+    const touch = e.touches[0];
+    setTouchStartPos({
+      ...touchStartPos,
+      [touch.identifier]: { x: touch.clientX, y: touch.clientY }
+    });
+  };
+  
+  // Handle touch move for swipe controls
+  const handleScreenTouchMove = (e: React.TouchEvent) => {
+    // Process each active touch
+    for (let i = 0; i < e.touches.length; i++) {
+      const touch = e.touches[i];
+      const startPos = touchStartPos[touch.identifier];
+      
+      if (startPos) {
+        // Calculate swipe direction based on movement from start position
+        const deltaX = touch.clientX - startPos.x;
+        const deltaY = touch.clientY - startPos.y;
+        const threshold = 20; // Minimum swipe distance
+        
+        // Determine direction based on strongest component
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          // Horizontal swipe
+          const left = deltaX < -threshold;
+          const right = deltaX > threshold;
+          
+          // Update active regions
+          setActiveRegions(prev => ({
+            ...prev,
+            left,
+            right
+          }));
+        } else {
+          // Vertical swipe
+          const forward = deltaY < -threshold;
+          const backward = deltaY > threshold;
+          
+          // Update active regions
+          setActiveRegions(prev => ({
+            ...prev,
+            forward,
+            backward
+          }));
+        }
+        
+        // Update controls
+        setKeys(state => ({
+          ...state,
+          forward: activeRegions.forward,
+          backward: activeRegions.backward,
+          left: activeRegions.left,
+          right: activeRegions.right
+        }));
+      }
+    }
+  };
+  
+  // Handle touch end for swipe controls
+  const handleScreenTouchEnd = (e: React.TouchEvent) => {
+    // Clear this touch point
+    const updatedTouches = { ...touchStartPos };
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      delete updatedTouches[e.changedTouches[i].identifier];
+    }
+    setTouchStartPos(updatedTouches);
+    
+    // If no touches remain, reset all directions
+    if (Object.keys(updatedTouches).length === 0) {
+      setActiveRegions({
+        forward: false,
+        backward: false,
+        left: false,
+        right: false
+      });
+      
+      // Reset keys
+      setKeys(state => ({
+        ...state,
+        forward: false,
+        backward: false,
+        left: false,
+        right: false
+      }));
+    }
+  };
+  
+  // Handle action buttons
+  const handleInteractStart = () => {
+    setInteractPressed(true);
+    setKeys(state => ({ ...state, interact: true }));
+  };
+  
+  const handleInteractEnd = () => {
+    setInteractPressed(false);
+    setKeys(state => ({ ...state, interact: false }));
+  };
+  
+  const handleMenuStart = () => {
+    setMenuPressed(true);
+    setKeys(state => ({ ...state, menu: true }));
+  };
+  
+  const handleMenuEnd = () => {
+    setMenuPressed(false);
+    setKeys(state => ({ ...state, menu: false }));
+  };
+  
+  return (
+    <>
+      {/* Full screen touch area */}
+      <div 
+        className="absolute inset-0 z-10 touch-none"
+        onTouchStart={handleScreenTouchStart}
+        onTouchMove={handleScreenTouchMove}
+        onTouchEnd={handleScreenTouchEnd}
+        onTouchCancel={handleScreenTouchEnd}
+      >
+        {/* Direction indicators */}
+        <div className="absolute inset-x-0 top-1/4 flex justify-center pointer-events-none">
+          <div 
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-opacity duration-150"
+            style={{ 
+              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
+              opacity: activeRegions.forward ? 0.9 : 0.3
+            }}
+          >
+            <span className="text-white font-bold">↑</span>
+          </div>
+        </div>
+        
+        <div className="absolute inset-x-0 bottom-1/3 flex justify-center pointer-events-none">
+          <div 
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-opacity duration-150"
+            style={{ 
+              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
+              opacity: activeRegions.backward ? 0.9 : 0.3
+            }}
+          >
+            <span className="text-white font-bold">↓</span>
+          </div>
+        </div>
+        
+        <div className="absolute inset-y-0 left-10 flex items-center pointer-events-none">
+          <div 
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-opacity duration-150"
+            style={{ 
+              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
+              opacity: activeRegions.left ? 0.9 : 0.3
+            }}
+          >
+            <span className="text-white font-bold">←</span>
+          </div>
+        </div>
+        
+        <div className="absolute inset-y-0 right-10 flex items-center pointer-events-none">
+          <div 
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-opacity duration-150"
+            style={{ 
+              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
+              opacity: activeRegions.right ? 0.9 : 0.3
+            }}
+          >
+            <span className="text-white font-bold">→</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Action buttons - similar to joystick controls */}
+      <div className="absolute bottom-20 right-8 flex flex-col gap-4 z-20">
+        {/* Interact button */}
+        <div 
+          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
+          style={{ 
+            backgroundColor: interactPressed 
+              ? `rgba(217, 119, 6, ${controlsOpacity})` 
+              : `rgba(245, 158, 11, ${controlsOpacity})`
+          }}
+          onTouchStart={handleInteractStart}
+          onTouchEnd={handleInteractEnd}
+          onTouchCancel={handleInteractEnd}
+        >
+          E
+        </div>
+        
+        {/* Menu button */}
+        <div 
+          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
+          style={{ 
+            backgroundColor: menuPressed 
+              ? `rgba(109, 40, 217, ${controlsOpacity})` 
+              : `rgba(124, 58, 237, ${controlsOpacity})`
+          }}
           onTouchStart={handleMenuStart}
           onTouchEnd={handleMenuEnd}
           onTouchCancel={handleMenuEnd}
