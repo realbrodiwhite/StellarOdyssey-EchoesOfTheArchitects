@@ -11,9 +11,10 @@ import { AlertCircle, Navigation, MapPin, Shield, SkullIcon, Globe, Space, Compa
 
 interface SpaceNavigationProps {
   onClose: () => void;
+  onSelectLocation?: (locationId: string) => void;
 }
 
-const SpaceNavigation: React.FC<SpaceNavigationProps> = ({ onClose }) => {
+const SpaceNavigation: React.FC<SpaceNavigationProps> = ({ onClose, onSelectLocation }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'available' | 'discovered' | 'all'>('available');
   const [searchQuery, setSearchQuery] = useState('');
@@ -78,6 +79,12 @@ const SpaceNavigation: React.FC<SpaceNavigationProps> = ({ onClose }) => {
             completeNavigation();
             setIsNavigating(false);
             playSuccess();
+            
+            // If onSelectLocation prop is provided, call it with the navigation target
+            if (onSelectLocation && navigationTarget) {
+              onSelectLocation(navigationTarget);
+              onClose(); // Close the navigation panel
+            }
           }, 500);
         }
       }, 100);

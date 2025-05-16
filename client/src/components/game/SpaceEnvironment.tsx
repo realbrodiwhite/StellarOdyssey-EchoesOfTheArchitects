@@ -192,9 +192,12 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
           console.log("MISSION COMPLETE: Successfully docked at Proxima Outpost");
         } else {
           // For other locations, set a generic objective
-          const location = getLocationById(locationId);
-          if (location) {
-            setCurrentObjective(`Explore ${location.name}`);
+          // Use the current location after we've navigated
+          const newLocation = getCurrentLocation();
+          if (newLocation) {
+            setCurrentObjective(`Explore ${newLocation.name}`);
+          } else {
+            setCurrentObjective(`Explore ${locationId}`);
           }
         }
       } else {
