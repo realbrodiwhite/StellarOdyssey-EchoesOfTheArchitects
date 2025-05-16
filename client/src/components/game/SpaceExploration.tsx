@@ -929,7 +929,9 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
 // Mobile Control Components
 const TouchControls = () => {
   const isMobile = useIsMobile();
-  const { mobileControlType, controlsOpacity, setMobileControlType } = useGame();
+  const game = useGame();
+  const mobileControlType = game.mobileControlType || 'joystick';
+  const controlsOpacity = game.controlsOpacity || 0.7;
   
   // Don't render on non-mobile devices
   if (!isMobile) return null;
@@ -946,7 +948,7 @@ const TouchControls = () => {
                 ? 'bg-blue-600 text-white' 
                 : 'bg-gray-700 text-gray-300'
             }`}
-            onClick={() => setMobileControlType('joystick')}
+            onClick={() => game.setMobileControlType && game.setMobileControlType('joystick')}
           >
             Joystick
           </button>
@@ -956,7 +958,7 @@ const TouchControls = () => {
                 ? 'bg-blue-600 text-white' 
                 : 'bg-gray-700 text-gray-300'
             }`}
-            onClick={() => setMobileControlType('swipe')}
+            onClick={() => game.setMobileControlType && game.setMobileControlType('swipe')}
           >
             Swipe
           </button>
@@ -970,7 +972,11 @@ const TouchControls = () => {
             min="20" 
             max="100" 
             value={controlsOpacity * 100} 
-            onChange={(e) => useGame.getState().setControlsOpacity(Number(e.target.value) / 100)}
+            onChange={(e) => {
+              if (game.setControlsOpacity) {
+                game.setControlsOpacity(Number(e.target.value) / 100)
+              }
+            }}
             className="w-full"
           />
         </div>
@@ -984,7 +990,8 @@ const TouchControls = () => {
 
 // Joystick-style controls
 const JoystickControls = () => {
-  const { controlsOpacity } = useGame();
+  const game = useGame();
+  const controlsOpacity = game.controlsOpacity || 0.7;
   const [, setKeys] = useKeyboardControls<Controls>();
   
   // Touch joystick state
@@ -1043,13 +1050,12 @@ const JoystickControls = () => {
     const right = deltaX > deadzone;
     
     // Update keyboard controls state
-    setKeys(state => ({
-      ...state, 
+    setKeys({
       forward, 
       backward, 
       left, 
       right
-    }));
+    });
   };
   
   // Handle touch end for joystick
@@ -1058,35 +1064,34 @@ const JoystickControls = () => {
     setJoystickPosition({ x: 0, y: 0 });
     
     // Reset all movement keys
-    setKeys(state => ({
-      ...state, 
+    setKeys({
       forward: false, 
       backward: false, 
       left: false, 
       right: false
-    }));
+    });
   };
   
   // Handle interact button
   const handleInteractStart = () => {
     setInteractPressed(true);
-    setKeys(state => ({ ...state, interact: true }));
+    setKeys({ interact: true });
   };
   
   const handleInteractEnd = () => {
     setInteractPressed(false);
-    setKeys(state => ({ ...state, interact: false }));
+    setKeys({ interact: false });
   };
   
   // Handle menu button
   const handleMenuStart = () => {
     setMenuPressed(true);
-    setKeys(state => ({ ...state, menu: true }));
+    setKeys({ menu: true });
   };
   
   const handleMenuEnd = () => {
     setMenuPressed(false);
-    setKeys(state => ({ ...state, menu: false }));
+    setKeys({ menu: false });
   };
   
   return (
@@ -1152,7 +1157,8 @@ const JoystickControls = () => {
 
 // Swipe-style controls 
 const SwipeControls = () => {
-  const { controlsOpacity } = useGame();
+  const game = useGame();
+  const controlsOpacity = game.controlsOpacity || 0.7;
   const [, setKeys] = useKeyboardControls<Controls>();
   
   // Screen regions and active states
@@ -1219,13 +1225,12 @@ const SwipeControls = () => {
         }
         
         // Update controls
-        setKeys(state => ({
-          ...state,
+        setKeys({
           forward: activeRegions.forward,
           backward: activeRegions.backward,
           left: activeRegions.left,
           right: activeRegions.right
-        }));
+        });
       }
     }
   };
@@ -1249,13 +1254,12 @@ const SwipeControls = () => {
       });
       
       // Reset keys
-      setKeys(state => ({
-        ...state,
+      setKeys({
         forward: false,
         backward: false,
         left: false,
         right: false
-      }));
+      });
     }
   };
   

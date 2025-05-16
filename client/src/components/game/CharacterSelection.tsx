@@ -275,65 +275,71 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
         )}
       </div>
       
+      {/* Sticky confirmation button at the bottom of screen */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="z-10 flex flex-col items-center px-4 w-full max-w-md"
+        className="fixed bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black to-transparent pt-8 pb-4 sm:pb-6 md:pb-8 px-4"
       >
-        {selectedIndex !== null && getSelectedTemplate() ? (
-          <motion.div
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            className="mb-4 sm:mb-6 md:mb-8 text-center"
+        <div className="flex flex-col items-center max-w-md mx-auto">
+          {selectedIndex !== null && getSelectedTemplate() ? (
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="mb-4 sm:mb-5 text-center"
+            >
+              <h3 className="text-green-400 text-base sm:text-lg mb-1 sm:mb-2">
+                Character Selected: {getSelectedTemplate()?.class} ({selectedGender})
+              </h3>
+              <p className="text-gray-400 text-xs sm:text-sm">Are you ready to begin your cosmic adventure?</p>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="mb-4 sm:mb-5 text-center"
+            >
+              <h3 className="text-amber-400 text-base sm:text-lg mb-1 sm:mb-2">Select a character to continue</h3>
+              <p className="text-gray-400 text-xs sm:text-sm">Each class has unique abilities and advantages</p>
+            </motion.div>
+          )}
+          
+          <Button 
+            variant="default" 
+            size="lg" 
+            disabled={selectedIndex === null || !getSelectedTemplate()}
+            onClick={handleConfirmSelection}
+            className={`px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6 text-base sm:text-lg transition-all w-full sm:w-auto ${
+              selectedIndex !== null 
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg' 
+                : 'bg-gray-700'
+            }`}
           >
-            <h3 className="text-green-400 text-base sm:text-lg mb-1 sm:mb-2">
-              Character Selected: {getSelectedTemplate()?.class} ({selectedGender})
-            </h3>
-            <p className="text-gray-400 text-xs sm:text-sm">Are you ready to begin your cosmic adventure?</p>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="mb-4 sm:mb-6 md:mb-8 text-center"
-          >
-            <h3 className="text-amber-400 text-base sm:text-lg mb-1 sm:mb-2">Select a character to continue</h3>
-            <p className="text-gray-400 text-xs sm:text-sm">Each class has unique abilities and advantages</p>
-          </motion.div>
-        )}
-        
-        <Button 
-          variant="default" 
-          size="lg" 
-          disabled={selectedIndex === null || !getSelectedTemplate()}
-          onClick={handleConfirmSelection}
-          className={`px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6 text-base sm:text-lg transition-all w-full sm:w-auto ${
-            selectedIndex !== null 
-              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg' 
-              : 'bg-gray-700'
-          }`}
-        >
-          {selectedIndex !== null ? (
-            <div className="flex items-center justify-center">
-              <span>Begin Adventure</span>
-              <span className="ml-2">→</span>
-            </div>
-          ) : 'Choose Your Path'}
-        </Button>
-        
-        {selectedIndex !== null && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mt-3 sm:mt-4 text-gray-400 text-xs"
-          >
-            Press ENTER to continue
-          </motion.div>
-        )}
+            {selectedIndex !== null ? (
+              <div className="flex items-center justify-center">
+                <span>Begin Adventure</span>
+                <span className="ml-2">→</span>
+              </div>
+            ) : 'Choose Your Path'}
+          </Button>
+          
+          {selectedIndex !== null && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mt-3 text-gray-400 text-xs"
+            >
+              Press ENTER to continue
+            </motion.div>
+          )}
+        </div>
       </motion.div>
+      
+      {/* Add bottom padding to ensure content isn't hidden behind the sticky button */}
+      <div className="h-40 sm:h-48 md:h-52"></div>
       
       {/* Character Detail Modal */}
       {modalCharacter !== null && getModalCharacter() && (
