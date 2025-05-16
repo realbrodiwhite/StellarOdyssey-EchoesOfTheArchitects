@@ -151,6 +151,10 @@ const ForearmPad: React.FC<ForearmPadProps> = ({ onClose }) => {
             </div>
           )}
           
+          {activeTab === 'navigation' && (
+            <SpaceNavigation onClose={onClose} />
+          )}
+          
           {activeTab === 'systems' && (
             <div>
               <h3 className="text-blue-300 font-semibold mb-4">Ship Systems Control</h3>

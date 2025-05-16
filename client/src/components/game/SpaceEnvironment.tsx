@@ -12,6 +12,7 @@ import { useGame } from "@/lib/stores/useGame";
 import { useCompanion, DialogueType } from "@/lib/stores/useCompanion";
 import { useAchievements } from "@/lib/stores/useAchievements";
 import { useAudio } from "@/lib/stores/useAudio";
+import { useLocation } from "@/lib/stores/useLocation";
 import { Controls } from "@/lib/types";
 import { Html } from "@react-three/drei";
 import SpaceExploration from "./SpaceExploration";
