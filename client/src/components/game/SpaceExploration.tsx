@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { 
   useKeyboardControls, 
@@ -12,6 +12,7 @@ import { Controls, LocationType } from "@/lib/types";
 import useLocation from "@/lib/stores/useLocation";
 import { Vector3 } from "three";
 import { useAudio } from "@/lib/stores/useAudio";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 // Define interactable objects
 type Interactable = {
@@ -838,9 +839,10 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
       <Html fullscreen>
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-60 text-white p-2 rounded-md text-sm">
           <div className="flex gap-4">
-            <div>WASD/Arrows: Fly</div>
-            <div>E: Interact</div>
-            <div>ESC: Navigation</div>
+            <div className="hidden md:block">WASD/Arrows: Fly</div>
+            <div className="hidden md:block">E: Interact</div>
+            <div className="hidden md:block">ESC: Navigation</div>
+            <div className="md:hidden">Use touch controls to fly</div>
           </div>
         </div>
         
@@ -848,7 +850,173 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
           <div className="font-semibold">{currentLocation?.name || "Unknown Location"}</div>
           <div className="text-xs text-blue-300">{currentLocation?.type}</div>
         </div>
+        
+        {/* Mobile Touch Controls */}
+        <TouchControls />
       </Html>
+    </>
+  );
+};
+
+// Touch Controls Component for Mobile Devices
+const TouchControls = () => {
+  const isMobile = useIsMobile();
+  const [, setKeys] = useKeyboardControls<Controls>();
+  
+  // Touch joystick state
+  const [touchActive, setTouchActive] = useState(false);
+  const [joystickPosition, setJoystickPosition] = useState({ x: 0, y: 0 });
+  const [basePosition, setBasePosition] = useState({ x: 0, y: 0 });
+  const joystickRef = useRef<HTMLDivElement>(null);
+  const maxDistance = 50; // Maximum joystick distance
+  
+  // Interaction button states
+  const [interactPressed, setInteractPressed] = useState(false);
+  const [menuPressed, setMenuPressed] = useState(false);
+  
+  // Handle touch start for joystick
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!joystickRef.current) return;
+    
+    const touch = e.touches[0];
+    const rect = joystickRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    setBasePosition({ x: centerX, y: centerY });
+    setJoystickPosition({ x: 0, y: 0 });
+    setTouchActive(true);
+  };
+  
+  // Handle touch move for joystick
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchActive) return;
+    
+    const touch = e.touches[0];
+    
+    // Calculate joystick offset from center
+    let deltaX = touch.clientX - basePosition.x;
+    let deltaY = touch.clientY - basePosition.y;
+    
+    // Limit joystick movement to a circle
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    if (distance > maxDistance) {
+      const angle = Math.atan2(deltaY, deltaX);
+      deltaX = Math.cos(angle) * maxDistance;
+      deltaY = Math.sin(angle) * maxDistance;
+    }
+    
+    setJoystickPosition({ x: deltaX, y: deltaY });
+    
+    // Convert joystick position to key presses
+    // Forward/backward: Y axis
+    // Left/right: X axis
+    const deadzone = 10; // Small deadzone to prevent accidental movement
+    
+    const forward = deltaY < -deadzone;
+    const backward = deltaY > deadzone;
+    const left = deltaX < -deadzone;
+    const right = deltaX > deadzone;
+    
+    // Update keyboard controls state
+    setKeys(state => ({
+      ...state, 
+      forward, 
+      backward, 
+      left, 
+      right
+    }));
+  };
+  
+  // Handle touch end for joystick
+  const handleTouchEnd = () => {
+    setTouchActive(false);
+    setJoystickPosition({ x: 0, y: 0 });
+    
+    // Reset all movement keys
+    setKeys(state => ({
+      ...state, 
+      forward: false, 
+      backward: false, 
+      left: false, 
+      right: false
+    }));
+  };
+  
+  // Handle interact button
+  const handleInteractStart = () => {
+    setInteractPressed(true);
+    setKeys(state => ({ ...state, interact: true }));
+  };
+  
+  const handleInteractEnd = () => {
+    setInteractPressed(false);
+    setKeys(state => ({ ...state, interact: false }));
+  };
+  
+  // Handle menu button
+  const handleMenuStart = () => {
+    setMenuPressed(true);
+    setKeys(state => ({ ...state, menu: true }));
+  };
+  
+  const handleMenuEnd = () => {
+    setMenuPressed(false);
+    setKeys(state => ({ ...state, menu: false }));
+  };
+  
+  // Don't render on non-mobile devices
+  if (!isMobile) return null;
+  
+  return (
+    <>
+      {/* Movement joystick */}
+      <div className="absolute bottom-20 left-16 touch-none">
+        <div 
+          ref={joystickRef}
+          className="w-32 h-32 rounded-full bg-gray-800 bg-opacity-50 border-2 border-blue-500 flex items-center justify-center"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
+        >
+          <div 
+            className="w-16 h-16 rounded-full bg-blue-500 bg-opacity-70 absolute"
+            style={{ 
+              transform: `translate(${joystickPosition.x}px, ${joystickPosition.y}px)`,
+              transition: touchActive ? 'none' : 'transform 0.2s ease-out'
+            }}
+          />
+        </div>
+        <div className="text-white text-xs mt-1 text-center">Movement</div>
+      </div>
+      
+      {/* Action buttons */}
+      <div className="absolute bottom-20 right-8 flex flex-col gap-4">
+        {/* Interact button */}
+        <div 
+          className={`w-16 h-16 rounded-full flex items-center justify-center ${
+            interactPressed ? 'bg-yellow-600' : 'bg-yellow-500'
+          } bg-opacity-70 text-white font-bold text-lg shadow-lg`}
+          onTouchStart={handleInteractStart}
+          onTouchEnd={handleInteractEnd}
+          onTouchCancel={handleInteractEnd}
+        >
+          E
+        </div>
+        
+        {/* Menu button */}
+        <div 
+          className={`w-16 h-16 rounded-full flex items-center justify-center ${
+            menuPressed ? 'bg-purple-700' : 'bg-purple-600'
+          } bg-opacity-70 text-white font-bold text-lg shadow-lg`}
+          onTouchStart={handleMenuStart}
+          onTouchEnd={handleMenuEnd}
+          onTouchCancel={handleMenuEnd}
+        >
+          ESC
+        </div>
+      </div>
     </>
   );
 };
