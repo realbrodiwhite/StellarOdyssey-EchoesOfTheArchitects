@@ -1262,34 +1262,42 @@ const SwipeControls = () => {
       });
       
       // Reset keys
-      setKeys({
-        forward: false,
-        backward: false,
-        left: false,
-        right: false
-      });
+      const keys: any = {};
+      keys.forward = false;
+      keys.backward = false;
+      keys.left = false;
+      keys.right = false;
+      setKeys(keys);
     }
   };
   
   // Handle action buttons
   const handleInteractStart = () => {
     setInteractPressed(true);
-    setKeys({ interact: true });
+    const keys: any = {};
+    keys.interact = true;
+    setKeys(keys);
   };
   
   const handleInteractEnd = () => {
     setInteractPressed(false);
-    setKeys({ interact: false });
+    const keys: any = {};
+    keys.interact = false;
+    setKeys(keys);
   };
   
   const handleMenuStart = () => {
     setMenuPressed(true);
-    setKeys({ menu: true });
+    const keys: any = {};
+    keys.menu = true;
+    setKeys(keys);
   };
   
   const handleMenuEnd = () => {
     setMenuPressed(false);
-    setKeys({ menu: false });
+    const keys: any = {};
+    keys.menu = false;
+    setKeys(keys);
   };
   
   return (
