@@ -251,6 +251,59 @@ const Spaceship = () => {
     state.camera.lookAt(lookTarget);
   });
   
+  // Create a ref for thruster animation
+  const thrusterRef = useRef<THREE.Group>(null);
+  
+  // Track the exhaust particles
+  const [exhaustParticles, setExhaustParticles] = useState<THREE.Vector3[]>([]);
+  const maxParticles = 100;
+  
+  // Animate the thruster and particles
+  useFrame((state, delta) => {
+    if (thrusterRef.current) {
+      // Pulsate the thruster when moving forward
+      const keys = getKeys();
+      const isThrusting = keys.forward;
+      
+      if (isThrusting) {
+        // Larger flame effect when thrusting
+        thrusterRef.current.scale.z = 1 + Math.sin(state.clock.elapsedTime * 15) * 0.2;
+        thrusterRef.current.scale.x = 0.8 + Math.sin(state.clock.elapsedTime * 10) * 0.1;
+        thrusterRef.current.scale.y = 0.8 + Math.sin(state.clock.elapsedTime * 10) * 0.1;
+        
+        // Add new exhaust particles when thrusting
+        if (Math.random() > 0.6) {
+          const newParticle = new THREE.Vector3(
+            (Math.random() - 0.5) * 0.5,
+            (Math.random() - 0.5) * 0.5,
+            2.5 + Math.random() * 1
+          );
+          setExhaustParticles(prev => {
+            // Add new particle and remove oldest if at max capacity
+            const updated = [...prev, newParticle];
+            return updated.length > maxParticles ? updated.slice(1) : updated;
+          });
+        }
+      } else {
+        // Smaller idle effect when not thrusting
+        thrusterRef.current.scale.z = 0.6 + Math.sin(state.clock.elapsedTime * 8) * 0.1;
+        thrusterRef.current.scale.x = 0.6;
+        thrusterRef.current.scale.y = 0.6;
+      }
+      
+      // Update existing particles (move them behind the ship)
+      setExhaustParticles(prev => 
+        prev.map(particle => {
+          particle.z += delta * (isThrusting ? 10 : 5);
+          // Slightly spread particles outward as they move away
+          particle.x += (Math.random() - 0.5) * 0.1;
+          particle.y += (Math.random() - 0.5) * 0.1;
+          return particle;
+        }).filter(particle => particle.z < 15)  // Remove particles too far away
+      );
+    }
+  });
+
   return (
     <group ref={shipRef} position={[0, 0, 0]}>
       {/* Simple ship shape - in production, use a real 3D model */}
@@ -263,8 +316,53 @@ const Spaceship = () => {
         <meshStandardMaterial color="#2255cc" roughness={0.4} metalness={0.6} />
       </mesh>
       
-      {/* Engine glow */}
-      <pointLight position={[0, 0, 2]} distance={5} intensity={1} color="#66aaff" />
+      {/* Enhanced engine effects */}
+      {/* Main thruster glow */}
+      <pointLight position={[0, 0, 2.5]} distance={8} intensity={2} color="#66aaff" />
+      
+      {/* Thruster flame effect */}
+      {/* Static thruster flames */}
+      <group ref={thrusterRef} position={[0, 0, 2.5]} rotation={[Math.PI, 0, 0]}>
+        {/* Inner bright core */}
+        <mesh>
+          <coneGeometry args={[0.6, 2, 16]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
+        </mesh>
+        
+        {/* Middle layer */}
+        <mesh position={[0, 0, 0.2]}>
+          <coneGeometry args={[0.8, 2.5, 16]} />
+          <meshBasicMaterial color="#66ccff" transparent opacity={0.7} />
+        </mesh>
+        
+        {/* Outer flame */}
+        <mesh position={[0, 0, 0.4]}>
+          <coneGeometry args={[1, 3, 16]} />
+          <meshBasicMaterial color="#3366ff" transparent opacity={0.5} />
+        </mesh>
+      </group>
+      
+      {/* Dynamic exhaust particles */}
+      {exhaustParticles.map((particle, index) => (
+        <mesh key={index} position={particle} scale={[0.1 + Math.random() * 0.2, 0.1 + Math.random() * 0.2, 0.1 + Math.random() * 0.2]}>
+          <sphereGeometry args={[1, 8, 8]} />
+          <meshBasicMaterial 
+            color={index % 3 === 0 ? '#ffffff' : index % 2 === 0 ? '#66ccff' : '#3366ff'} 
+            transparent 
+            opacity={0.7 - (particle.z / 15) * 0.7} // Fade out with distance
+          />
+        </mesh>
+      ))}
+      
+      {/* Particle light effects (random flickering for engine glow) */}
+      {exhaustParticles.length > 0 && (
+        <pointLight 
+          position={[0, 0, 3 + Math.sin(Date.now() * 0.01) * 0.5]} 
+          distance={10} 
+          intensity={1 + Math.sin(Date.now() * 0.02) * 0.5} 
+          color="#66aaff" 
+        />
+      )}
     </group>
   );
 };
