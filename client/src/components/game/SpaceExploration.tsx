@@ -12,6 +12,7 @@ import { Controls, LocationType } from "@/lib/types";
 import useLocation from "@/lib/stores/useLocation";
 import { Vector3 } from "three";
 import { useAudio } from "@/lib/stores/useAudio";
+import { useGame } from "@/lib/stores/useGame";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 
 // Define interactable objects
@@ -250,13 +251,14 @@ const Spaceship = () => {
     setVelocity(newVelocity);
     
     // Update camera to follow ship with smooth interpolation
-    // Create target camera position
+    // Create target camera position - much further back for a more dramatic perspective
     const cameraTargetPos = ship.position.clone();
-    cameraTargetPos.y += 2; // Slight height offset
-    cameraTargetPos.z += 8; // Distance behind
+    cameraTargetPos.y += 3; // Increased height offset for better viewing angle
+    cameraTargetPos.z += 15; // Much greater distance behind
     
     // Smoothly move camera toward target position
-    const cameraLerpFactor = delta * 2.5; // Adjust for desired smoothness
+    // Use a slower lerp factor for more cinematic camera movement
+    const cameraLerpFactor = delta * 1.5; // Reduced for smoother, more gradual camera movement
     state.camera.position.lerp(cameraTargetPos, cameraLerpFactor);
     
     // Look slightly ahead of the ship with interpolated forward direction
@@ -387,81 +389,147 @@ const Spaceship = () => {
         />
       </mesh>
       
-      {/* Atmospheric re-entry heat shield effect */}
+      {/* Atmospheric re-entry heat shield effect - now with softer gradients on both sides */}
       {showHeatEffect && (
         <>
-          {/* Heat glow around ship */}
+          {/* Primary heat glow around ship - more intense and colored based on speed */}
           <pointLight 
             position={[0, 0, -1.5]} 
-            distance={6} 
+            distance={8} 
             intensity={2 * heatIntensity} 
-            color="#ff5500" 
+            color={heatIntensity > 0.7 ? "#4488ff" : "#ff5500"} 
           />
           
-          {/* Front heat shield plasma */}
-          <mesh position={[0, 0, -1.7]} rotation={[0, 0, Date.now() * 0.002]}>
-            <torusGeometry args={[1.2, 0.6 * heatIntensity, 16, 30]} />
-            <meshBasicMaterial color="#ff7700" transparent opacity={0.7 * heatIntensity} />
+          {/* Secondary heat glow for a more diffuse effect */}
+          <pointLight 
+            position={[0, 0, -2.5]} 
+            distance={12} 
+            intensity={1.5 * heatIntensity} 
+            color={heatIntensity > 0.7 ? "#2266ff" : "#ff7700"} 
+          />
+          
+          {/* Radial gradient for soft fading effect on both sides */}
+          <sprite position={[0, 0, -2]} scale={[8, 8, 8]}>
+            <spriteMaterial
+              map={null}
+              color={heatIntensity > 0.7 ? "#4488ff" : "#ff6600"}
+              transparent
+              opacity={0.3 * heatIntensity}
+              depthTest={false}
+              blending={THREE.AdditiveBlending} // Additive blending for softer edges
+            />
+          </sprite>
+          
+          {/* Secondary outer glow for even softer gradient */}
+          <sprite position={[0, 0, -2.2]} scale={[12, 12, 12]}>
+            <spriteMaterial
+              map={null}
+              color={heatIntensity > 0.7 ? "#1144ff" : "#ff4400"}
+              transparent
+              opacity={0.15 * heatIntensity}
+              depthTest={false}
+              blending={THREE.AdditiveBlending}
+            />
+          </sprite>
+          
+          {/* Front heat shield plasma - dynamic rotation and color transition */}
+          <mesh 
+            position={[0, 0, -1.7]} 
+            rotation={[0, 0, Date.now() * (0.001 + heatIntensity * 0.002)]}
+          >
+            <torusGeometry args={[1.2, 0.6 * heatIntensity, 32, 40]} /> {/* Higher poly count for smoother look */}
+            <meshBasicMaterial 
+              color={heatIntensity > 0.7 ? "#44aaff" : "#ff7700"} 
+              transparent 
+              opacity={0.7 * heatIntensity} 
+              blending={THREE.AdditiveBlending}
+            />
           </mesh>
           
-          {/* Heat particles at the front of the ship */}
+          {/* Heat particles at the front of the ship - more dynamic and varied */}
           <points position={[0, 0, -2]}>
             <bufferGeometry>
               <bufferAttribute
                 attach="attributes-position"
-                count={50}
-                array={new Float32Array(Array.from({ length: 50 * 3 }, (_, i) => {
-                  const angle = (i % 50) / 50 * Math.PI * 2;
-                  const radius = 1.5 * (0.7 + Math.sin(Date.now() * 0.003 + i) * 0.3);
+                count={80} // More particles for better effect
+                array={new Float32Array(Array.from({ length: 80 * 3 }, (_, i) => {
+                  const angle = (i % 80) / 80 * Math.PI * 2;
+                  // Create a more natural, irregular pattern with multiple sine waves
+                  const radius = 1.5 * (0.7 + 
+                    Math.sin(Date.now() * 0.003 + i) * 0.3 + 
+                    Math.sin(Date.now() * 0.005 + i * 0.7) * 0.2
+                  );
                   return (i % 3 === 0) 
                     ? Math.cos(angle) * radius 
                     : (i % 3 === 1) 
                     ? Math.sin(angle) * radius 
-                    : (Math.random() - 0.5) * 0.5;
+                    : (Math.random() - 0.5) * (0.5 + heatIntensity * 0.5); // Varied z-position
                 }))}
                 itemSize={3}
               />
             </bufferGeometry>
             <pointsMaterial
-              size={0.2 * heatIntensity}
-              color="#ff3300"
+              size={0.2 * heatIntensity + 0.1} // Slightly larger base size
+              color={heatIntensity > 0.7 ? "#88ccff" : "#ff3300"} // Color transition
               transparent
               opacity={0.8 * heatIntensity}
               sizeAttenuation
+              blending={THREE.AdditiveBlending} // Additive blending for better visual effect
             />
           </points>
         </>
       )}
       
-      {/* Enhanced engine effects */}
-      {/* Main thruster glow */}
-      <pointLight position={[0, 0, 2.5]} distance={8} intensity={2} color="#66aaff" />
+      {/* Enhanced engine effects with improved transitions */}
+      {/* Dynamic thruster glow with color and intensity based on speed */}
+      <pointLight 
+        position={[0, 0, 2.5]} 
+        distance={10} 
+        intensity={2 + heatIntensity * 2} 
+        color={heatIntensity > 0.5 ? "#66aaff" : "#ffaa66"} 
+      />
       
-      {/* Thruster flame effect */}
+      {/* Thruster flame effect - with improved gradients and transitions */}
       {/* Corrected thruster flames - pointing in the right direction */}
       <group ref={thrusterRef} position={[0, 0, 2.5]} rotation={[Math.PI, 0, 0]}>
-        {/* Inner bright core - hot white center */}
+        {/* Inner bright core - transitions from yellow/orange to white based on speed */}
         <mesh position={[0, 0, 0.2]}>
-          <coneGeometry args={[0.5, 1.5, 16]} />
-          <meshBasicMaterial color="#ffffff" transparent opacity={0.95} />
+          <coneGeometry args={[0.5, 1.5 + heatIntensity * 2, 16]} />
+          <meshBasicMaterial 
+            color={heatIntensity > 0.7 ? "#ffffff" : heatIntensity > 0.3 ? "#ffffdd" : "#ffdd66"} 
+            transparent 
+            opacity={0.95} 
+          />
         </mesh>
         
-        {/* Middle layer - bright blue */}
+        {/* Middle layer - transitions from orange to bright blue */}
         <mesh position={[0, 0, 0.3]}>
-          <coneGeometry args={[0.7, 2.2, 16]} />
-          <meshBasicMaterial color="#99eeff" transparent opacity={0.8} />
+          <coneGeometry args={[0.7, 2.2 + heatIntensity * 3, 16]} />
+          <meshBasicMaterial 
+            color={heatIntensity > 0.5 ? "#99eeff" : "#ffaa44"} 
+            transparent 
+            opacity={0.8} 
+          />
         </mesh>
         
-        {/* Outer flame - deeper blue */}
+        {/* Outer flame - transitions from yellow to deeper blue */}
         <mesh position={[0, 0, 0.4]}>
-          <coneGeometry args={[0.9, 3, 16]} />
-          <meshBasicMaterial color="#3366ff" transparent opacity={0.6} />
+          <coneGeometry args={[0.9, 3 + heatIntensity * 4, 16]} />
+          <meshBasicMaterial 
+            color={heatIntensity > 0.3 ? "#3366ff" : "#ffcc22"} 
+            transparent 
+            opacity={0.6 + heatIntensity * 0.2} 
+          />
         </mesh>
         
-        {/* Extra outer glow for visual effect */}
+        {/* Extra outer glow for visual effect - soft gradient effect */}
         <mesh position={[0, 0, 0.5]}>
-          <coneGeometry args={[1.1, 3.5, 16]} />
-          <meshBasicMaterial color="#1133aa" transparent opacity={0.3} />
+          <coneGeometry args={[1.1, 3.5 + heatIntensity * 5, 16]} />
+          <meshBasicMaterial 
+            color={heatIntensity > 0.2 ? "#1133aa" : "#ff8800"} 
+            transparent 
+            opacity={0.3} 
+          />
         </mesh>
       </group>
       
