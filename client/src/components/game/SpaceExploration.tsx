@@ -992,7 +992,7 @@ const TouchControls = () => {
 const JoystickControls = () => {
   const game = useGame();
   const controlsOpacity = game.controlsOpacity || 0.7;
-  const [, setKeys] = useKeyboardControls<any>();
+  const [, setKeys] = useKeyboardControls<Controls>();
   
   // Touch joystick state
   const [touchActive, setTouchActive] = useState(false);
@@ -1167,7 +1167,7 @@ const JoystickControls = () => {
 const SwipeControls = () => {
   const game = useGame();
   const controlsOpacity = game.controlsOpacity || 0.7;
-  const [, setKeys] = useKeyboardControls<any>();
+  const [, setKeys] = useKeyboardControls<Controls>();
   
   // Screen regions and active states
   const [activeRegions, setActiveRegions] = useState({
