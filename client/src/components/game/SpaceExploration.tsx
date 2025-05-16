@@ -262,8 +262,15 @@ const Spaceship = () => {
   const [showHeatEffect, setShowHeatEffect] = useState(false);
   const [heatIntensity, setHeatIntensity] = useState(0);
   
+  // Create a time reference for animations
+  const timeRef = useRef({ elapsedTime: 0 });
+  
   // Animate the thruster and particles
   useFrame((state, delta) => {
+    // Update our animation timer
+    timeRef.current.elapsedTime += delta;
+    const animTime = timeRef.current.elapsedTime;
+    
     if (thrusterRef.current) {
       // Get current keyboard state
       const keys = getKeys();
@@ -289,19 +296,21 @@ const Spaceship = () => {
         }
       }
       
+      // Engine animation using our own timer
       if (isThrusting) {
-        // Larger flame effect when thrusting
-        thrusterRef.current.scale.z = 1 + Math.sin(state.clock.elapsedTime * 15) * 0.2;
-        thrusterRef.current.scale.x = 0.8 + Math.sin(state.clock.elapsedTime * 10) * 0.1;
-        thrusterRef.current.scale.y = 0.8 + Math.sin(state.clock.elapsedTime * 10) * 0.1;
+        // Larger flame effect when thrusting - expanded outward
+        thrusterRef.current.scale.x = 1.0 + Math.sin(animTime * 15) * 0.1;
+        thrusterRef.current.scale.y = 1.0 + Math.sin(animTime * 15) * 0.1;
+        // Length grows outward from the back of the ship
+        thrusterRef.current.scale.z = 1.5 + Math.sin(animTime * 12) * 0.2;
         
         // Add new exhaust particles when thrusting - more particles at higher speeds
-        const particleChance = 0.6 - (currentSpeed / maxSpeed) * 0.3; // More particles at higher speeds
+        const particleChance = 0.7 - (currentSpeed / maxSpeed) * 0.4; // More particles at higher speeds
         if (Math.random() > particleChance) {
           const newParticle = new THREE.Vector3(
             (Math.random() - 0.5) * 0.5,
             (Math.random() - 0.5) * 0.5,
-            2.5 + Math.random() * 1
+            3.5 + Math.random() * 1.5 // Particles appear further back
           );
           setExhaustParticles(prev => {
             // Add new particle and remove oldest if at max capacity
@@ -310,15 +319,19 @@ const Spaceship = () => {
           });
         }
       } else if (isBraking) {
-        // Special braking effect (pulsed)
-        thrusterRef.current.scale.z = 0.8 + Math.sin(state.clock.elapsedTime * 30) * 0.4;
-        thrusterRef.current.scale.x = 0.7 + Math.sin(state.clock.elapsedTime * 20) * 0.2;
-        thrusterRef.current.scale.y = 0.7 + Math.sin(state.clock.elapsedTime * 20) * 0.2;
+        // Special braking effect - quick pulses with different pattern
+        const pulseTime = animTime * 20;
+        const pulseValue = (Math.sin(pulseTime) + Math.sin(pulseTime * 1.5)) * 0.25;
+        
+        thrusterRef.current.scale.x = 0.8 + pulseValue;
+        thrusterRef.current.scale.y = 0.8 + pulseValue;
+        thrusterRef.current.scale.z = 0.9 + pulseValue;
       } else {
-        // Smaller idle effect when not thrusting
-        thrusterRef.current.scale.z = 0.6 + Math.sin(state.clock.elapsedTime * 8) * 0.1;
-        thrusterRef.current.scale.x = 0.6;
-        thrusterRef.current.scale.y = 0.6;
+        // Smaller idle effect when not thrusting - gentle pulsing
+        const idlePulse = Math.sin(animTime * 5) * 0.05;
+        thrusterRef.current.scale.x = 0.7 + idlePulse;
+        thrusterRef.current.scale.y = 0.7 + idlePulse;
+        thrusterRef.current.scale.z = 0.8 + idlePulse;
       }
       
       // Update existing particles (move them behind the ship)
@@ -373,7 +386,7 @@ const Spaceship = () => {
           />
           
           {/* Front heat shield plasma */}
-          <mesh position={[0, 0, -1.7]} rotation={[0, 0, state.clock.elapsedTime * 2]}>
+          <mesh position={[0, 0, -1.7]} rotation={[0, 0, Date.now() * 0.002]}>
             <torusGeometry args={[1.2, 0.6 * heatIntensity, 16, 30]} />
             <meshBasicMaterial color="#ff7700" transparent opacity={0.7 * heatIntensity} />
           </mesh>
@@ -386,7 +399,7 @@ const Spaceship = () => {
                 count={50}
                 array={new Float32Array(Array.from({ length: 50 * 3 }, (_, i) => {
                   const angle = (i % 50) / 50 * Math.PI * 2;
-                  const radius = 1.5 * (0.7 + Math.sin(state.clock.elapsedTime * 3 + i) * 0.3);
+                  const radius = 1.5 * (0.7 + Math.sin(Date.now() * 0.003 + i) * 0.3);
                   return (i % 3 === 0) 
                     ? Math.cos(angle) * radius 
                     : (i % 3 === 1) 
@@ -412,24 +425,30 @@ const Spaceship = () => {
       <pointLight position={[0, 0, 2.5]} distance={8} intensity={2} color="#66aaff" />
       
       {/* Thruster flame effect */}
-      {/* Static thruster flames */}
-      <group ref={thrusterRef} position={[0, 0, 2.5]} rotation={[Math.PI, 0, 0]}>
-        {/* Inner bright core */}
-        <mesh>
-          <coneGeometry args={[0.6, 2, 16]} />
-          <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
+      {/* Static thruster flames - fixed direction with improved appearance */}
+      <group ref={thrusterRef} position={[0, 0, 2.5]} rotation={[0, 0, 0]}>
+        {/* Inner bright core - hot white center */}
+        <mesh position={[0, 0, 1]}>
+          <coneGeometry args={[0.5, 1.5, 16]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.95} />
         </mesh>
         
-        {/* Middle layer */}
-        <mesh position={[0, 0, 0.2]}>
-          <coneGeometry args={[0.8, 2.5, 16]} />
-          <meshBasicMaterial color="#66ccff" transparent opacity={0.7} />
+        {/* Middle layer - bright blue */}
+        <mesh position={[0, 0, 1.4]}>
+          <coneGeometry args={[0.7, 2.2, 16]} />
+          <meshBasicMaterial color="#99eeff" transparent opacity={0.8} />
         </mesh>
         
-        {/* Outer flame */}
-        <mesh position={[0, 0, 0.4]}>
-          <coneGeometry args={[1, 3, 16]} />
-          <meshBasicMaterial color="#3366ff" transparent opacity={0.5} />
+        {/* Outer flame - deeper blue */}
+        <mesh position={[0, 0, 1.8]}>
+          <coneGeometry args={[0.9, 3, 16]} />
+          <meshBasicMaterial color="#3366ff" transparent opacity={0.6} />
+        </mesh>
+        
+        {/* Extra outer glow for visual effect */}
+        <mesh position={[0, 0, 2.2]}>
+          <coneGeometry args={[1.1, 3.5, 16]} />
+          <meshBasicMaterial color="#1133aa" transparent opacity={0.3} />
         </mesh>
       </group>
       
