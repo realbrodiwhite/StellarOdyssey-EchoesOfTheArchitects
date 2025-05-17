@@ -5,13 +5,303 @@ import { Card } from "../ui/card";
 import { characterTemplates } from "@/lib/data/characters"; // Original templates as fallback
 import { expandedCharacterTemplates } from "@/lib/data/expanded-characters"; // New expanded templates
 import { useCharacter } from "@/lib/stores/useCharacter";
-import { CharacterClass, SkillType, Gender, Character } from "@/lib/types";
+import { CharacterClass, SkillType, Gender, Character, Skill } from "@/lib/types";
 import CharacterDetailModal from "./CharacterDetailModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CharacterSelectionProps {
   onSelect: () => void;
 }
+
+// Get the icon for a specific skill type
+const getSkillTypeIcon = (type: SkillType): string => {
+  switch (type) {
+    case SkillType.Technical:
+      return "🔧"; // Wrench
+    case SkillType.Scientific:
+      return "🧪"; // Test tube
+    case SkillType.Social:
+      return "💬"; // Speech bubble
+    case SkillType.Navigation:
+      return "🧭"; // Compass
+    case SkillType.Combat:
+      return "⚔️"; // Crossed swords
+    default:
+      return "✨"; // Sparkles (fallback)
+  }
+};
+
+// Get color for a specific skill type
+const getSkillTypeColor = (type: SkillType): string => {
+  switch (type) {
+    case SkillType.Technical:
+      return "text-yellow-400";
+    case SkillType.Scientific:
+      return "text-purple-400";
+    case SkillType.Social:
+      return "text-green-400";
+    case SkillType.Navigation:
+      return "text-blue-400";
+    case SkillType.Combat:
+      return "text-red-400";
+    default:
+      return "text-gray-400";
+  }
+};
+
+// Character Card Component
+const CharacterCard = ({ 
+  character, 
+  isSelected, 
+  onClick, 
+  onViewDetails 
+}: { 
+  character: Character; 
+  isSelected: boolean; 
+  onClick: () => void; 
+  onViewDetails: (e: React.MouseEvent) => void;
+}) => {
+  return (
+    <Card 
+      className={`cursor-pointer transition-all duration-200 overflow-hidden ${
+        isSelected
+          ? 'ring-2 ring-blue-500 bg-gray-800 transform scale-[1.02]' 
+          : 'hover:bg-gray-900 hover:ring-1 hover:ring-blue-300 bg-gray-950'
+      }`}
+      onClick={onClick}
+    >
+      <div className="relative">
+        {/* Character glow effect on selected */}
+        {isSelected && (
+          <div className="absolute -inset-0.5 bg-blue-500/20 animate-pulse rounded-lg z-0"></div>
+        )}
+        
+        <div className="p-2 relative z-10">
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="text-sm font-bold text-white">{character.class}</h2>
+            {isSelected && (
+              <div className="bg-blue-500 text-white text-[9px] px-1 py-0.5 rounded">Selected</div>
+            )}
+          </div>
+          
+          <div className="h-0.5 w-10 bg-gradient-to-r from-blue-500 to-purple-500 mb-1"></div>
+          
+          <p className="text-gray-300 text-[10px] mb-2 line-clamp-1">{character.description.split('.')[0]}.</p>
+          
+          <div className="space-y-1">
+            {/* Top skill at a glance */}
+            {character.skills
+              .filter(skill => skill.level > 1)
+              .slice(0, 1)
+              .map(skill => (
+                <div key={skill.id} className="flex justify-between items-center">
+                  <span className="text-gray-400 text-[9px]">{skill.name}</span>
+                  <div className="flex space-x-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <div 
+                        key={i}
+                        className={`w-0.5 h-1.5 rounded-sm ${
+                          i < skill.level ? 'bg-blue-400' : 'bg-gray-700'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </div>
+            
+          <div className="mt-2 pt-1 border-t border-gray-800 grid grid-cols-2 gap-1">
+            <div className="bg-gray-900/60 p-1 rounded">
+              <div className="text-[8px] text-blue-400">Health</div>
+              <div className="text-[10px] font-bold text-white">
+                <span className="text-red-400 mr-0.5">❤</span> {character.health}
+              </div>
+            </div>
+            
+            <div className="bg-gray-900/60 p-1 rounded">
+              <div className="text-[8px] text-blue-400">Energy</div>
+              <div className="text-[10px] font-bold text-white">
+                <span className="text-blue-400 mr-0.5">⚡</span> {character.energy}
+              </div>
+            </div>
+          </div>
+          
+          <button
+            className="mt-1 w-full text-center text-[9px] bg-gray-800/80 hover:bg-gray-700 text-gray-300 py-0.5 rounded transition-colors"
+            onClick={onViewDetails}
+          >
+            Details
+          </button>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+// Character Sidebar Preview Component
+const CharacterPreview = ({ character }: { character: Character | null }) => {
+  if (!character) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center">
+        <div className="text-blue-400 text-4xl mb-4">👤</div>
+        <h3 className="text-white text-base font-bold mb-2">Select a Character</h3>
+        <p className="text-gray-400 text-xs">Choose your class to view detailed stats</p>
+      </div>
+    );
+  }
+
+  // Group skills by type
+  const skillsByType = useMemo(() => {
+    const result: Record<SkillType, Skill[]> = {
+      [SkillType.Technical]: [],
+      [SkillType.Scientific]: [],
+      [SkillType.Social]: [],
+      [SkillType.Navigation]: [],
+      [SkillType.Combat]: []
+    };
+    
+    character.skills.forEach(skill => {
+      result[skill.type].push(skill);
+    });
+    
+    return result;
+  }, [character.skills]);
+
+  return (
+    <div className="h-full overflow-y-auto flex flex-col">
+      {/* Character header */}
+      <div className="bg-gradient-to-r from-blue-900/80 to-indigo-900/80 p-3 rounded-t border-b border-blue-700">
+        <h2 className="text-white text-xl font-bold mb-1">{character.class}</h2>
+        <div className="h-1 w-16 bg-gradient-to-r from-blue-500 to-purple-500 mb-2"></div>
+        <p className="text-gray-300 text-sm">{character.gender} • Level {character.level}</p>
+      </div>
+      
+      {/* Character avatar (placeholder) */}
+      <div className="bg-gray-800 p-4 border-b border-gray-700">
+        <div className="mx-auto w-24 h-24 bg-gradient-to-br from-blue-700 to-indigo-900 rounded-full flex items-center justify-center mb-2">
+          <span className="text-white text-3xl">{character.class.charAt(0)}</span>
+        </div>
+        <div className="text-center">
+          <div className="text-gray-400 text-xs mb-3">{character.description}</div>
+          
+          {/* Character stats */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-gray-900/60 p-2 rounded">
+              <div className="text-[10px] text-blue-400">Health</div>
+              <div className="text-sm font-bold text-white">
+                <span className="text-red-400 mr-1">❤</span> {character.health} / {character.maxHealth}
+              </div>
+            </div>
+            
+            <div className="bg-gray-900/60 p-2 rounded">
+              <div className="text-[10px] text-blue-400">Energy</div>
+              <div className="text-sm font-bold text-white">
+                <span className="text-blue-400 mr-1">⚡</span> {character.energy} / {character.maxEnergy}
+              </div>
+            </div>
+            
+            {character.shield !== undefined && (
+              <div className="bg-gray-900/60 p-2 rounded">
+                <div className="text-[10px] text-blue-400">Shield</div>
+                <div className="text-sm font-bold text-white">
+                  <span className="text-cyan-400 mr-1">🛡️</span> {character.shield} / {character.maxShield}
+                </div>
+              </div>
+            )}
+            
+            {character.credits !== undefined && (
+              <div className="bg-gray-900/60 p-2 rounded">
+                <div className="text-[10px] text-blue-400">Credits</div>
+                <div className="text-sm font-bold text-white">
+                  <span className="text-yellow-400 mr-1">💰</span> {character.credits}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      {/* Skills section */}
+      <div className="flex-1 bg-gray-900 p-3 overflow-y-auto">
+        <h3 className="text-blue-400 text-sm font-bold mb-2">Skills</h3>
+        
+        {Object.entries(skillsByType).map(([type, skills]) => {
+          if (skills.length === 0) return null;
+          
+          return (
+            <div key={type} className="mb-3">
+              <div className={`flex items-center mb-1 ${getSkillTypeColor(type as SkillType)}`}>
+                <span className="mr-1">{getSkillTypeIcon(type as SkillType)}</span>
+                <span className="text-xs font-bold">{type}</span>
+              </div>
+              
+              <div className="space-y-1.5">
+                {skills.map(skill => (
+                  <div key={skill.id} className="flex justify-between items-center bg-gray-800/50 p-1.5 rounded">
+                    <div>
+                      <div className="text-white text-xs">{skill.name}</div>
+                      <div className="text-gray-400 text-[9px]">{skill.description}</div>
+                    </div>
+                    <div className="flex space-x-0.5 ml-2">
+                      {[...Array(skill.maxLevel)].map((_, i) => (
+                        <div 
+                          key={i}
+                          className={`w-1 h-3 rounded-sm ${
+                            i < skill.level 
+                              ? `${getSkillTypeColor(skill.type).replace('text-', 'bg-')}` 
+                              : 'bg-gray-700'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+        
+        {/* Abilities section */}
+        {character.abilities && character.abilities.length > 0 && (
+          <div className="mt-4">
+            <h3 className="text-purple-400 text-sm font-bold mb-2">Abilities</h3>
+            
+            <div className="space-y-2">
+              {character.abilities.map(ability => (
+                <div key={ability.id} className="bg-gray-800/50 p-2 rounded">
+                  <div className="flex justify-between items-start">
+                    <div className="text-white text-xs font-bold">{ability.name}</div>
+                    <div className="text-blue-400 text-[9px]">
+                      Energy: {ability.energyCost}
+                    </div>
+                  </div>
+                  
+                  <div className="text-gray-400 text-[9px] mt-1">{ability.description}</div>
+                  
+                  <div className="flex justify-between mt-1.5">
+                    {ability.damage && (
+                      <div className="text-red-400 text-[9px]">
+                        Damage: {ability.damage}
+                      </div>
+                    )}
+                    {ability.healing && (
+                      <div className="text-green-400 text-[9px]">
+                        Healing: {ability.healing}
+                      </div>
+                    )}
+                    <div className="text-amber-400 text-[9px]">
+                      Cooldown: {ability.cooldown}s
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => {
   // Use expanded character templates if available, otherwise fall back to original
@@ -126,7 +416,7 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
   }, [selectedIndex, uniqueClasses.length]);
   
   return (
-    <div className="h-screen w-full bg-black flex flex-col items-center justify-center relative overflow-auto py-4 sm:py-6 md:py-8">
+    <div className="h-screen w-full bg-black flex flex-col items-center justify-center relative overflow-hidden">
       {/* Background stars - responsive */}
       <div className="absolute inset-0 z-0">
         {[...Array(Math.min(80, Math.max(30, Math.floor(window.innerWidth / 12))))].map((_, i) => (
@@ -144,202 +434,126 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
         ))}
       </div>
       
-      <motion.h1
-        className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-5 md:mb-6 z-10 px-4 text-center"
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        Select Your Character
-      </motion.h1>
-      
-      {/* Gender Selection Tabs */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-        className="mb-6 z-10 w-full max-w-xs"
-      >
-        <Tabs 
-          defaultValue={Gender.Male} 
-          className="w-full"
-          onValueChange={(value) => handleGenderToggle(value as Gender)}
+      {/* Main content layout with sidebar */}
+      <div className="w-full h-full flex flex-col max-h-screen z-10">
+        {/* Header */}
+        <motion.div
+          className="p-4 sm:p-5 flex flex-col items-center"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
         >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value={Gender.Male} className="text-sm sm:text-base font-medium">
-              Male
-            </TabsTrigger>
-            <TabsTrigger value={Gender.Female} className="text-sm sm:text-base font-medium">
-              Female
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </motion.div>
-      
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto mb-6 sm:mb-7 md:mb-8 z-10 px-2 sm:px-3 md:px-4">
-        {uniqueClasses && uniqueClasses.length > 0 ? (
-          uniqueClasses.map((characterClass, index) => {
-            // Get the character of the selected gender for this class
-            const characterGroup = charactersByClass[characterClass];
-            const character = characterGroup && characterGroup[selectedGender] && characterGroup[selectedGender][0];
-            
-            if (!character) return null;
-            
-            return (
-              <motion.div
-                key={`${characterClass}-${selectedGender}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-              >
-                <Card 
-                  className={`cursor-pointer transition-all duration-200 overflow-hidden ${
-                    selectedIndex === index 
-                      ? 'ring-3 ring-blue-500 bg-gray-800 transform scale-[1.02]' 
-                      : 'hover:bg-gray-900 hover:ring-1 hover:ring-blue-300 bg-gray-950'
-                  }`}
-                  onClick={() => handleCharacterSelect(index)}
-                >
-                  <div className="relative">
-                    {/* Character glow effect on selected */}
-                    {selectedIndex === index && (
-                      <div className="absolute -inset-0.5 bg-blue-500/20 animate-pulse rounded-lg z-0"></div>
-                    )}
-                    
-                    <div className="p-3 relative z-10">
-                      <div className="flex items-center justify-between mb-2">
-                        <h2 className="text-base font-bold text-white">{character.class}</h2>
-                        {selectedIndex === index && (
-                          <div className="bg-blue-500 text-white text-[10px] px-1 py-0.5 rounded">Selected</div>
-                        )}
-                      </div>
-                      
-                      <div className="h-0.5 w-12 bg-gradient-to-r from-blue-500 to-purple-500 mb-2"></div>
-                      
-                      <p className="text-gray-300 text-xs mb-3 line-clamp-2">{character.description.split('.')[0]}.</p>
-                      
-                      <div className="space-y-1.5">
-                        {/* Top skills at a glance */}
-                        {character.skills
-                          .filter(skill => skill.level > 1)
-                          .slice(0, 2)
-                          .map(skill => (
-                            <div key={skill.id} className="flex justify-between items-center">
-                              <span className="text-gray-400 text-[10px]">{skill.name}</span>
-                              <div className="flex space-x-0.5">
-                                {[...Array(5)].map((_, i) => (
-                                  <div 
-                                    key={i}
-                                    className={`w-1 h-2 rounded-sm ${
-                                      i < skill.level ? 'bg-blue-400' : 'bg-gray-700'
-                                    }`}
-                                  />
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                        
-                      <div className="mt-3 pt-2 border-t border-gray-800 grid grid-cols-2 gap-1.5">
-                        <div className="bg-gray-900/60 p-1.5 rounded">
-                          <div className="text-[9px] text-blue-400">Health</div>
-                          <div className="text-xs font-bold text-white">
-                            <span className="text-red-400 mr-0.5">❤</span> {character.health}
-                          </div>
-                        </div>
-                        
-                        <div className="bg-gray-900/60 p-1.5 rounded">
-                          <div className="text-[9px] text-blue-400">Energy</div>
-                          <div className="text-xs font-bold text-white">
-                            <span className="text-blue-400 mr-0.5">⚡</span> {character.energy}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <button
-                        className="mt-2 w-full text-center text-[10px] bg-gray-800/80 hover:bg-gray-700 text-gray-300 py-1 rounded transition-colors"
-                        onClick={(e) => handleCharacterDetails(e, index)}
-                      >
-                        View Details
-                      </button>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            );
-          })
-        ) : (
-          <div className="w-full text-center text-white col-span-4">
-            <p>Loading character templates...</p>
-          </div>
-        )}
-      </div>
-      
-      {/* Sticky confirmation button at the bottom of screen */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="fixed bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black to-transparent pt-8 pb-4 sm:pb-6 md:pb-8 px-4"
-      >
-        <div className="flex flex-col items-center max-w-md mx-auto">
-          {selectedIndex !== null && getSelectedTemplate() ? (
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="mb-4 sm:mb-5 text-center"
-            >
-              <h3 className="text-green-400 text-base sm:text-lg mb-1 sm:mb-2">
-                Character Selected: {getSelectedTemplate()?.class} ({selectedGender})
-              </h3>
-              <p className="text-gray-400 text-xs sm:text-sm">Are you ready to begin your cosmic adventure?</p>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="mb-4 sm:mb-5 text-center"
-            >
-              <h3 className="text-amber-400 text-base sm:text-lg mb-1 sm:mb-2">Select a character to continue</h3>
-              <p className="text-gray-400 text-xs sm:text-sm">Each class has unique abilities and advantages</p>
-            </motion.div>
-          )}
+          <h1 className="text-2xl sm:text-3xl font-bold text-white text-center">
+            Select Your Character
+          </h1>
           
-          <Button 
-            variant="default" 
-            size="lg" 
-            disabled={selectedIndex === null || !getSelectedTemplate()}
-            onClick={handleConfirmSelection}
-            className={`px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6 text-base sm:text-lg transition-all w-full sm:w-auto ${
-              selectedIndex !== null 
-                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg' 
-                : 'bg-gray-700'
-            }`}
+          {/* Gender Selection Tabs */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-3 w-full max-w-xs"
           >
-            {selectedIndex !== null ? (
-              <div className="flex items-center justify-center">
-                <span>Begin Adventure</span>
-                <span className="ml-2">→</span>
-              </div>
-            ) : 'Choose Your Path'}
-          </Button>
-          
-          {selectedIndex !== null && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mt-3 text-gray-400 text-xs"
+            <Tabs 
+              defaultValue={Gender.Male} 
+              className="w-full"
+              onValueChange={(value) => handleGenderToggle(value as Gender)}
             >
-              Press ENTER to continue
-            </motion.div>
-          )}
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value={Gender.Male} className="text-sm font-medium">
+                  Male
+                </TabsTrigger>
+                <TabsTrigger value={Gender.Female} className="text-sm font-medium">
+                  Female
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </motion.div>
+        </motion.div>
+        
+        {/* Main content with sidebar */}
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-2 sm:p-4">
+          {/* Character cards grid */}
+          <div className="flex-1 overflow-y-auto pr-0 lg:pr-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-3">
+              {uniqueClasses && uniqueClasses.length > 0 ? (
+                uniqueClasses.map((characterClass, index) => {
+                  // Get the character of the selected gender for this class
+                  const characterGroup = charactersByClass[characterClass];
+                  const character = characterGroup && characterGroup[selectedGender] && characterGroup[selectedGender][0];
+                  
+                  if (!character) return null;
+                  
+                  return (
+                    <motion.div
+                      key={`${characterClass}-${selectedGender}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05, duration: 0.5 }}
+                    >
+                      <CharacterCard 
+                        character={character}
+                        isSelected={selectedIndex === index}
+                        onClick={() => handleCharacterSelect(index)}
+                        onViewDetails={(e) => handleCharacterDetails(e, index)}
+                      />
+                    </motion.div>
+                  );
+                })
+              ) : (
+                <div className="w-full text-center text-white col-span-full">
+                  <p>Loading character templates...</p>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Sidebar character preview */}
+          <motion.div 
+            className="lg:w-80 xl:w-96 bg-gray-900/80 rounded-lg border border-gray-800 shadow-xl overflow-hidden mt-4 lg:mt-0 flex flex-col"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="h-full">
+              <CharacterPreview character={getSelectedTemplate()} />
+            </div>
+            
+            {/* Confirmation button */}
+            <div className="p-3 border-t border-gray-800 bg-gray-900">
+              <Button 
+                variant="default" 
+                size="lg" 
+                disabled={selectedIndex === null || !getSelectedTemplate()}
+                onClick={handleConfirmSelection}
+                className={`w-full py-3 transition-all ${
+                  selectedIndex !== null 
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg' 
+                    : 'bg-gray-700'
+                }`}
+              >
+                {selectedIndex !== null ? (
+                  <div className="flex items-center justify-center">
+                    <span>Begin Adventure</span>
+                    <span className="ml-2">→</span>
+                  </div>
+                ) : 'Choose Your Path'}
+              </Button>
+              
+              {selectedIndex !== null && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="mt-2 text-gray-400 text-xs text-center"
+                >
+                  Press ENTER to continue
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
-      
-      {/* Add bottom padding to ensure content isn't hidden behind the sticky button */}
-      <div className="h-40 sm:h-48 md:h-52"></div>
+      </div>
       
       {/* Character Detail Modal */}
       {modalCharacter !== null && getModalCharacter() && (
