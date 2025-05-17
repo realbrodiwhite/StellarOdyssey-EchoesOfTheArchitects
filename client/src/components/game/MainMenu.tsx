@@ -99,7 +99,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       >
         <div className="flex flex-col items-center gap-3">
           <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl"><span className="text-blue-400">STELLAR</span> ODYSSEY</div>
-          <div className="text-sm sm:text-base md:text-lg lg:text-xl tracking-[1em] font-light shimmer-text">ECHOES OF THE ARCHITECTS</div>
+          <div className="text-sm sm:text-base md:text-lg lg:text-xl tracking-[1.5em] font-light shimmer-text">ECHOES OF THE ARCHITECTS</div>
         </div>
       </motion.div>
       
@@ -114,7 +114,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       
       {/* Menu buttons */}
       <motion.div
-        className="flex flex-col sm:flex-row gap-2 z-10 w-full max-w-[150px] sm:max-w-[400px] justify-center px-4 mt-6"
+        className="flex flex-col sm:flex-row gap-4 sm:gap-8 z-10 w-full max-w-[150px] sm:max-w-[500px] justify-center px-4 mt-6"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
