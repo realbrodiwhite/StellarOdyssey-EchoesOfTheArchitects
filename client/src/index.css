@@ -135,11 +135,13 @@
   background: linear-gradient(
     90deg,
     rgba(160, 160, 160, 0.5) 0%,
-    rgba(160, 160, 160, 0.5) 15%,
-    rgba(175, 175, 175, 0.6) 35%,
-    rgba(180, 180, 180, 0.55) 50%,
-    rgba(175, 175, 175, 0.6) 65%,
-    rgba(160, 160, 160, 0.5) 85%,
+    rgba(165, 165, 165, 0.52) 20%,
+    rgba(170, 170, 170, 0.54) 30%,
+    rgba(175, 175, 175, 0.56) 40%,
+    rgba(180, 180, 180, 0.58) 50%,
+    rgba(175, 175, 175, 0.56) 60%,
+    rgba(170, 170, 170, 0.54) 70%,
+    rgba(165, 165, 165, 0.52) 80%,
     rgba(160, 160, 160, 0.5) 100%
   );
   background-size: 200% 100%;
@@ -165,7 +167,7 @@
     transparent 100%
   );
   animation: reflectionMove 35s ease-in-out infinite alternate;
-  transform: skewX(-10deg);
+  transform: skewX(10deg); /* Changed to positive angle to face the direction of movement */
 }
 
 @keyframes shimmerEffect {
