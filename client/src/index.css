@@ -73,7 +73,7 @@
   padding-right: 0;
   font-weight: 300;
   font-stretch: condensed;
-  transform: scaleX(0.85) scaleY(1.4); /* Made text taller with scaleY */
+  transform: scaleX(0.85) scaleY(1.4) skewX(-15deg); /* More dramatic italics with skewX */
   line-height: 0.9;
   background-image: linear-gradient(180deg, 
     #ffffff 0%, 
@@ -101,8 +101,9 @@
   font-family: "Polaris", "Derelict", "Arial Black", sans-serif;
   letter-spacing: 0.01em;
   text-transform: uppercase;
-  font-style: normal;
+  font-style: italic;
   font-weight: 900;
+  transform: skewX(-15deg); /* Added dramatic italics */
   font-stretch: expanded;
   transform: scaleY(1.4); /* Made text taller with scaleY */
   line-height: 0.9;
