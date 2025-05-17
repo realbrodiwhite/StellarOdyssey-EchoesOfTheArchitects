@@ -26,6 +26,37 @@ type Interactable = {
   scale?: [number, number, number];
 };
 
+// Weapon types for EVE-like combat system
+type WeaponType = "kineticTurret" | "laserCannon" | "missile" | "lockingMissile" | "miningLaser";
+
+// Ammunition and weapon stats
+interface Weapon {
+  type: WeaponType;
+  name: string;
+  damage: number;
+  range: number;
+  fireRate: number; // shots per second
+  energyCost: number;
+  cooldown: number;
+  currentCooldown: number;
+  projectileSpeed: number;
+  color: string;
+}
+
+// Projectile class for weapon firing
+interface Projectile {
+  id: string;
+  type: WeaponType;
+  position: THREE.Vector3;
+  direction: THREE.Vector3;
+  speed: number;
+  damage: number;
+  range: number;
+  distanceTraveled: number;
+  color: string;
+  target?: THREE.Object3D;
+}
+
 // Define a particle system for space dust and debris
 const SpaceDust = () => {
   const particlesRef = useRef<THREE.Points>(null);
@@ -133,7 +164,6 @@ const SpaceStation = ({ position, name }: {
   position: [number, number, number];
   name: string;
 }) => {
-  // Could use a real model in production
   return (
     <group position={position}>
       <mesh castShadow>
@@ -161,8 +191,572 @@ const SpaceStation = ({ position, name }: {
   );
 };
 
+// Projectile component for weapons
+const Projectile = ({ projectile, onRemove }: { 
+  projectile: Projectile, 
+  onRemove: (id: string) => void 
+}) => {
+  const ref = useRef<THREE.Mesh>(null);
+  
+  useFrame((state, delta) => {
+    if (!ref.current) return;
+    
+    // Move projectile along its direction
+    const movement = projectile.direction.clone().multiplyScalar(projectile.speed * delta);
+    ref.current.position.add(movement);
+    
+    // Update distance traveled
+    projectile.distanceTraveled += movement.length();
+    
+    // Check if projectile has reached its range
+    if (projectile.distanceTraveled >= projectile.range) {
+      onRemove(projectile.id);
+      return;
+    }
+    
+    // Handle homing missiles
+    if (projectile.type === "lockingMissile" && projectile.target) {
+      const targetPosition = projectile.target.position;
+      const toTarget = targetPosition.clone().sub(ref.current.position).normalize();
+      
+      // Gradually turn toward target
+      const turnFactor = 0.1;
+      projectile.direction.lerp(toTarget, turnFactor * delta * 10);
+      projectile.direction.normalize();
+      
+      // Orient the missile toward its direction
+      if (ref.current) {
+        const lookAtPos = ref.current.position.clone().add(projectile.direction);
+        ref.current.lookAt(lookAtPos);
+      }
+    }
+  });
+
+  // Different visuals for different projectile types
+  const getProjectileGeometry = () => {
+    switch (projectile.type) {
+      case "kineticTurret":
+        return <sphereGeometry args={[0.1, 8, 8]} />;
+      case "laserCannon":
+        return <cylinderGeometry args={[0.03, 0.03, 2, 8]} rotation={[Math.PI / 2, 0, 0]} />;
+      case "missile":
+      case "lockingMissile":
+        return <coneGeometry args={[0.1, 0.4, 8]} rotation={[Math.PI / 2, 0, 0]} />;
+      case "miningLaser":
+        return <cylinderGeometry args={[0.05, 0.01, 1.5, 8]} rotation={[Math.PI / 2, 0, 0]} />;
+      default:
+        return <boxGeometry args={[0.1, 0.1, 0.3]} />;
+    }
+  };
+
+  // Different materials for different projectile types
+  const getProjectileMaterial = () => {
+    let emissiveIntensity = 1.0;
+    
+    switch (projectile.type) {
+      case "laserCannon":
+        emissiveIntensity = 2.0;
+        break;
+      case "miningLaser":
+        emissiveIntensity = 1.5;
+        break;
+      default:
+        emissiveIntensity = 0.8;
+    }
+    
+    return (
+      <meshStandardMaterial 
+        color={projectile.color} 
+        emissive={projectile.color} 
+        emissiveIntensity={emissiveIntensity}
+        transparent
+        opacity={0.9}
+      />
+    );
+  };
+
+  // Add trail effects for missiles
+  const renderTrail = () => {
+    if (projectile.type === "missile" || projectile.type === "lockingMissile") {
+      return (
+        <pointLight
+          position={[0, 0, 0.2]}
+          distance={2}
+          intensity={0.5}
+          color={"#ffaa44"}
+        />
+      );
+    }
+    return null;
+  };
+
+  return (
+    <mesh
+      ref={ref}
+      position={projectile.position.toArray()}
+      userData={{ projectile: true, id: projectile.id }}
+    >
+      {getProjectileGeometry()}
+      {getProjectileMaterial()}
+      {renderTrail()}
+    </mesh>
+  );
+};
+
+// EVE Online style minimap component
+const Minimap = ({ 
+  playerPosition,
+  interactables,
+  projectiles,
+  selectedTarget,
+  onSelectTarget
+}: { 
+  playerPosition: THREE.Vector3,
+  interactables: Interactable[],
+  projectiles: Projectile[],
+  selectedTarget: string | null,
+  onSelectTarget: (id: string) => void
+}) => {
+  const minimapSize = 150;
+  const minimapRadius = minimapSize / 2;
+  const minimapScale = 0.1; // Scale factor for converting world to minimap coordinates
+  
+  // Style for the minimap container
+  const minimapStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    width: `${minimapSize}px`,
+    height: `${minimapSize}px`,
+    backgroundColor: 'rgba(0, 20, 40, 0.7)',
+    border: '2px solid rgba(100, 180, 255, 0.8)',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    boxShadow: '0 0 10px rgba(0, 100, 200, 0.5)',
+    zIndex: 1000
+  };
+  
+  // Transform world position to minimap position
+  const worldToMinimap = (worldPos: [number, number, number]): [number, number] => {
+    // Scale the position and center it on the minimap
+    const x = worldPos[0] * minimapScale + minimapRadius;
+    const y = worldPos[2] * minimapScale + minimapRadius; // Use Z as Y on the 2D map
+    
+    return [x, y];
+  };
+  
+  // Style for the player dot
+  const playerDotStyle: React.CSSProperties = {
+    position: 'absolute',
+    width: '6px',
+    height: '6px',
+    backgroundColor: '#00ffff',
+    border: '1px solid #ffffff',
+    borderRadius: '50%',
+    transform: 'translate(-50%, -50%)',
+    // Convert player position to minimap position
+    left: `${worldToMinimap([playerPosition.x, playerPosition.y, playerPosition.z])[0]}px`,
+    top: `${worldToMinimap([playerPosition.x, playerPosition.y, playerPosition.z])[1]}px`,
+    zIndex: 2
+  };
+  
+  // Render interactable markers on the minimap
+  const renderInteractableMarkers = () => {
+    return interactables.map(interactable => {
+      const [x, y] = worldToMinimap(interactable.position);
+      
+      let color;
+      let size = 4;
+      
+      switch (interactable.type) {
+        case "location":
+          color = interactable.color || "#33ff88";
+          size = 5;
+          break;
+        case "asteroid":
+          color = interactable.color || "#bbbbbb";
+          break;
+        case "debris":
+          color = interactable.color || "#ff8800";
+          break;
+        case "anomaly":
+          color = interactable.color || "#ff33ff";
+          break;
+        default:
+          color = "#ffffff";
+      }
+      
+      const isSelected = selectedTarget === interactable.id;
+      
+      const markerStyle: React.CSSProperties = {
+        position: 'absolute',
+        width: `${size}px`,
+        height: `${size}px`,
+        backgroundColor: color,
+        borderRadius: '50%',
+        transform: 'translate(-50%, -50%)',
+        left: `${x}px`,
+        top: `${y}px`,
+        zIndex: 1,
+        border: isSelected ? '1px solid #ffffff' : 'none',
+        boxShadow: isSelected ? '0 0 3px #ffffff' : 'none',
+        cursor: 'pointer'
+      };
+      
+      return (
+        <div 
+          key={interactable.id} 
+          style={markerStyle} 
+          onClick={() => onSelectTarget(interactable.id)}
+          title={interactable.name}
+        />
+      );
+    });
+  };
+  
+  // Render projectile markers on the minimap
+  const renderProjectileMarkers = () => {
+    return projectiles.map(projectile => {
+      const [x, y] = worldToMinimap([
+        projectile.position.x, 
+        projectile.position.y, 
+        projectile.position.z
+      ]);
+      
+      let color;
+      let size = 2;
+      
+      switch (projectile.type) {
+        case "kineticTurret":
+          color = projectile.color;
+          break;
+        case "laserCannon":
+          color = projectile.color;
+          break;
+        case "missile":
+        case "lockingMissile":
+          color = "#ff6600";
+          size = 3;
+          break;
+        case "miningLaser":
+          color = "#44ff88";
+          break;
+        default:
+          color = projectile.color;
+      }
+      
+      const markerStyle: React.CSSProperties = {
+        position: 'absolute',
+        width: `${size}px`,
+        height: `${size}px`,
+        backgroundColor: color,
+        borderRadius: '50%',
+        transform: 'translate(-50%, -50%)',
+        left: `${x}px`,
+        top: `${y}px`,
+        zIndex: 1
+      };
+      
+      return (
+        <div 
+          key={projectile.id} 
+          style={markerStyle}
+        />
+      );
+    });
+  };
+  
+  // Render minimap navigation circles
+  const renderCircles = () => {
+    return (
+      <>
+        {/* Range circles */}
+        <div style={{
+          position: 'absolute',
+          width: '70%',
+          height: '70%',
+          border: '1px solid rgba(100, 180, 255, 0.3)',
+          borderRadius: '50%',
+          top: '15%',
+          left: '15%'
+        }} />
+        <div style={{
+          position: 'absolute',
+          width: '40%',
+          height: '40%',
+          border: '1px solid rgba(100, 180, 255, 0.3)',
+          borderRadius: '50%',
+          top: '30%',
+          left: '30%'
+        }} />
+      </>
+    );
+  };
+  
+  return (
+    <div style={minimapStyle}>
+      {renderCircles()}
+      {renderInteractableMarkers()}
+      {renderProjectileMarkers()}
+      <div style={playerDotStyle} />
+    </div>
+  );
+};
+
+// Weapon UI component for EVE-like weapon controls
+const WeaponControls = ({ 
+  weapons, 
+  selectedWeapon, 
+  onSelectWeapon, 
+  onFireWeapon, 
+  selectedTarget 
+}: { 
+  weapons: Weapon[], 
+  selectedWeapon: number,
+  onSelectWeapon: (index: number) => void,
+  onFireWeapon: () => void,
+  selectedTarget: string | null
+}) => {
+  const containerStyle: React.CSSProperties = {
+    position: 'absolute',
+    bottom: '20px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 20, 40, 0.7)',
+    border: '1px solid rgba(100, 180, 255, 0.8)',
+    borderRadius: '5px',
+    padding: '10px',
+    color: 'white',
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '14px',
+    zIndex: 1000,
+    maxWidth: '500px'
+  };
+  
+  const weaponRowStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: '10px'
+  };
+  
+  const weaponButtonStyle = (index: number): React.CSSProperties => ({
+    backgroundColor: index === selectedWeapon 
+      ? 'rgba(100, 180, 255, 0.6)' 
+      : 'rgba(40, 60, 100, 0.6)',
+    border: `1px solid ${index === selectedWeapon ? 'rgba(150, 220, 255, 0.9)' : 'rgba(100, 140, 200, 0.6)'}`,
+    color: 'white',
+    padding: '5px 10px',
+    margin: '0 5px',
+    borderRadius: '3px',
+    cursor: 'pointer',
+    outline: 'none',
+    fontSize: '12px',
+    flex: 1,
+    textAlign: 'center'
+  });
+  
+  const fireButtonStyle: React.CSSProperties = {
+    backgroundColor: selectedTarget 
+      ? 'rgba(200, 60, 60, 0.7)' 
+      : 'rgba(100, 60, 60, 0.4)',
+    border: `1px solid ${selectedTarget ? 'rgba(255, 100, 100, 0.9)' : 'rgba(150, 80, 80, 0.5)'}`,
+    color: 'white',
+    padding: '8px 15px',
+    borderRadius: '3px',
+    cursor: selectedTarget ? 'pointer' : 'not-allowed',
+    outline: 'none',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    marginTop: '5px',
+    width: '100%'
+  };
+  
+  const currentWeapon = weapons[selectedWeapon];
+  
+  // Show cooldown progress if weapon is cooling down
+  const cooldownProgress = currentWeapon.currentCooldown > 0 
+    ? (currentWeapon.currentCooldown / currentWeapon.cooldown * 100) 
+    : 0;
+  
+  return (
+    <div style={containerStyle}>
+      <div style={weaponRowStyle}>
+        {weapons.map((weapon, index) => (
+          <button 
+            key={weapon.type} 
+            style={weaponButtonStyle(index)}
+            onClick={() => onSelectWeapon(index)}
+          >
+            {weapon.name}
+          </button>
+        ))}
+      </div>
+      
+      <div style={{ width: '100%', textAlign: 'center', marginBottom: '5px' }}>
+        {currentWeapon.currentCooldown > 0 ? (
+          <div style={{ position: 'relative', height: '10px', backgroundColor: 'rgba(40, 60, 80, 0.6)', borderRadius: '2px' }}>
+            <div style={{ 
+              position: 'absolute', 
+              left: 0, 
+              top: 0, 
+              height: '100%', 
+              width: `${100 - cooldownProgress}%`,
+              backgroundColor: 'rgba(100, 180, 255, 0.8)',
+              borderRadius: '2px'
+            }} />
+          </div>
+        ) : (
+          <div style={{ fontSize: '12px' }}>
+            {selectedTarget ? 'Ready to Fire!' : 'Select Target'}
+          </div>
+        )}
+      </div>
+      
+      <button 
+        style={fireButtonStyle}
+        onClick={onFireWeapon}
+        disabled={!selectedTarget || currentWeapon.currentCooldown > 0}
+      >
+        FIRE {currentWeapon.name.toUpperCase()}
+      </button>
+    </div>
+  );
+};
+
+// Target info display
+const TargetInfo = ({ 
+  target, 
+  onClearTarget 
+}: { 
+  target: Interactable | null, 
+  onClearTarget: () => void 
+}) => {
+  if (!target) return null;
+  
+  const containerStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '20px',
+    left: '20px',
+    backgroundColor: 'rgba(0, 20, 40, 0.7)',
+    border: '1px solid rgba(100, 180, 255, 0.8)',
+    borderRadius: '5px',
+    padding: '10px',
+    color: 'white',
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '14px',
+    zIndex: 1000,
+    minWidth: '200px'
+  };
+  
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '8px',
+    borderBottom: '1px solid rgba(100, 180, 255, 0.4)',
+    paddingBottom: '5px'
+  };
+  
+  const titleStyle: React.CSSProperties = {
+    margin: 0,
+    fontSize: '16px',
+    fontWeight: 'bold',
+    color: 'rgba(150, 220, 255, 1.0)'
+  };
+  
+  const closeButtonStyle: React.CSSProperties = {
+    backgroundColor: 'transparent',
+    border: 'none',
+    color: 'rgba(150, 220, 255, 0.8)',
+    cursor: 'pointer',
+    fontSize: '18px',
+    padding: '0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '24px',
+    height: '24px'
+  };
+  
+  let targetTypeColor;
+  switch (target.type) {
+    case "location":
+      targetTypeColor = target.color || "#33ff88";
+      break;
+    case "asteroid":
+      targetTypeColor = target.color || "#bbbbbb";
+      break;
+    case "debris":
+      targetTypeColor = target.color || "#ff8800";
+      break;
+    case "anomaly":
+      targetTypeColor = target.color || "#ff33ff";
+      break;
+    default:
+      targetTypeColor = "#ffffff";
+  }
+  
+  return (
+    <div style={containerStyle}>
+      <div style={headerStyle}>
+        <h3 style={titleStyle}>{target.name}</h3>
+        <button style={closeButtonStyle} onClick={onClearTarget}>×</button>
+      </div>
+      
+      <div style={{ marginBottom: '5px' }}>
+        <span style={{ 
+          display: 'inline-block', 
+          width: '12px', 
+          height: '12px', 
+          backgroundColor: targetTypeColor,
+          borderRadius: '50%',
+          marginRight: '5px',
+          verticalAlign: 'middle'
+        }}></span>
+        <span style={{ 
+          textTransform: 'capitalize', 
+          color: 'rgba(200, 230, 255, 0.9)'
+        }}>
+          {target.type}
+        </span>
+      </div>
+      
+      {target.description && (
+        <p style={{ 
+          margin: '5px 0', 
+          fontSize: '12px',
+          color: 'rgba(180, 210, 240, 0.8)'
+        }}>
+          {target.description}
+        </p>
+      )}
+      
+      <div style={{ 
+        fontSize: '12px', 
+        marginTop: '10px',
+        color: 'rgba(100, 180, 255, 0.7)'
+      }}>
+        Distance: {Math.floor(Math.random() * 100) + 200} km
+      </div>
+    </div>
+  );
+};
+
 // Player spaceship
-const Spaceship = () => {
+const Spaceship = ({ 
+  onFireWeapon 
+}: { 
+  onFireWeapon: (
+    position: THREE.Vector3, 
+    direction: THREE.Vector3, 
+    weaponType: WeaponType,
+    target?: THREE.Object3D
+  ) => void
+}) => {
   const shipRef = useRef<THREE.Group>(null);
   const [shipRotation, setShipRotation] = useState<[number, number, number]>([0, 0, 0]);
   const [rotationTarget, setRotationTarget] = useState<[number, number, number]>([0, 0, 0]);
@@ -172,6 +766,72 @@ const Spaceship = () => {
   const acceleration = 0.05;
   const deceleration = 0.02;
   const rotationSpeed = 0.1;
+  
+  // Weapons system
+  const [weapons, setWeapons] = useState<Weapon[]>([
+    {
+      type: "kineticTurret",
+      name: "Kinetic Turret",
+      damage: 25,
+      range: 30,
+      fireRate: 2,
+      energyCost: 5,
+      cooldown: 1.5,
+      currentCooldown: 0,
+      projectileSpeed: 20,
+      color: "#aaccff"
+    },
+    {
+      type: "laserCannon",
+      name: "Laser Cannon",
+      damage: 40,
+      range: 25,
+      fireRate: 1,
+      energyCost: 15,
+      cooldown: 3,
+      currentCooldown: 0,
+      projectileSpeed: 50,
+      color: "#ff3366"
+    },
+    {
+      type: "missile",
+      name: "Missile",
+      damage: 80,
+      range: 50,
+      fireRate: 0.5,
+      energyCost: 20,
+      cooldown: 5,
+      currentCooldown: 0,
+      projectileSpeed: 12,
+      color: "#ffaa44"
+    },
+    {
+      type: "lockingMissile",
+      name: "Locking Missile",
+      damage: 120,
+      range: 75,
+      fireRate: 0.2,
+      energyCost: 35,
+      cooldown: 8,
+      currentCooldown: 0,
+      projectileSpeed: 15,
+      color: "#ff8800"
+    },
+    {
+      type: "miningLaser",
+      name: "Mining Laser",
+      damage: 5,
+      range: 15,
+      fireRate: 0.3,
+      energyCost: 10,
+      cooldown: 2,
+      currentCooldown: 0,
+      projectileSpeed: 8,
+      color: "#44ff88"
+    }
+  ]);
+  const [selectedWeapon, setSelectedWeapon] = useState(0);
+  
   const { playHit } = useAudio();
   
   // Load the 3D spaceship model
@@ -186,7 +846,7 @@ const Spaceship = () => {
       setModelLoaded(true);
       console.log("Spaceship model loaded successfully");
       
-      // Scale the model appropriately - this can be adjusted based on actual model size
+      // Scale the model appropriately - can be adjusted based on model size
       if (shipRef.current) {
         shipRef.current.scale.set(2.5, 2.5, 2.5);
       }
@@ -195,6 +855,16 @@ const Spaceship = () => {
   
   // Preload the model to avoid hiccups
   useGLTF.preload('/models/spaceship.glb');
+  
+  // Update weapon cooldowns
+  useFrame((state, delta) => {
+    setWeapons(prevWeapons => 
+      prevWeapons.map(weapon => ({
+        ...weapon,
+        currentCooldown: Math.max(0, weapon.currentCooldown - delta)
+      }))
+    );
+  });
   
   useFrame((state, delta) => {
     if (!shipRef.current) return;
@@ -213,7 +883,7 @@ const Spaceship = () => {
     const up = new THREE.Vector3(0, 1, 0);
     up.applyQuaternion(ship.quaternion);
     
-    // Handle acceleration
+    // Handle movement with WASD and rotation with arrow keys
     if (keys.forward) {
       newVelocity.add(forward.multiplyScalar(acceleration));
     }
@@ -224,23 +894,21 @@ const Spaceship = () => {
     
     if (keys.left) {
       newVelocity.add(right.multiplyScalar(-acceleration));
-      setRotationTarget([rotationTarget[0], rotationTarget[1], Math.PI * 0.1]);
-    } else if (keys.right) {
-      newVelocity.add(right.multiplyScalar(acceleration));
-      setRotationTarget([rotationTarget[0], rotationTarget[1], -Math.PI * 0.1]);
-    } else {
-      setRotationTarget([rotationTarget[0], rotationTarget[1], 0]);
     }
     
-    // Apply banking effect
+    if (keys.right) {
+      newVelocity.add(right.multiplyScalar(acceleration));
+    }
+    
+    // Apply banking effect for visual feedback on movement
+    const bankAmount = Math.PI * 0.1;
     const targetZ = keys.left 
-      ? Math.PI * 0.1 
+      ? bankAmount 
       : keys.right 
-        ? -Math.PI * 0.1 
+        ? -bankAmount 
         : 0;
     
     // Ultra-smooth interpolation with cubic easing for more natural motion
-    // Increased precision with lower lerp factor for smoother transitions
     const rotationLerpFactor = delta * 2.0; // Slower, more gradual transitions
     
     // Use smooth step function for more natural easing
@@ -303,16 +971,46 @@ const Spaceship = () => {
     state.camera.lookAt(lookTarget);
   });
   
+  // Handle weapon firing
+  const handleFireWeapon = (target?: THREE.Object3D) => {
+    if (!shipRef.current) return;
+    
+    const weapon = weapons[selectedWeapon];
+    if (weapon.currentCooldown > 0) return;
+    
+    // Get ship's forward direction
+    const direction = new THREE.Vector3(0, 0, -1);
+    direction.applyQuaternion(shipRef.current.quaternion);
+    direction.normalize();
+    
+    // Get weapon muzzle position (slightly in front of the ship)
+    const weaponPosition = shipRef.current.position.clone().add(
+      direction.clone().multiplyScalar(2)
+    );
+    
+    // Set weapon on cooldown
+    setWeapons(prevWeapons => {
+      const newWeapons = [...prevWeapons];
+      newWeapons[selectedWeapon] = {
+        ...newWeapons[selectedWeapon],
+        currentCooldown: newWeapons[selectedWeapon].cooldown
+      };
+      return newWeapons;
+    });
+    
+    // Fire the weapon
+    onFireWeapon(weaponPosition, direction, weapon.type, target);
+    
+    // Play sound effect
+    playHit();
+  };
+  
   // Create a ref for thruster animation
   const thrusterRef = useRef<THREE.Group>(null);
   
   // Track the exhaust particles
   const [exhaustParticles, setExhaustParticles] = useState<THREE.Vector3[]>([]);
   const maxParticles = 100;
-  
-  // Track atmospheric entry effect
-  const [showHeatEffect, setShowHeatEffect] = useState(false);
-  const [heatIntensity, setHeatIntensity] = useState(0);
   
   // Create a time reference for animations
   const timeRef = useRef({ elapsedTime: 0 });
@@ -331,22 +1029,6 @@ const Spaceship = () => {
       
       // Calculate current speed
       const currentSpeed = velocity.length();
-      
-      // Determine if we're in heat effect territory (very fast speed)
-      const heatThreshold = maxSpeed * 0.7;
-      if (currentSpeed > heatThreshold) {
-        // Calculate heat intensity based on speed
-        const newHeatIntensity = Math.min(1, (currentSpeed - heatThreshold) / (maxSpeed - heatThreshold));
-        setHeatIntensity(newHeatIntensity);
-        setShowHeatEffect(true);
-      } else {
-        // Gradually reduce heat effect when slowing down
-        if (heatIntensity > 0) {
-          setHeatIntensity(Math.max(0, heatIntensity - delta * 0.5));
-        } else {
-          setShowHeatEffect(false);
-        }
-      }
       
       // Engine animation using our own timer
       if (isThrusting) {
@@ -435,349 +1117,278 @@ const Spaceship = () => {
         </group>
       )}
       
-      {/* Atmospheric re-entry heat shield effect - now with softer gradients on both sides */}
-      {showHeatEffect && (
-        <>
-          {/* Primary heat glow around ship - more intense and colored based on speed */}
-          <pointLight 
-            position={[0, 0, -1.5]} 
-            distance={8} 
-            intensity={2 * heatIntensity} 
-            color={heatIntensity > 0.7 ? "#4488ff" : "#ff5500"} 
-          />
-          
-          {/* Secondary heat glow for a more diffuse effect */}
-          <pointLight 
-            position={[0, 0, -2.5]} 
-            distance={12} 
-            intensity={1.5 * heatIntensity} 
-            color={heatIntensity > 0.7 ? "#2266ff" : "#ff7700"} 
-          />
-          
-          {/* Radial gradient for soft fading effect on both sides */}
-          <sprite position={[0, 0, -2]} scale={[8, 8, 8]}>
-            <spriteMaterial
-              map={null}
-              color={heatIntensity > 0.7 ? "#4488ff" : "#ff6600"}
-              transparent
-              opacity={0.3 * heatIntensity}
-              depthTest={false}
-              blending={THREE.AdditiveBlending} // Additive blending for softer edges
-            />
-          </sprite>
-          
-          {/* Secondary outer glow for even softer gradient */}
-          <sprite position={[0, 0, -2.2]} scale={[12, 12, 12]}>
-            <spriteMaterial
-              map={null}
-              color={heatIntensity > 0.7 ? "#1144ff" : "#ff4400"}
-              transparent
-              opacity={0.15 * heatIntensity}
-              depthTest={false}
-              blending={THREE.AdditiveBlending}
-            />
-          </sprite>
-          
-          {/* Front heat shield plasma - dynamic rotation and color transition */}
-          <mesh 
-            position={[0, 0, -1.7]} 
-            rotation={[0, 0, Date.now() * (0.001 + heatIntensity * 0.002)]}
-          >
-            <torusGeometry args={[1.2, 0.6 * heatIntensity, 32, 40]} /> {/* Higher poly count for smoother look */}
-            <meshBasicMaterial 
-              color={heatIntensity > 0.7 ? "#44aaff" : "#ff7700"} 
-              transparent 
-              opacity={0.7 * heatIntensity} 
-              blending={THREE.AdditiveBlending}
-            />
-          </mesh>
-          
-          {/* Heat particles at the front of the ship - more dynamic and varied */}
-          <points position={[0, 0, -2]}>
-            <bufferGeometry>
-              <bufferAttribute
-                attach="attributes-position"
-                count={80} // More particles for better effect
-                array={new Float32Array(Array.from({ length: 80 * 3 }, (_, i) => {
-                  const angle = (i % 80) / 80 * Math.PI * 2;
-                  // Create a more natural, irregular pattern with multiple sine waves
-                  const radius = 1.5 * (0.7 + 
-                    Math.sin(Date.now() * 0.003 + i) * 0.3 + 
-                    Math.sin(Date.now() * 0.005 + i * 0.7) * 0.2
-                  );
-                  return (i % 3 === 0) 
-                    ? Math.cos(angle) * radius 
-                    : (i % 3 === 1) 
-                    ? Math.sin(angle) * radius 
-                    : (Math.random() - 0.5) * (0.5 + heatIntensity * 0.5); // Varied z-position
-                }))}
-                itemSize={3}
-              />
-            </bufferGeometry>
-            <pointsMaterial
-              size={0.2 * heatIntensity + 0.1} // Slightly larger base size
-              color={heatIntensity > 0.7 ? "#88ccff" : "#ff3300"} // Color transition
-              transparent
-              opacity={0.8 * heatIntensity}
-              sizeAttenuation
-              blending={THREE.AdditiveBlending} // Additive blending for better visual effect
-            />
-          </points>
-        </>
-      )}
-      
-      {/* Simple engine effects that flash blue only at warp speed */}
-      {/* Dynamic thruster glow that stays yellow until warp speed */}
-      <pointLight 
-        position={[0, 0, 2.5]} 
-        distance={8} 
-        intensity={1 + (heatIntensity > 0.9 ? 3 : 0)} 
-        color={heatIntensity > 0.9 ? "#88aaff" : "#ffcc66"} 
-      />
-      
-      {/* Thruster flame effect - yellow until warp speed, then blue flash */}
-      <group ref={thrusterRef} position={[0, 0, 2.5]} rotation={[Math.PI, 0, 0]}>
-        {/* Inner bright core - stays yellow until high speed */}
-        <mesh position={[0, 0, 0.1]}>
-          <coneGeometry args={[0.4, 1.0 + (heatIntensity > 0.9 ? 2.0 : 0), 16]} />
-          <meshBasicMaterial 
-            color={heatIntensity > 0.9 ? "#ffffff" : "#ffdd66"} 
-            transparent 
-            opacity={0.95} 
-          />
-        </mesh>
-        
-        {/* Middle layer - only gets blue at warp speed */}
-        <mesh position={[0, 0, 0.2]}>
-          <coneGeometry args={[0.5, 1.2 + (heatIntensity > 0.9 ? 3.0 : 0), 16]} />
-          <meshBasicMaterial 
-            color={heatIntensity > 0.9 ? "#bbddff" : "#ffaa44"} 
-            transparent 
-            opacity={0.8} 
-          />
-        </mesh>
-        
-        {/* Outer flame - only extends at warp speed */}
-        <mesh position={[0, 0, 0.3]}>
-          <coneGeometry args={[0.7, 1.5 + (heatIntensity > 0.9 ? 4.0 : 0), 16]} />
-          <meshBasicMaterial 
-            color={heatIntensity > 0.9 ? "#3366ff" : "#ffcc22"} 
-            transparent 
-            opacity={0.6} 
-          />
-        </mesh>
-        
-        {/* Flash effect that only appears during warp transition */}
-        {heatIntensity > 0.85 && heatIntensity < 0.95 && (
-          <mesh position={[0, 0, 0]}>
-            <sphereGeometry args={[3 * (1.0 - (heatIntensity - 0.85) * 10), 16, 16]} />
-            <meshBasicMaterial 
-              color="#aaddff" 
-              transparent 
-              opacity={0.7 * (1.0 - (heatIntensity - 0.85) * 10)}
-              blending={THREE.AdditiveBlending}
-            />
-          </mesh>
-        )}
-      </group>
-      
-      {/* Dynamic exhaust particles */}
-      {exhaustParticles.map((particle, index) => (
-        <mesh key={index} position={particle} scale={[0.1 + Math.random() * 0.2, 0.1 + Math.random() * 0.2, 0.1 + Math.random() * 0.2]}>
-          <sphereGeometry args={[1, 8, 8]} />
-          <meshBasicMaterial 
-            color={index % 3 === 0 ? '#ffffff' : index % 2 === 0 ? '#66ccff' : '#3366ff'} 
-            transparent 
-            opacity={0.7 - (particle.z / 15) * 0.7} // Fade out with distance
-          />
-        </mesh>
-      ))}
-      
-      {/* Particle light effects (random flickering for engine glow) */}
-      {exhaustParticles.length > 0 && (
-        <pointLight 
-          position={[0, 0, 3 + Math.sin(Date.now() * 0.01) * 0.5]} 
-          distance={10} 
-          intensity={1 + Math.sin(Date.now() * 0.02) * 0.5} 
-          color="#66aaff" 
+      {/* Simple engine thruster effects - no heat shield flashing */}
+      <group ref={thrusterRef} position={[0, 0, 2.5]}>
+        {/* Engine glow - simple yellow point light */}
+        <pointLight
+          position={[0, 0, 0]}
+          distance={3}
+          intensity={0.8}
+          color="#ffaa00"
         />
-      )}
+        
+        {/* Engine exhaust particles */}
+        {exhaustParticles.map((particle, i) => (
+          <mesh key={i} position={particle.toArray()}>
+            <sphereGeometry args={[0.05 + Math.random() * 0.05, 6, 6]} />
+            <meshBasicMaterial 
+              color="#ffaa44" 
+              transparent 
+              opacity={0.7 - (particle.z / 15) * 0.7}
+            />
+          </mesh>
+        ))}
+      </group>
     </group>
   );
 };
 
-// Interactable object
+// Moon component
+const Moon = ({ position, name, color = "#aaaaff" }: {
+  position: [number, number, number];
+  name: string;
+  color?: string;
+}) => {
+  return (
+    <group position={position}>
+      <mesh castShadow>
+        <sphereGeometry args={[3, 32, 32]} />
+        <meshStandardMaterial
+          color={color}
+          roughness={0.9}
+          metalness={0.1}
+        />
+      </mesh>
+      <Text
+        position={[0, 4, 0]}
+        fontSize={1}
+        color="#ffffff"
+        anchorX="center"
+        anchorY="middle"
+      >
+        {name}
+      </Text>
+    </group>
+  );
+};
+
+// Interactable object component
 const InteractableObject = ({ 
   interactable, 
   isHighlighted, 
-  onInteract 
-}: {
+  onInteract,
+  isSelected
+}: { 
   interactable: Interactable;
   isHighlighted: boolean;
   onInteract: () => void;
+  isSelected: boolean;
 }) => {
-  const scale = interactable.scale || [1, 1, 1];
-  const color = interactable.color || "#ffffff";
+  const objRef = useRef<THREE.Group>(null);
+  
+  // Rotation animation
+  useFrame((state, delta) => {
+    if (objRef.current) {
+      objRef.current.rotation.y += delta * 0.3;
+    }
+  });
+  
+  // Get color based on interactable type
+  const getColor = () => {
+    switch (interactable.type) {
+      case "location":
+        return interactable.color || "#33ff88";
+      case "asteroid":
+        return interactable.color || "#bbbbbb";
+      case "debris":
+        return interactable.color || "#ff8800";
+      case "anomaly":
+        return interactable.color || "#ff33ff";
+      default:
+        return "#ffffff";
+    }
+  };
+  
+  // Get shape based on interactable type
+  const getShape = () => {
+    switch (interactable.type) {
+      case "location":
+        return (
+          <sphereGeometry args={[1, 16, 16]} />
+        );
+      case "asteroid":
+        return (
+          <icosahedronGeometry args={[1, 0]} />
+        );
+      case "debris":
+        return (
+          <dodecahedronGeometry args={[1, 0]} />
+        );
+      case "anomaly":
+        return (
+          <octahedronGeometry args={[1, 0]} />
+        );
+      default:
+        return (
+          <boxGeometry args={[1, 1, 1]} />
+        );
+    }
+  };
   
   return (
-    <group position={interactable.position}>
-      <mesh
-        onClick={onInteract}
-        onPointerOver={() => {/* Handle hover */}}
-        onPointerOut={() => {/* Handle hover end */}}
-        scale={scale}
-      >
-        {interactable.type === "location" ? (
-          <sphereGeometry args={[1, 16, 16]} />
-        ) : interactable.type === "asteroid" ? (
-          <icosahedronGeometry args={[1, 0]} />
-        ) : interactable.type === "debris" ? (
-          <boxGeometry args={[1, 1, 1]} />
-        ) : (
-          <torusGeometry args={[1, 0.3, 16, 32]} />
-        )}
+    <group 
+      ref={objRef} 
+      position={interactable.position}
+      scale={interactable.scale || [1, 1, 1]}
+      onClick={onInteract}
+      userData={{ interactable: true, interactableId: interactable.id }}
+    >
+      <mesh castShadow>
+        {getShape()}
         <meshStandardMaterial 
-          color={isHighlighted ? "#ffaa22" : color} 
-          emissive={isHighlighted ? "#663300" : undefined}
-          emissiveIntensity={isHighlighted ? 0.5 : 0}
+          color={getColor()} 
+          emissive={isHighlighted || isSelected ? getColor() : "#000000"} 
+          emissiveIntensity={isHighlighted ? 0.5 : isSelected ? 0.8 : 0}
+          roughness={0.7} 
+          metalness={0.3} 
         />
       </mesh>
-      {isHighlighted && (
-        <Html position={[0, scale[1] + 1, 0]} center>
-          <div className="bg-black bg-opacity-70 text-white p-2 rounded-md text-sm whitespace-nowrap">
-            <div className="font-semibold">{interactable.name}</div>
-            {interactable.description && (
-              <div className="text-xs text-gray-300">{interactable.description}</div>
-            )}
-            <div className="text-xs text-yellow-300 mt-1">Press 'E' to interact</div>
-          </div>
-        </Html>
+      <Text
+        position={[0, 2, 0]}
+        fontSize={0.8}
+        color="#ffffff"
+        anchorX="center"
+        anchorY="middle"
+      >
+        {interactable.name}
+      </Text>
+      
+      {(isHighlighted || isSelected) && (
+        <pointLight
+          position={[0, 0, 0]}
+          distance={5}
+          intensity={isSelected ? 0.8 : 0.4}
+          color={getColor()}
+        />
+      )}
+      
+      {/* Selection indicator */}
+      {isSelected && (
+        <group position={[0, 0, 0]}>
+          <mesh rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[1.5, 0.05, 16, 32]} />
+            <meshBasicMaterial 
+              color="#ffffff" 
+              transparent 
+              opacity={0.7} 
+            />
+          </mesh>
+          
+          {/* Targeting brackets */}
+          {Array.from({ length: 4 }).map((_, i) => (
+            <mesh 
+              key={i} 
+              position={[
+                i % 2 === 0 ? (i < 2 ? -1.8 : 1.8) : 0,
+                i % 2 === 1 ? (i < 2 ? -1.8 : 1.8) : 0,
+                0
+              ]}
+              rotation={[Math.PI / 2, 0, 0]}
+            >
+              <boxGeometry args={[0.4, 0.05, 0.05]} />
+              <meshBasicMaterial 
+                color="#ffffff" 
+                transparent 
+                opacity={0.9} 
+              />
+            </mesh>
+          ))}
+        </group>
       )}
     </group>
   );
 };
 
-// Generate interactables based on location type
+// Generate interactable objects based on location type
 const generateInteractables = (locationType: LocationType): Interactable[] => {
   switch (locationType) {
     case LocationType.Space:
       return [
         {
-          id: "asteroid_field",
+          id: "planet-1",
+          type: "location",
+          position: [20, 0, -30],
+          name: "Alpha Prime",
+          description: "Habitable planet with rich mineral deposits",
+          color: "#66ff88"
+        },
+        {
+          id: "station-1",
+          type: "location",
+          position: [-15, 5, -40],
+          name: "Trading Post",
+          description: "Caldari Trading Station - Commerce hub",
+          color: "#aaaaff"
+        },
+        {
+          id: "asteroid-1",
           type: "asteroid",
-          position: [15, 0, -20],
-          name: "Asteroid Field",
-          description: "Dense cluster of minable resources",
-          scale: [5, 5, 5],
-          color: "#aa8866"
+          position: [0, -10, -50],
+          name: "Resource Cluster",
+          description: "Dense asteroid field rich in minerals",
+          scale: [3, 3, 3]
         },
         {
-          id: "space_anomaly",
-          type: "anomaly",
-          position: [-25, 5, -15],
-          name: "Void Resonance",
-          description: "Unknown energy signature",
-          scale: [3, 3, 3],
-          color: "#aa22ff"
+          id: "asteroid-2",
+          type: "asteroid",
+          position: [12, -5, -45],
+          name: "Veldspar Field",
+          description: "Common ore field suitable for mining",
+          scale: [2.5, 2.5, 2.5]
         },
         {
-          id: "derelict_ship",
+          id: "asteroid-3",
+          type: "asteroid",
+          position: [-8, -7, -55],
+          name: "Scordite Belt",
+          description: "Valuable ore with high metal content",
+          scale: [2, 2, 2],
+          color: "#ddaa88"
+        },
+        {
+          id: "debris-1",
           type: "debris",
-          position: [0, -8, -30],
-          name: "Abandoned Vessel",
-          description: "Salvageable technology",
-          scale: [4, 1, 8],
-          color: "#555555"
+          position: [8, 12, -60],
+          name: "Ship Wreckage",
+          description: "Destroyed vessel with salvageable components",
+          scale: [1.5, 1.5, 1.5]
+        },
+        {
+          id: "anomaly-1",
+          type: "anomaly",
+          position: [-30, 15, -70],
+          name: "Void Signal",
+          description: "Unknown energy signature - approach with caution",
+          color: "#ff77ff"
         }
       ];
     case LocationType.Planet:
       return [
         {
-          id: "landing_zone",
+          id: "settlement-1",
           type: "location",
-          position: [0, 10, -25],
-          name: "Landing Zone Alpha",
-          description: "Safe area to land your ship",
-          scale: [2, 0.5, 2],
-          color: "#22aa22"
+          position: [30, 0, -50],
+          name: "Research Outpost",
+          description: "Scientific facility studying planet's ecosystem",
+          color: "#ffcc44"
         },
         {
-          id: "settlement",
+          id: "ruins-1",
           type: "location",
-          position: [20, 5, -20],
-          name: "Colony Outpost",
-          description: "Small settlement with traders",
-          scale: [4, 2, 4],
-          color: "#aaaaaa"
-        },
-        {
-          id: "ancient_ruins",
-          type: "location",
-          position: [-15, 3, -30],
-          name: "Ancient Structure",
-          description: "Mysterious alien building",
-          scale: [6, 6, 6],
-          color: "#665533"
-        }
-      ];
-    case LocationType.Station:
-      return [
-        {
-          id: "docking_bay",
-          type: "location",
-          position: [0, 0, -25],
-          name: "Main Docking Bay",
-          description: "Spacecraft landing facilities",
-          scale: [5, 1, 5],
-          color: "#335599"
-        },
-        {
-          id: "trading_hub",
-          type: "location",
-          position: [10, 5, -20],
-          name: "Commerce Section",
-          description: "Shops and services",
-          scale: [3, 3, 3],
-          color: "#aa9955"
-        },
-        {
-          id: "command_center",
-          type: "location",
-          position: [-10, 10, -15],
-          name: "Operations Center",
-          description: "Station administration",
-          scale: [4, 4, 4],
-          color: "#557799"
-        }
-      ];
-    case LocationType.Derelict:
-      return [
-        {
-          id: "breach_point",
-          type: "location",
-          position: [0, 0, -20],
-          name: "Hull Breach",
-          description: "Entry point to the derelict",
-          scale: [3, 1, 3],
-          color: "#774433"
-        },
-        {
-          id: "power_core",
-          type: "location",
-          position: [-15, 5, -25],
-          name: "Reactor Chamber",
-          description: "Damaged power systems",
-          scale: [4, 4, 4],
-          color: "#33aacc"
-        },
-        {
-          id: "cargo_hold",
-          type: "location",
-          position: [20, -5, -30],
-          name: "Cargo Storage",
-          description: "Potential salvage",
-          scale: [6, 3, 6],
-          color: "#887766"
+          position: [-25, 10, -60],
+          name: "Ancient Temple",
+          description: "Mysterious ruins of unknown origin",
+          color: "#ff8855"
         }
       ];
     default:
@@ -785,104 +1396,184 @@ const generateInteractables = (locationType: LocationType): Interactable[] => {
   }
 };
 
+// Define the main SpaceExploration component
 interface SpaceExplorationProps {
   onNavigate: () => void;
   onLand: (locationId: string) => void;
 }
 
 const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
-  const { getCurrentLocation } = useLocation();
-  const currentLocation = getCurrentLocation();
-  const [interactables, setInteractables] = useState<Interactable[]>([]);
+  const { currentLocation } = useLocation();
   const [highlightedInteractable, setHighlightedInteractable] = useState<string | null>(null);
-  const [, getKeys] = useKeyboardControls<Controls>();
+  const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+  const [projectiles, setProjectiles] = useState<Projectile[]>([]);
+  const [selectedWeapon, setSelectedWeapon] = useState(0);
+  const shipRef = useRef<THREE.Group>(null);
+  const controls = useRef<React.ElementRef<typeof PerspectiveCamera>>(null);
+  const isMobile = useIsMobile();
   
-  // Generate interactables based on location
-  useEffect(() => {
-    if (currentLocation) {
-      setInteractables(generateInteractables(currentLocation.type));
-    }
+  // Generate interactable objects based on the current location
+  const interactables = useMemo(() => {
+    return generateInteractables(currentLocation.type);
   }, [currentLocation]);
   
-  // Check for nearby interactables
-  useFrame((state) => {
-    // Ship position is essentially the camera position in our setup
-    const shipPosition = state.camera.position.clone();
+  // Get the selected interactable object
+  const selectedInteractable = useMemo(() => {
+    return interactables.find(i => i.id === selectedTarget) || null;
+  }, [interactables, selectedTarget]);
+  
+  // Generate a unique ID for projectiles
+  const generateId = () => {
+    return Math.random().toString(36).substring(2, 11);
+  };
+  
+  // Handle firing weapons
+  const handleFireWeapon = (
+    position: THREE.Vector3, 
+    direction: THREE.Vector3, 
+    weaponType: WeaponType,
+    target?: THREE.Object3D
+  ) => {
+    const newProjectile: Projectile = {
+      id: generateId(),
+      type: weaponType,
+      position: position.clone(),
+      direction: direction.clone(),
+      speed: getProjectileSpeed(weaponType),
+      damage: getProjectileDamage(weaponType),
+      range: getProjectileRange(weaponType),
+      distanceTraveled: 0,
+      color: getProjectileColor(weaponType),
+      target
+    };
     
-    // Find the closest interactable within range
-    let closestInteractable: string | null = null;
-    let closestDistance = 10; // Maximum interaction distance
+    setProjectiles(prev => [...prev, newProjectile]);
     
-    interactables.forEach(interactable => {
-      const interactablePosition = new Vector3(
-        interactable.position[0],
-        interactable.position[1],
-        interactable.position[2]
-      );
-      
-      const distance = shipPosition.distanceTo(interactablePosition);
-      
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestInteractable = interactable.id;
-      }
-    });
+    // Play weapon sound based on type
+    const { playHit, playLaser } = useAudio();
     
-    setHighlightedInteractable(closestInteractable);
-    
-    // Handle interaction key press
-    const keys = getKeys();
-    if (keys.interact && highlightedInteractable) {
-      const interactable = interactables.find(i => i.id === highlightedInteractable);
-      if (interactable) {
-        // Handle interaction logic
-        console.log(`Interacting with ${interactable.name}`);
-        onLand(interactable.id);
-      }
+    if (weaponType === "laserCannon" || weaponType === "miningLaser") {
+      playLaser();
+    } else {
+      playHit();
     }
+  };
+  
+  // Get projectile speed based on weapon type
+  const getProjectileSpeed = (weaponType: WeaponType): number => {
+    switch (weaponType) {
+      case "kineticTurret": return 20;
+      case "laserCannon": return 50;
+      case "missile": return 12;
+      case "lockingMissile": return 15;
+      case "miningLaser": return 8;
+      default: return 15;
+    }
+  };
+  
+  // Get projectile damage based on weapon type
+  const getProjectileDamage = (weaponType: WeaponType): number => {
+    switch (weaponType) {
+      case "kineticTurret": return 25;
+      case "laserCannon": return 40;
+      case "missile": return 80;
+      case "lockingMissile": return 120;
+      case "miningLaser": return 5;
+      default: return 10;
+    }
+  };
+  
+  // Get projectile range based on weapon type
+  const getProjectileRange = (weaponType: WeaponType): number => {
+    switch (weaponType) {
+      case "kineticTurret": return 30;
+      case "laserCannon": return 25;
+      case "missile": return 50;
+      case "lockingMissile": return 75;
+      case "miningLaser": return 15;
+      default: return 20;
+    }
+  };
+  
+  // Get projectile color based on weapon type
+  const getProjectileColor = (weaponType: WeaponType): string => {
+    switch (weaponType) {
+      case "kineticTurret": return "#aaccff";
+      case "laserCannon": return "#ff3366";
+      case "missile": 
+      case "lockingMissile": 
+        return "#ff8800";
+      case "miningLaser": return "#44ff88";
+      default: return "#ffffff";
+    }
+  };
+  
+  // Handle removing projectiles
+  const handleRemoveProjectile = (id: string) => {
+    setProjectiles(prev => prev.filter(p => p.id !== id));
+  };
+  
+  // Handle raycaster for interaction with objects
+  useFrame((state) => {
+    // Simple raycaster from camera
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2(0, 0); // Center of screen
     
-    // Handle navigation console key press
-    if (keys.menu) {
-      onNavigate();
+    raycaster.setFromCamera(mouse, state.camera);
+    
+    // Check for intersections with interactable objects
+    const intersects = raycaster.intersectObjects(
+      state.scene.children.filter(child => 
+        child.userData && child.userData.interactable
+      ),
+      true
+    );
+    
+    if (intersects.length > 0) {
+      // Get the interactable object that was hit
+      const hit = intersects[0].object;
+      let parentObj = hit;
+      
+      // Find the parent with userData
+      while (parentObj && (!parentObj.userData || !parentObj.userData.interactableId)) {
+        if (parentObj.parent) {
+          parentObj = parentObj.parent;
+        } else {
+          break;
+        }
+      }
+      
+      if (parentObj && parentObj.userData && parentObj.userData.interactableId) {
+        const interactableId = parentObj.userData.interactableId;
+        
+        if (interactableId && interactableId !== highlightedInteractable) {
+          setHighlightedInteractable(interactableId);
+        }
+      }
+    } else if (highlightedInteractable) {
+      setHighlightedInteractable(null);
     }
   });
   
-  // Create scene content based on location type
+  // Mobile touch controls
+  const [touchStart, setTouchStart] = useState<[number, number] | null>(null);
+  const [touchEnd, setTouchEnd] = useState<[number, number] | null>(null);
+  const touchSensitivity = 1.0;
+  
+  // Render location-specific content
   const renderLocationContent = () => {
-    if (!currentLocation) return null;
-    
     switch (currentLocation.type) {
-      case LocationType.Space:
-        return (
-          <>
-            <Planet 
-              position={[-50, -20, -100]} 
-              size={25} 
-              color="#4466aa" 
-              name="Proxima IV" 
-            />
-            <SpaceStation 
-              position={[30, 10, -60]} 
-              name="Frontier Outpost" 
-            />
-            <SpaceDust />
-          </>
-        );
-      
       case LocationType.Planet:
         return (
           <>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -50, 0]} receiveShadow>
-              <planeGeometry args={[1000, 1000]} />
-              <meshStandardMaterial 
-                color={currentLocation.id.includes("alien") ? "#446644" : "#886644"}
-                roughness={1}
-              />
-            </mesh>
-            <fog attach="fog" args={["#aabbcc", 50, 200]} />
             <Planet 
-              position={[-100, 80, -150]} 
-              size={15} 
+              position={[0, -50, -100]} 
+              size={40} 
+              color="#44aa66" 
+              name={currentLocation.name} 
+            />
+            <Moon 
+              position={[60, 20, -150]} 
               color="#aaaaff" 
               name="Moon" 
             />
@@ -922,10 +1613,19 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
   return (
     <>
       {/* Player ship */}
-      <Spaceship />
+      <Spaceship onFireWeapon={handleFireWeapon} />
       
       {/* Location-specific content */}
       {renderLocationContent()}
+      
+      {/* Projectiles */}
+      {projectiles.map(projectile => (
+        <Projectile
+          key={projectile.id}
+          projectile={projectile}
+          onRemove={handleRemoveProjectile}
+        />
+      ))}
       
       {/* Interactable objects */}
       {interactables.map(interactable => (
@@ -933,7 +1633,8 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
           key={interactable.id}
           interactable={interactable}
           isHighlighted={highlightedInteractable === interactable.id}
-          onInteract={() => onLand(interactable.id)}
+          isSelected={selectedTarget === interactable.id}
+          onInteract={() => setSelectedTarget(interactable.id)}
         />
       ))}
       
@@ -943,519 +1644,207 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
         position={[10, 20, 10]}
         intensity={1}
         castShadow
-        shadow-mapSize={[2048, 2048]}
-        shadow-camera-far={100}
-        shadow-camera-left={-20}
-        shadow-camera-right={20}
-        shadow-camera-top={20}
-        shadow-camera-bottom={-20}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
       />
       
-      {/* Interface elements */}
-      <Html fullscreen>
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-60 text-white p-2 rounded-md text-sm">
-          <div className="flex gap-4">
-            <div className="hidden md:block">WASD/Arrows: Fly</div>
-            <div className="hidden md:block">E: Interact</div>
-            <div className="hidden md:block">ESC: Navigation</div>
-            <div className="md:hidden">Use touch controls to fly</div>
-          </div>
-        </div>
+      {/* Star background */}
+      <mesh position={[0, 0, -500]} rotation={[0, 0, 0]}>
+        <sphereGeometry args={[400, 64, 64]} />
+        <meshBasicMaterial color="#000011" side={THREE.BackSide} />
+      </mesh>
+      
+      {/* UI - Rendered using Html */}
+      <Html position={[0, 0, 0]} center>
+        {/* EVE-like Minimap */}
+        <Minimap 
+          playerPosition={shipRef.current?.position || new THREE.Vector3(0, 0, 0)}
+          interactables={interactables}
+          projectiles={projectiles}
+          selectedTarget={selectedTarget}
+          onSelectTarget={setSelectedTarget}
+        />
         
-        <div className="absolute top-4 left-4 bg-black bg-opacity-60 text-white p-2 rounded-md">
-          <div className="font-semibold">{currentLocation?.name || "Unknown Location"}</div>
-          <div className="text-xs text-blue-300">{currentLocation?.type}</div>
-        </div>
+        {/* Target Info Display */}
+        {selectedInteractable && (
+          <TargetInfo 
+            target={selectedInteractable} 
+            onClearTarget={() => setSelectedTarget(null)} 
+          />
+        )}
         
-        {/* Mobile Touch Controls */}
-        <TouchControls />
+        {/* Weapon Controls */}
+        <WeaponControls 
+          weapons={[
+            {
+              type: "kineticTurret",
+              name: "Kinetic Turret",
+              damage: 25,
+              range: 30,
+              fireRate: 2,
+              energyCost: 5,
+              cooldown: 1.5,
+              currentCooldown: 0,
+              projectileSpeed: 20,
+              color: "#aaccff"
+            },
+            {
+              type: "laserCannon",
+              name: "Laser Cannon",
+              damage: 40,
+              range: 25,
+              fireRate: 1,
+              energyCost: 15,
+              cooldown: 3,
+              currentCooldown: 0,
+              projectileSpeed: 50,
+              color: "#ff3366"
+            },
+            {
+              type: "missile",
+              name: "Missile",
+              damage: 80,
+              range: 50,
+              fireRate: 0.5,
+              energyCost: 20,
+              cooldown: 5,
+              currentCooldown: 0,
+              projectileSpeed: 12,
+              color: "#ffaa44"
+            },
+            {
+              type: "lockingMissile",
+              name: "Locking Missile",
+              damage: 120,
+              range: 75,
+              fireRate: 0.2,
+              energyCost: 35,
+              cooldown: 8,
+              currentCooldown: 0,
+              projectileSpeed: 15,
+              color: "#ff8800"
+            },
+            {
+              type: "miningLaser",
+              name: "Mining Laser",
+              damage: 5,
+              range: 15,
+              fireRate: 0.3,
+              energyCost: 10,
+              cooldown: 2,
+              currentCooldown: 0,
+              projectileSpeed: 8,
+              color: "#44ff88"
+            }
+          ]}
+          selectedWeapon={selectedWeapon}
+          onSelectWeapon={setSelectedWeapon}
+          onFireWeapon={() => {
+            if (!selectedTarget) return;
+            
+            // Get the target object position
+            const targetObj = interactables.find(i => i.id === selectedTarget);
+            if (!targetObj) return;
+            
+            // Get ship's forward direction
+            const direction = new THREE.Vector3();
+            if (shipRef.current) {
+              direction.subVectors(
+                new THREE.Vector3(...targetObj.position),
+                shipRef.current.position
+              ).normalize();
+              
+              // Get weapon muzzle position (slightly in front of the ship)
+              const weaponPosition = shipRef.current.position.clone().add(
+                direction.clone().multiplyScalar(2)
+              );
+              
+              // Fire the weapon
+              handleFireWeapon(
+                weaponPosition,
+                direction,
+                ["kineticTurret", "laserCannon", "missile", "lockingMissile", "miningLaser"][selectedWeapon] as WeaponType
+              );
+            }
+          }}
+          selectedTarget={selectedTarget}
+        />
+        
+        {/* Navigation UI - Button for star map */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '20px',
+            right: '20px',
+            backgroundColor: 'rgba(30, 60, 100, 0.7)',
+            color: 'white',
+            padding: '15px',
+            borderRadius: '50%',
+            width: '60px',
+            height: '60px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px',
+            touchAction: 'none',
+            userSelect: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 0 15px rgba(100, 200, 255, 0.8)'
+          }}
+          onClick={onNavigate}
+        >
+          <span style={{ fontWeight: 'bold' }}>N</span>
+        </div>
       </Html>
-    </>
-  );
-};
-
-// Mobile Control Components
-const TouchControls = () => {
-  const isMobile = useIsMobile();
-  const game = useGame();
-  const mobileControlType = game.mobileControlType || 'joystick';
-  const controlsOpacity = game.controlsOpacity || 0.7;
-  
-  // Don't render on non-mobile devices
-  if (!isMobile) return null;
-  
-  return (
-    <>
-      {/* Control switcher at the top of screen */}
-      <div className="absolute top-20 right-4 bg-gray-800 bg-opacity-60 rounded-lg p-2 z-50">
-        <div className="text-white text-xs mb-1">Control Type:</div>
-        <div className="flex gap-2">
-          <button 
-            className={`px-3 py-1 text-sm rounded-md ${
-              mobileControlType === 'joystick' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-700 text-gray-300'
-            }`}
-            onClick={() => game.setMobileControlType && game.setMobileControlType('joystick')}
-          >
-            Joystick
-          </button>
-          <button 
-            className={`px-3 py-1 text-sm rounded-md ${
-              mobileControlType === 'swipe' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-700 text-gray-300'
-            }`}
-            onClick={() => game.setMobileControlType && game.setMobileControlType('swipe')}
-          >
-            Swipe
-          </button>
-        </div>
-        
-        {/* Opacity slider */}
-        <div className="mt-2">
-          <div className="text-white text-xs mb-1">Opacity: {Math.round(controlsOpacity * 100)}%</div>
-          <input 
-            type="range" 
-            min="20" 
-            max="100" 
-            value={controlsOpacity * 100} 
-            onChange={(e) => {
-              if (game.setControlsOpacity) {
-                game.setControlsOpacity(Number(e.target.value) / 100)
+      
+      {/* Mobile touch controls */}
+      {isMobile && (
+        <Html position={[0, 0, 0]} center>
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '20px',
+              left: '20px',
+              backgroundColor: 'rgba(30, 60, 100, 0.5)',
+              borderRadius: '50%',
+              width: '100px',
+              height: '100px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              touchAction: 'none',
+              userSelect: 'none'
+            }}
+            onTouchStart={(e) => {
+              const touch = e.touches[0];
+              setTouchStart([touch.clientX, touch.clientY]);
+            }}
+            onTouchMove={(e) => {
+              if (touchStart) {
+                const touch = e.touches[0];
+                setTouchEnd([touch.clientX, touch.clientY]);
               }
             }}
-            className="w-full"
-          />
-        </div>
-      </div>
-      
-      {/* Render appropriate control type */}
-      {mobileControlType === 'joystick' ? <JoystickControls /> : <SwipeControls />}
-    </>
-  );
-};
-
-// Joystick-style controls
-const JoystickControls = () => {
-  const game = useGame();
-  const controlsOpacity = game.controlsOpacity || 0.7;
-  const [, setKeys] = useKeyboardControls<Controls>();
-  
-  // Touch joystick state
-  const [touchActive, setTouchActive] = useState(false);
-  const [joystickPosition, setJoystickPosition] = useState({ x: 0, y: 0 });
-  const [basePosition, setBasePosition] = useState({ x: 0, y: 0 });
-  const joystickRef = useRef<HTMLDivElement>(null);
-  const maxDistance = 50; // Maximum joystick distance
-  
-  // Interaction button states
-  const [interactPressed, setInteractPressed] = useState(false);
-  const [menuPressed, setMenuPressed] = useState(false);
-  
-  // Handle touch start for joystick
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!joystickRef.current) return;
-    
-    const touch = e.touches[0];
-    const rect = joystickRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    setBasePosition({ x: centerX, y: centerY });
-    setJoystickPosition({ x: 0, y: 0 });
-    setTouchActive(true);
-  };
-  
-  // Handle touch move for joystick
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchActive) return;
-    
-    const touch = e.touches[0];
-    
-    // Calculate joystick offset from center
-    let deltaX = touch.clientX - basePosition.x;
-    let deltaY = touch.clientY - basePosition.y;
-    
-    // Limit joystick movement to a circle
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    if (distance > maxDistance) {
-      const angle = Math.atan2(deltaY, deltaX);
-      deltaX = Math.cos(angle) * maxDistance;
-      deltaY = Math.sin(angle) * maxDistance;
-    }
-    
-    setJoystickPosition({ x: deltaX, y: deltaY });
-    
-    // Convert joystick position to key presses
-    // Forward/backward: Y axis
-    // Left/right: X axis
-    const deadzone = 10; // Small deadzone to prevent accidental movement
-    
-    const forward = deltaY < -deadzone;
-    const backward = deltaY > deadzone;
-    const left = deltaX < -deadzone;
-    const right = deltaX > deadzone;
-    
-    // Update keyboard controls state
-    setKeys(state => {
-      return {
-        ...state,
-        forward,
-        backward,
-        left,
-        right
-      };
-    });
-  };
-  
-  // Handle touch end for joystick
-  const handleTouchEnd = () => {
-    setTouchActive(false);
-    setJoystickPosition({ x: 0, y: 0 });
-    
-    // Reset all movement keys
-    setKeys(state => {
-      return {
-        ...state,
-        forward: false,
-        backward: false,
-        left: false,
-        right: false
-      };
-    });
-  };
-  
-  // Handle interact button
-  const handleInteractStart = () => {
-    setInteractPressed(true);
-    setKeys(state => ({
-      ...state,
-      interact: true
-    }));
-  };
-  
-  const handleInteractEnd = () => {
-    setInteractPressed(false);
-    setKeys(state => ({
-      ...state,
-      interact: false
-    }));
-  };
-  
-  // Handle menu button
-  const handleMenuStart = () => {
-    setMenuPressed(true);
-    setKeys(state => ({
-      ...state,
-      menu: true
-    }));
-  };
-  
-  const handleMenuEnd = () => {
-    setMenuPressed(false);
-    setKeys(state => ({
-      ...state,
-      menu: false
-    }));
-  };
-  
-  return (
-    <>
-      {/* Movement joystick */}
-      <div className="absolute bottom-20 left-16 touch-none">
-        <div 
-          ref={joystickRef}
-          className="w-32 h-32 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: `rgba(31, 41, 55, ${controlsOpacity})`, borderColor: `rgba(59, 130, 246, ${controlsOpacity})` }}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onTouchCancel={handleTouchEnd}
-        >
-          <div 
-            className="w-16 h-16 rounded-full absolute"
-            style={{ 
-              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
-              transform: `translate(${joystickPosition.x}px, ${joystickPosition.y}px)`,
-              transition: touchActive ? 'none' : 'transform 0.2s ease-out'
-            }}
-          />
-        </div>
-        <div className="text-white text-xs mt-1 text-center">Movement</div>
-      </div>
-      
-      {/* Action buttons */}
-      <div className="absolute bottom-20 right-8 flex flex-col gap-4">
-        {/* Interact button */}
-        <div 
-          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
-          style={{ 
-            backgroundColor: interactPressed 
-              ? `rgba(217, 119, 6, ${controlsOpacity})` 
-              : `rgba(245, 158, 11, ${controlsOpacity})`
-          }}
-          onTouchStart={handleInteractStart}
-          onTouchEnd={handleInteractEnd}
-          onTouchCancel={handleInteractEnd}
-        >
-          E
-        </div>
-        
-        {/* Menu button */}
-        <div 
-          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
-          style={{ 
-            backgroundColor: menuPressed 
-              ? `rgba(109, 40, 217, ${controlsOpacity})` 
-              : `rgba(124, 58, 237, ${controlsOpacity})`
-          }}
-          onTouchStart={handleMenuStart}
-          onTouchEnd={handleMenuEnd}
-          onTouchCancel={handleMenuEnd}
-        >
-          ESC
-        </div>
-      </div>
-    </>
-  );
-};
-
-// Swipe-style controls 
-const SwipeControls = () => {
-  const game = useGame();
-  const controlsOpacity = game.controlsOpacity || 0.7;
-  const [, setKeys] = useKeyboardControls<Controls>();
-  
-  // Screen regions and active states
-  const [activeRegions, setActiveRegions] = useState({
-    forward: false,
-    backward: false,
-    left: false,
-    right: false
-  });
-  
-  // Touch start positions
-  const [touchStartPos, setTouchStartPos] = useState<Record<string, { x: number, y: number }>>({});
-  
-  // Action button states
-  const [interactPressed, setInteractPressed] = useState(false);
-  const [menuPressed, setMenuPressed] = useState(false);
-  
-  // Handle touch start for swipe controls
-  const handleScreenTouchStart = (e: React.TouchEvent) => {
-    // Store the touch start position for this touch ID
-    const touch = e.touches[0];
-    setTouchStartPos({
-      ...touchStartPos,
-      [touch.identifier]: { x: touch.clientX, y: touch.clientY }
-    });
-  };
-  
-  // Handle touch move for swipe controls
-  const handleScreenTouchMove = (e: React.TouchEvent) => {
-    // Process each active touch
-    for (let i = 0; i < e.touches.length; i++) {
-      const touch = e.touches[i];
-      const startPos = touchStartPos[touch.identifier];
-      
-      if (startPos) {
-        // Calculate swipe direction based on movement from start position
-        const deltaX = touch.clientX - startPos.x;
-        const deltaY = touch.clientY - startPos.y;
-        const threshold = 20; // Minimum swipe distance
-        
-        // Determine direction based on strongest component
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-          // Horizontal swipe
-          const left = deltaX < -threshold;
-          const right = deltaX > threshold;
-          
-          // Update active regions
-          setActiveRegions(prev => ({
-            ...prev,
-            left,
-            right
-          }));
-        } else {
-          // Vertical swipe
-          const forward = deltaY < -threshold;
-          const backward = deltaY > threshold;
-          
-          // Update active regions
-          setActiveRegions(prev => ({
-            ...prev,
-            forward,
-            backward
-          }));
-        }
-        
-        // Update controls
-        setKeys(state => ({
-          ...state,
-          forward: activeRegions.forward,
-          backward: activeRegions.backward,
-          left: activeRegions.left,
-          right: activeRegions.right
-        }));
-      }
-    }
-  };
-  
-  // Handle touch end for swipe controls
-  const handleScreenTouchEnd = (e: React.TouchEvent) => {
-    // Clear this touch point
-    const updatedTouches = { ...touchStartPos };
-    for (let i = 0; i < e.changedTouches.length; i++) {
-      delete updatedTouches[e.changedTouches[i].identifier];
-    }
-    setTouchStartPos(updatedTouches);
-    
-    // If no touches remain, reset all directions
-    if (Object.keys(updatedTouches).length === 0) {
-      setActiveRegions({
-        forward: false,
-        backward: false,
-        left: false,
-        right: false
-      });
-      
-      // Reset keys
-      setKeys(state => ({
-        ...state,
-        forward: false,
-        backward: false,
-        left: false,
-        right: false
-      }));
-    }
-  };
-  
-  // Handle action buttons
-  const handleInteractStart = () => {
-    setInteractPressed(true);
-    setKeys(state => ({
-      ...state,
-      interact: true
-    }));
-  };
-  
-  const handleInteractEnd = () => {
-    setInteractPressed(false);
-    setKeys(state => ({
-      ...state,
-      interact: false
-    }));
-  };
-  
-  const handleMenuStart = () => {
-    setMenuPressed(true);
-    setKeys(state => ({
-      ...state,
-      menu: true
-    }));
-  };
-  
-  const handleMenuEnd = () => {
-    setMenuPressed(false);
-    setKeys(state => ({
-      ...state,
-      menu: false
-    }));
-  };
-  
-  return (
-    <>
-      {/* Full screen touch area */}
-      <div 
-        className="absolute inset-0 z-10 touch-none"
-        onTouchStart={handleScreenTouchStart}
-        onTouchMove={handleScreenTouchMove}
-        onTouchEnd={handleScreenTouchEnd}
-        onTouchCancel={handleScreenTouchEnd}
-      >
-        {/* Direction indicators */}
-        <div className="absolute inset-x-0 top-1/4 flex justify-center pointer-events-none">
-          <div 
-            className="w-16 h-16 rounded-full flex items-center justify-center transition-opacity duration-150"
-            style={{ 
-              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
-              opacity: activeRegions.forward ? 0.9 : 0.3
+            onTouchEnd={() => {
+              setTouchStart(null);
+              setTouchEnd(null);
             }}
           >
-            <span className="text-white font-bold">↑</span>
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                backgroundColor: 'rgba(100, 180, 255, 0.8)',
+                borderRadius: '50%',
+                transform: touchEnd && touchStart
+                  ? `translate(${(touchEnd[0] - touchStart[0]) * 0.5}px, ${(touchEnd[1] - touchStart[1]) * 0.5}px)`
+                  : 'none',
+                transition: touchEnd ? 'none' : 'transform 0.2s ease-out'
+              }}
+            />
           </div>
-        </div>
-        
-        <div className="absolute inset-x-0 bottom-1/3 flex justify-center pointer-events-none">
-          <div 
-            className="w-16 h-16 rounded-full flex items-center justify-center transition-opacity duration-150"
-            style={{ 
-              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
-              opacity: activeRegions.backward ? 0.9 : 0.3
-            }}
-          >
-            <span className="text-white font-bold">↓</span>
-          </div>
-        </div>
-        
-        <div className="absolute inset-y-0 left-10 flex items-center pointer-events-none">
-          <div 
-            className="w-16 h-16 rounded-full flex items-center justify-center transition-opacity duration-150"
-            style={{ 
-              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
-              opacity: activeRegions.left ? 0.9 : 0.3
-            }}
-          >
-            <span className="text-white font-bold">←</span>
-          </div>
-        </div>
-        
-        <div className="absolute inset-y-0 right-10 flex items-center pointer-events-none">
-          <div 
-            className="w-16 h-16 rounded-full flex items-center justify-center transition-opacity duration-150"
-            style={{ 
-              backgroundColor: `rgba(59, 130, 246, ${controlsOpacity})`,
-              opacity: activeRegions.right ? 0.9 : 0.3
-            }}
-          >
-            <span className="text-white font-bold">→</span>
-          </div>
-        </div>
-      </div>
-      
-      {/* Action buttons - similar to joystick controls */}
-      <div className="absolute bottom-20 right-8 flex flex-col gap-4 z-20">
-        {/* Interact button */}
-        <div 
-          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
-          style={{ 
-            backgroundColor: interactPressed 
-              ? `rgba(217, 119, 6, ${controlsOpacity})` 
-              : `rgba(245, 158, 11, ${controlsOpacity})`
-          }}
-          onTouchStart={handleInteractStart}
-          onTouchEnd={handleInteractEnd}
-          onTouchCancel={handleInteractEnd}
-        >
-          E
-        </div>
-        
-        {/* Menu button */}
-        <div 
-          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
-          style={{ 
-            backgroundColor: menuPressed 
-              ? `rgba(109, 40, 217, ${controlsOpacity})` 
-              : `rgba(124, 58, 237, ${controlsOpacity})`
-          }}
-          onTouchStart={handleMenuStart}
-          onTouchEnd={handleMenuEnd}
-          onTouchCancel={handleMenuEnd}
-        >
-          ESC
-        </div>
-      </div>
+        </Html>
+      )}
     </>
   );
 };
