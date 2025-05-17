@@ -225,6 +225,8 @@ function getNextStage(currentStage: GameStage): GameStage {
       return GameStage.Cutscene2;
     case GameStage.Cutscene2:
       return GameStage.Act3;
+    case GameStage.Act3:           // Added missing transition
+      return GameStage.Cutscene3;  // Added missing transition
     case GameStage.Cutscene3:
       return GameStage.Act4;
     case GameStage.Act4:
@@ -237,7 +239,9 @@ function getNextStage(currentStage: GameStage): GameStage {
       return GameStage.Outro;
     case GameStage.Outro:
       return GameStage.Complete;
+    case GameStage.Complete:       // Explicitly handle complete state
+      return GameStage.Complete;   // End state loops back to itself
     default:
-      return GameStage.Complete; // End state loops back to itself
+      return GameStage.Complete;   // Default fallback to complete
   }
 }
