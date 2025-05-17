@@ -150,87 +150,80 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           }}></div>
         </div>
         
-        {/* Improved moon debris rings - different sizes and better visibility */}
+        {/* Detailed debris rings with many small chunks of rock */}
         
-        {/* First major ring - largest, outer ring */}
+        {/* First major debris ring - outer */}
         <div className="absolute" style={{
-          width: "320%",
-          height: "0.9vh",
+          width: "300%",
+          height: "3vh", 
           top: "50%",
-          left: "-110%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(230,230,240,0.15) 15%, rgba(230,230,240,0.5) 35%, rgba(230,230,240,0.7) 50%, rgba(230,230,240,0.5) 65%, rgba(230,230,240,0.15) 85%, transparent 100%)",
-          boxShadow: "0 0 5px rgba(255,255,255,0.4)",
-          transform: "translateY(-50%) rotate(12deg)",
-          borderRadius: "50%"
+          left: "-100%",
+          background: `radial-gradient(ellipse at center, transparent, transparent),
+                      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="30" viewBox="0 0 600 30"><g fill="rgba(255,255,255,0.7)"><circle cx="10" cy="5" r="0.8" /><circle cx="22" cy="12" r="0.5" /><circle cx="35" cy="8" r="0.3" /><circle cx="42" cy="15" r="0.7" /><circle cx="58" cy="10" r="0.4" /><circle cx="65" cy="17" r="0.6" /><circle cx="80" cy="7" r="0.5" /><circle cx="92" cy="14" r="0.3" /><circle cx="105" cy="19" r="0.8" /><circle cx="120" cy="3" r="0.6" /><circle cx="132" cy="12" r="0.4" /><circle cx="145" cy="21" r="0.3" /><circle cx="158" cy="9" r="0.7" /><circle cx="178" cy="16" r="0.4" /><circle cx="192" cy="5" r="0.6" /><circle cx="210" cy="17" r="0.3" /><circle cx="220" cy="10" r="0.5" /><circle cx="238" cy="7" r="0.4" /><circle cx="250" cy="19" r="0.8" /><circle cx="275" cy="4" r="0.5" /><circle cx="290" cy="12" r="0.3" /><circle cx="310" cy="18" r="0.7" /><circle cx="325" cy="8" r="0.5" /><circle cx="345" cy="15" r="0.4" /><circle cx="360" cy="3" r="0.6" /><circle cx="380" cy="20" r="0.3" /><circle cx="395" cy="7" r="0.5" /><circle cx="410" cy="17" r="0.8" /><circle cx="425" cy="4" r="0.4" /><circle cx="442" cy="13" r="0.6" /><circle cx="468" cy="8" r="0.3" /><circle cx="480" cy="16" r="0.7" /><circle cx="495" cy="5" r="0.4" /><circle cx="510" cy="19" r="0.5" /><circle cx="525" cy="10" r="0.6" /><circle cx="543" cy="3" r="0.3" /><circle cx="560" cy="21" r="0.8" /><circle cx="582" cy="12" r="0.5" /></g></svg>')`,
+          boxShadow: "0 0 8px rgba(255,255,255,0.2)",
+          transform: "translateY(-50%) rotate(12deg) perspective(100px) rotateX(5deg)",
+          borderRadius: "50%",
+          opacity: 0.9
         }}></div>
         
-        {/* Second major ring - medium width, different angle */}
+        {/* Second major debris ring - middle, denser */}
         <div className="absolute" style={{
-          width: "250%",
-          height: "1.2vh",
+          width: "240%",
+          height: "4vh",
           top: "49%",
-          left: "-75%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(210,210,220,0.2) 20%, rgba(210,210,220,0.8) 40%, rgba(210,210,220,0.95) 50%, rgba(210,210,220,0.8) 60%, rgba(210,210,220,0.2) 80%, transparent 100%)",
-          boxShadow: "0 0 6px rgba(255,255,255,0.4)",
-          transform: "translateY(-50%) rotate(-18deg)",
-          borderRadius: "50%"
+          left: "-70%",
+          background: `radial-gradient(ellipse at center, transparent, transparent),
+                      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="500" height="40" viewBox="0 0 500 40"><g fill="rgba(240,240,245,0.8)"><circle cx="8" cy="23" r="1.0" /><circle cx="19" cy="7" r="0.6" /><circle cx="32" cy="19" r="1.2" /><circle cx="45" cy="5" r="0.7" /><circle cx="57" cy="22" r="0.9" /><circle cx="68" cy="12" r="0.5" /><circle cx="79" cy="28" r="1.1" /><circle cx="90" cy="8" r="0.8" /><circle cx="102" cy="17" r="0.4" /><circle cx="118" cy="25" r="1.0" /><circle cx="130" cy="6" r="0.7" /><circle cx="144" cy="14" r="0.5" /><circle cx="158" cy="27" r="0.9" /><circle cx="172" cy="11" r="0.6" /><circle cx="189" cy="19" r="1.1" /><circle cx="204" cy="8" r="0.8" /><circle cx="218" cy="23" r="0.5" /><circle cx="235" cy="12" r="0.9" /><circle cx="249" cy="29" r="0.7" /><circle cx="262" cy="5" r="1.0" /><circle cx="278" cy="18" r="0.6" /><circle cx="295" cy="25" r="0.8" /><circle cx="308" cy="9" r="1.2" /><circle cx="321" cy="17" r="0.5" /><circle cx="336" cy="26" r="0.9" /><circle cx="349" cy="13" r="0.7" /><circle cx="364" cy="21" r="1.1" /><circle cx="379" cy="7" r="0.6" /><circle cx="388" cy="24" r="0.8" /><circle cx="401" cy="14" r="1.0" /><circle cx="415" cy="28" r="0.5" /><circle cx="429" cy="6" r="0.9" /><circle cx="442" cy="19" r="0.7" /><circle cx="457" cy="31" r="1.1" /><circle cx="468" cy="11" r="0.8" /><circle cx="482" cy="20" r="0.6" /></g></svg>')`,
+          boxShadow: "0 0 10px rgba(255,255,255,0.3)",
+          transform: "translateY(-50%) rotate(-18deg) perspective(150px) rotateX(-8deg)",
+          borderRadius: "50%",
+          opacity: 1
         }}></div>
         
-        {/* Third medium-visible ring - closer to planet */}
+        {/* Third major debris ring - inner, very dense */}
         <div className="absolute" style={{
           width: "180%",
-          height: "0.8vh",
+          height: "2.5vh",
           top: "50.5%",
           left: "-40%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(190,190,200,0.15) 15%, rgba(190,190,200,0.5) 40%, rgba(190,190,200,0.6) 50%, rgba(190,190,200,0.5) 60%, rgba(190,190,200,0.15) 85%, transparent 100%)",
-          boxShadow: "0 0 3px rgba(255,255,255,0.2)",
-          transform: "translateY(-50%) rotate(28deg)",
-          borderRadius: "50%"
+          background: `radial-gradient(ellipse at center, transparent, transparent),
+                      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="25" viewBox="0 0 400 25"><g fill="rgba(220,220,225,0.75)"><circle cx="12" cy="10" r="0.9" /><circle cx="23" cy="15" r="0.7" /><circle cx="38" cy="7" r="1.1" /><circle cx="51" cy="18" r="0.5" /><circle cx="63" cy="5" r="0.8" /><circle cx="75" cy="12" r="1.0" /><circle cx="88" cy="19" r="0.6" /><circle cx="99" cy="8" r="0.9" /><circle cx="114" cy="17" r="0.7" /><circle cx="127" cy="4" r="1.2" /><circle cx="139" cy="13" r="0.5" /><circle cx="152" cy="21" r="0.8" /><circle cx="167" cy="9" r="1.0" /><circle cx="179" cy="16" r="0.6" /><circle cx="190" cy="6" r="0.9" /><circle cx="204" cy="20" r="0.7" /><circle cx="218" cy="11" r="1.1" /><circle cx="233" cy="5" r="0.5" /><circle cx="245" cy="14" r="0.8" /><circle cx="258" cy="19" r="1.0" /><circle cx="272" cy="8" r="0.6" /><circle cx="285" cy="13" r="0.9" /><circle cx="299" cy="3" r="0.7" /><circle cx="312" cy="17" r="1.2" /><circle cx="324" cy="10" r="0.5" /><circle cx="337" cy="21" r="0.8" /><circle cx="352" cy="5" r="1.0" /><circle cx="363" cy="15" r="0.6" /><circle cx="376" cy="9" r="0.9" /><circle cx="389" cy="19" r="0.7" /></g></svg>')`,
+          boxShadow: "0 0 6px rgba(255,255,255,0.25)",
+          transform: "translateY(-50%) rotate(24deg) perspective(90px) rotateX(6deg)",
+          borderRadius: "50%",
+          opacity: 0.95
         }}></div>
         
-        {/* Fourth barely visible ring - thin, outer */}
+        {/* Scattered smaller debris */}
         <div className="absolute" style={{
           width: "350%",
-          height: "0.3vh",
-          top: "50.3%",
+          height: "10vh",
+          top: "45%",
           left: "-125%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(180,180,190,0.03) 30%, rgba(180,180,190,0.15) 50%, rgba(180,180,190,0.03) 70%, transparent 100%)",
-          transform: "translateY(-50%) rotate(-5deg)",
-          borderRadius: "50%"
+          background: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="100" viewBox="0 0 800 100"><g fill="rgba(255,255,255,0.3)"><circle cx="21" cy="45" r="0.4" /><circle cx="54" cy="23" r="0.3" /><circle cx="87" cy="65" r="0.25" /><circle cx="123" cy="12" r="0.35" /><circle cx="156" cy="78" r="0.3" /><circle cx="198" cy="34" r="0.25" /><circle cx="243" cy="56" r="0.4" /><circle cx="276" cy="89" r="0.3" /><circle cx="312" cy="23" r="0.25" /><circle cx="354" cy="67" r="0.35" /><circle cx="389" cy="12" r="0.3" /><circle cx="423" cy="88" r="0.25" /><circle cx="465" cy="45" r="0.4" /><circle cx="498" cy="23" r="0.3" /><circle cx="534" cy="76" r="0.25" /><circle cx="576" cy="33" r="0.35" /><circle cx="612" cy="54" r="0.3" /><circle cx="645" cy="87" r="0.25" /><circle cx="687" cy="21" r="0.4" /><circle cx="721" cy="67" r="0.3" /><circle cx="765" cy="43" r="0.25" /></g></svg>')`,
+          transform: "translateY(-50%)",
+          borderRadius: "50%",
+          opacity: 0.5
         }}></div>
         
-        {/* Fifth barely visible ring - thin, inner */}
+        {/* Dust cloud outer ring */}
         <div className="absolute" style={{
-          width: "150%",
-          height: "0.25vh",
-          top: "49.8%",
-          left: "-25%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,210,0.02) 30%, rgba(200,200,210,0.12) 50%, rgba(200,200,210,0.02) 70%, transparent 100%)",
+          width: "400%",
+          height: "8vh",
+          top: "50%",
+          left: "-150%",
+          background: `radial-gradient(ellipse at center, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.03) 30%, rgba(255,255,255,0.01) 70%, transparent 100%)`,
           transform: "translateY(-50%) rotate(5deg)",
-          borderRadius: "50%"
+          borderRadius: "50%",
+          opacity: 0.7
         }}></div>
         
-        {/* Sixth extremely faint ring - dust, inner */}
-        <div className="absolute" style={{
-          width: "130%",
-          height: "0.15vh",
-          top: "50.1%",
-          left: "-15%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(190,190,200,0.01) 30%, rgba(190,190,200,0.06) 50%, rgba(190,190,200,0.01) 70%, transparent 100%)",
-          transform: "translateY(-50%) rotate(-8deg)",
-          borderRadius: "50%"
-        }}></div>
-        
-        {/* Seventh extremely faint ring - dust, outer */}
-        <div className="absolute" style={{
-          width: "380%",
-          height: "0.1vh",
-          top: "49.6%",
-          left: "-140%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(170,170,180,0.01) 30%, rgba(170,170,180,0.04) 50%, rgba(170,170,180,0.01) 70%, transparent 100%)",
-          transform: "translateY(-50%) rotate(2deg)",
-          borderRadius: "50%"
-        }}></div>
+        {/* A few larger rock chunks scattered in rings */}
+        <div className="absolute rounded-full bg-gray-200" style={{ width: "2%", height: "2%", top: "49%", left: "35%", opacity: 0.85 }}></div>
+        <div className="absolute rounded-full bg-gray-300" style={{ width: "3%", height: "3%", top: "48%", left: "-35%", opacity: 0.9 }}></div>
+        <div className="absolute rounded-full bg-gray-100" style={{ width: "1.5%", height: "1.5%", top: "51%", left: "75%", opacity: 0.8 }}></div>
+        <div className="absolute rounded-full bg-gray-200" style={{ width: "2.5%", height: "2.5%", top: "50%", left: "-75%", opacity: 0.75 }}></div>
+        <div className="absolute rounded-full bg-gray-300" style={{ width: "1.8%", height: "1.8%", top: "49.5%", left: "60%", opacity: 0.85 }}></div>
         
         {/* First large moon chunk - embedded in first ring */}
         <div className="absolute rounded-full bg-gray-300" style={{
