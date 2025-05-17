@@ -14,7 +14,7 @@
 
 .shimmer-text {
   animation: shimmer 8s ease-in-out infinite;
-  letter-spacing: 0.25em;
+  letter-spacing: 1em;
   background-image: linear-gradient(90deg, transparent, transparent);
 }
 
@@ -28,6 +28,26 @@
   transform-origin: center;
   white-space: nowrap;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Special metallic effect for STELLAR text */
+.metallic-text {
+  background-image: linear-gradient(180deg, 
+    #ffffff 0%, 
+    #e0e0e0 20%, 
+    #b8b8b8 40%, 
+    #8f8f8f 50%, 
+    #b8b8b8 60%, 
+    #e0e0e0 80%, 
+    #ffffff 100%);
+  background-size: 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent; 
+  -moz-text-fill-color: transparent;
+  filter: drop-shadow(0px 0px 2px rgba(70, 130, 255, 0.7));
+  text-shadow: none;
 }
 
 @layer base {
@@ -59,6 +79,20 @@ canvas {
 }
 
 /* Game UI styles */
+/* Button effect for orbital animation */
+@keyframes orbitButton {
+  0% { transform: translateX(-10px) scale(0.98); }
+  50% { transform: translateX(5px) scale(1.02); }
+  100% { transform: translateX(-10px) scale(0.98); }
+}
+
+/* Star twinkle animation */
+@keyframes twinkling {
+  0% { opacity: 0.1; transform: scale(0.8); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+  100% { opacity: 0.1; transform: scale(0.8); }
+}
+
 .game-button {
   background-color: #2563eb;
   color: white;
@@ -73,6 +107,7 @@ canvas {
   margin: 6px 0;
   font-size: clamp(14px, 3vw, 18px);
   display: block;
+  animation: orbitButton 4s infinite;
 }
 
 .game-button:hover {
@@ -81,26 +116,44 @@ canvas {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Colored button variants */
+.game-button.primary {
+  background-color: #2563eb;
+  border: 2px solid #1d4ed8;
+  color: white;
+  animation-delay: 0s;
+}
+
+.game-button.success {
+  background-color: #10b981;
+  border: 2px solid #059669;
+  color: white;
+  animation-delay: 0.2s;
+}
+
 .game-button.outline {
   background-color: transparent;
-  color: #3b82f6;
-  border: 2px solid #3b82f6;
+  color: #f59e0b;
+  border: 2px solid #f59e0b;
+  animation-delay: 0.4s;
 }
 
 .game-button.outline:hover {
-  background-color: #3b82f6;
+  background-color: #f59e0b;
   color: white;
 }
 
 .game-button.ghost {
   background-color: transparent;
-  color: #d1d5db;
-  border: 2px solid #4b5563;
+  color: #ef4444;
+  border: 2px solid #ef4444;
+  animation-delay: 0.6s;
 }
 
 .game-button.ghost:hover {
-  background-color: #374151;
-  border-color: #374151;
+  background-color: #ef4444;
+  border-color: #ef4444;
+  color: white;
 }
 
 /* Space Scene Animation */
