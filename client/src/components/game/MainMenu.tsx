@@ -99,7 +99,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       >
         <div className="flex flex-col items-center gap-3">
           <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl"><span className="text-blue-400">STELLAR</span> ODYSSEY</div>
-          <div className="text-sm sm:text-base md:text-lg lg:text-xl tracking-[0.5em] font-light shimmer-text">ECHOES OF THE ARCHITECTS</div>
+          <div className="text-sm sm:text-base md:text-lg lg:text-xl tracking-[1em] font-light shimmer-text">ECHOES OF THE ARCHITECTS</div>
         </div>
       </motion.div>
       
@@ -119,21 +119,21 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
       >
-        <div className="game-button text-[10px] py-1 px-3" onClick={handleNewGame}>
+        <div className="game-button text-[10px] py-1 px-3 whitespace-nowrap" onClick={handleNewGame}>
           New Game
         </div>
         
         {showContinue && (
-          <div className="game-button text-[10px] py-1 px-3 outline" onClick={handleLoadGame}>
+          <div className="game-button text-[10px] py-1 px-3 whitespace-nowrap outline" onClick={handleLoadGame}>
             Load Game
           </div>
         )}
         
-        <div className="game-button text-[10px] py-1 px-3 outline" onClick={() => setShowPuzzleSelector(true)}>
+        <div className="game-button text-[10px] py-1 px-3 whitespace-nowrap outline" onClick={() => setShowPuzzleSelector(true)}>
           Puzzle Showcase
         </div>
         
-        <div className="game-button text-[10px] py-1 px-3 ghost" onClick={() => setShowSettings(true)}>
+        <div className="game-button text-[10px] py-1 px-3 whitespace-nowrap ghost" onClick={() => setShowSettings(true)}>
           Settings
         </div>
       </motion.div>
