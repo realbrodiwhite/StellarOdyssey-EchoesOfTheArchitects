@@ -126,7 +126,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
             </div>
             
             {/* Mobile version (two lines) with larger text - perfectly centered */}
-            <div className="flex flex-col sm:hidden items-center justify-center text-[5.5rem] md:text-[6rem] w-full px-3 text-center gap-2">
+            <div className="flex flex-col sm:hidden items-center justify-center text-[5.5rem] md:text-[6rem] w-full px-3 text-center gap-6">
               <div className="stellar-text w-full">STELLAR</div>
               <div className="odyssey-text w-full">ODYSSEY</div>
             </div>
