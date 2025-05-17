@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { 
   Environment, 
   Stars,
@@ -13,7 +13,7 @@ import { useCompanion, DialogueType } from "@/lib/stores/useCompanion";
 import { useAchievements } from "@/lib/stores/useAchievements";
 import { useAudio } from "@/lib/stores/useAudio";
 import { useLocation } from "@/lib/stores/useLocation";
-import { Controls, Location } from "@/lib/types";
+import { Controls, Location, LocationType } from "@/lib/types";
 import { Html } from "@react-three/drei";
 import SpaceExploration from "./SpaceExploration";
 import SpaceNavigation from "./SpaceNavigation";
@@ -25,6 +25,7 @@ import TechnicalPuzzle from "./TechnicalPuzzle";
 import SaveLoadMenu from "./SaveLoadMenu";
 import EmergencyEncounter from "./EmergencyEncounter";
 import ShipLaunchAnimation from "./ShipLaunchAnimation";
+import * as THREE from "three";
 
 interface SpaceEnvironmentProps {
   onEnterCombat: () => void;
@@ -68,12 +69,198 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const [showShipLaunch, setShowShipLaunch] = useState(true); // Start with ship launch animation
   const [showEmergencyEncounter, setShowEmergencyEncounter] = useState(false); // Will show after ship launch
   
+  // Contextual ambient lighting states
+  const [environmentPreset, setEnvironmentPreset] = useState<"night" | "apartment" | "city" | "dawn" | "forest" | "lobby" | "park" | "studio" | "sunset" | "warehouse">("night");
+  const [ambientIntensity, setAmbientIntensity] = useState<number>(0.3);
+  const [hemisphereIntensity, setHemisphereIntensity] = useState<number>(0.1);
+  const [hemisphereColor, setHemisphereColor] = useState<string>("#88ccff");
+  const [hemisphereGroundColor, setHemisphereGroundColor] = useState<string>("#884466");
+  
   // Companion and achievement systems
   const { activeCompanion, getRandomDialogue, addDialogue } = useCompanion();
   const { hasUnlockedCompanionAI } = useAchievements();
   
   // Get location data
   const currentLocation = getCurrentLocation();
+  
+  // Function to determine lighting settings based on location type and characteristics
+  const updateLightingForLocation = (location: Location | undefined) => {
+    if (!location) return;
+    
+    // Default space lighting
+    let preset: "night" | "apartment" | "city" | "dawn" | "forest" | "lobby" | "park" | "studio" | "sunset" | "warehouse" = "night";
+    let ambIntensity = 0.3;
+    let hemiIntensity = 0.1;
+    let hemiColor = "#88ccff";
+    let hemiGroundColor = "#884466";
+    
+    switch (location.type) {
+      case LocationType.Planet:
+        // Check for planet description to determine type
+        if (location.description.toLowerCase().includes("desert")) {
+          preset = "sunset";
+          ambIntensity = 0.5;
+          hemiIntensity = 0.2;
+          hemiColor = "#ffbb77";
+          hemiGroundColor = "#aa7744";
+        } else if (location.description.toLowerCase().includes("ice") || 
+                  location.description.toLowerCase().includes("arctic") || 
+                  location.description.toLowerCase().includes("frozen")) {
+          preset = "dawn";
+          ambIntensity = 0.4;
+          hemiIntensity = 0.15;
+          hemiColor = "#aaccff";
+          hemiGroundColor = "#ffffff";
+        } else if (location.description.toLowerCase().includes("jungle") || 
+                  location.description.toLowerCase().includes("forest")) {
+          preset = "forest";
+          ambIntensity = 0.2;
+          hemiIntensity = 0.15;
+          hemiColor = "#88cc88";
+          hemiGroundColor = "#335533";
+        } else if (location.description.toLowerCase().includes("volcanic") || 
+                  location.description.toLowerCase().includes("lava")) {
+          preset = "sunset";
+          ambIntensity = 0.5;
+          hemiIntensity = 0.2;
+          hemiColor = "#ff7744";
+          hemiGroundColor = "#661100";
+        } else if (location.description.toLowerCase().includes("ocean") || 
+                  location.description.toLowerCase().includes("water")) {
+          preset = "city";
+          ambIntensity = 0.35;
+          hemiIntensity = 0.15;
+          hemiColor = "#55aaff";
+          hemiGroundColor = "#00448a";
+        } else {
+          // Default terrestrial planet settings
+          preset = "park";
+          ambIntensity = 0.4;
+          hemiIntensity = 0.15;
+          hemiColor = "#aaddff";
+          hemiGroundColor = "#779966";
+        }
+        break;
+
+      case LocationType.Space:
+        preset = "night";
+        ambIntensity = 0.3;
+        hemiIntensity = 0.1;
+        hemiColor = "#88ccff";
+        hemiGroundColor = "#884466";
+        break;
+
+      case LocationType.Station:
+        preset = "apartment";
+        ambIntensity = 0.4;
+        hemiIntensity = 0.15;
+        hemiColor = "#ccccdd";
+        hemiGroundColor = "#555566";
+        break;
+
+      case LocationType.Derelict:
+        preset = "night";
+        ambIntensity = 0.2;
+        hemiIntensity = 0.05;
+        hemiColor = "#445566";
+        hemiGroundColor = "#332244";
+        break;
+
+      case LocationType.Anomaly:
+        // For anomalies, check for void energy
+        if (location.environmentEffects?.some(effect => effect.type === "voidEnergy")) {
+          preset = "night";
+          ambIntensity = 0.25;
+          hemiIntensity = 0.1;
+          hemiColor = "#9966cc";
+          hemiGroundColor = "#331144";
+        } else {
+          preset = "lobby";
+          ambIntensity = 0.3;
+          hemiIntensity = 0.1;
+          hemiColor = "#aabbcc";
+          hemiGroundColor = "#334455";
+        }
+        break;
+
+      case LocationType.Ruins:
+        preset = "sunset";
+        ambIntensity = 0.25;
+        hemiIntensity = 0.1;
+        hemiColor = "#ddbb99";
+        hemiGroundColor = "#775544";
+        break;
+
+      case LocationType.Settlement:
+        preset = "city";
+        ambIntensity = 0.4;
+        hemiIntensity = 0.15;
+        hemiColor = "#ccccdd";
+        hemiGroundColor = "#666677";
+        break;
+
+      default:
+        preset = "night";
+        ambIntensity = 0.3;
+        hemiIntensity = 0.1;
+        hemiColor = "#88ccff";
+        hemiGroundColor = "#884466";
+    }
+    
+    // Apply environment effects if present
+    if (location.environmentEffects && location.environmentEffects.length > 0) {
+      // Adjust lighting based on environmental effects
+      location.environmentEffects.forEach(effect => {
+        // Extreme temperature
+        if (effect.type === "extremeTemperature" && effect.severity > 2) {
+          if (location.description.toLowerCase().includes("cold") || 
+              location.description.toLowerCase().includes("ice") ||
+              location.description.toLowerCase().includes("frozen")) {
+            // Cold environments
+            hemiColor = "#aaccff";
+            hemiGroundColor = "#ddeeff";
+          } else {
+            // Hot environments
+            hemiColor = "#ffaa77";
+            hemiGroundColor = "#cc7744";
+          }
+        }
+        
+        // Radiation - give a slight green tint
+        if (effect.type === "radiation") {
+          hemiColor = mixColors(hemiColor, "#aaff99", effect.severity * 0.1);
+        }
+        
+        // Toxic atmosphere - give a slight purple/green tint
+        if (effect.type === "toxicAtmosphere") {
+          hemiColor = mixColors(hemiColor, "#aa88cc", effect.severity * 0.15);
+        }
+      });
+    }
+    
+    // Apply the lighting settings
+    setEnvironmentPreset(preset);
+    setAmbientIntensity(ambIntensity);
+    setHemisphereIntensity(hemiIntensity);
+    setHemisphereColor(hemiColor);
+    setHemisphereGroundColor(hemiGroundColor);
+  };
+  
+  // Helper function to mix colors
+  const mixColors = (color1: string, color2: string, ratio: number): string => {
+    // Convert hex to RGB
+    const c1 = new THREE.Color(color1);
+    const c2 = new THREE.Color(color2);
+    
+    // Mix the colors
+    const mixed = new THREE.Color(
+      c1.r * (1 - ratio) + c2.r * ratio,
+      c1.g * (1 - ratio) + c2.g * ratio,
+      c1.b * (1 - ratio) + c2.b * ratio
+    );
+    
+    return '#' + mixed.getHexString();
+  };
   
   // Initialize first mission guidance through ship's automated system
   useEffect(() => {
@@ -284,12 +471,16 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   
   return (
     <>
-      {/* Environment lighting */}
-      <Environment preset="night" />
+      {/* Environment lighting - dynamic based on location type */}
+      <Environment preset={environmentPreset} />
       
-      {/* Ambient lighting */}
-      <ambientLight intensity={0.3} />
-      <hemisphereLight intensity={0.1} color="#88ccff" groundColor="#884466" />
+      {/* Ambient lighting - dynamic intensity and colors */}
+      <ambientLight intensity={ambientIntensity} />
+      <hemisphereLight 
+        intensity={hemisphereIntensity} 
+        color={hemisphereColor} 
+        groundColor={hemisphereGroundColor} 
+      />
       
       {/* Background stars */}
       <Stars 
