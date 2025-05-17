@@ -30,15 +30,17 @@
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
-/* Special metallic effect for STELLAR text with chrome outline */
+/* Futuristic space effect for STELLAR text */
 .metallic-text {
+  font-family: "Orbitron", "Rajdhani", "Audiowide", "Arial Black", sans-serif;
+  letter-spacing: 0.08em;
   background-image: linear-gradient(180deg, 
     #ffffff 0%, 
-    #e0e0e0 20%, 
-    #b8b8b8 40%, 
-    #8f8f8f 50%, 
-    #b8b8b8 60%, 
-    #e0e0e0 80%, 
+    #a0e0ff 15%, 
+    #80c0ff 30%, 
+    #4080ff 50%, 
+    #80c0ff 70%, 
+    #a0e0ff 85%, 
     #ffffff 100%);
   background-size: 100%;
   background-clip: text;
@@ -49,20 +51,26 @@
   text-shadow: 
     0 0 1px #fff,
     0 0 2px #fff,
-    0 0 3px #fff,
+    0 0 3px #0ff,
     0 0 4px #0ff,
-    0 0 5px #0ff,
-    0 0 6px #0ff,
-    0 0 7px #0ff;
-  filter: drop-shadow(0px 0px 1px rgba(0, 255, 255, 0.9));
+    0 0 5px #0af,
+    0 0 6px #08f,
+    0 0 7px #06f;
+  filter: drop-shadow(0px 0px 2px rgba(0, 120, 255, 0.9));
+  transform: scaleY(1.1) scaleX(0.95);
 }
 
-/* Deep forest green for ODYSSEY text */
+/* Adventurous fantasy style for ODYSSEY text */
 .forest-green-text {
-  color: #1B4D3E;
+  font-family: "Luminari", "Papyrus", "Trattatello", "Copperplate", "Georgia", serif;
+  letter-spacing: 0.05em;
+  color: #ff8c00;
   text-shadow: 
     0 0 1px #fff,
-    0 0 2px #1B4D3E;
+    0 0 2px #f80,
+    0 0 3px #840,
+    0 0 6px #420;
+  transform: scaleY(1.05) scaleX(1.02);
 }
 
 @layer base {
