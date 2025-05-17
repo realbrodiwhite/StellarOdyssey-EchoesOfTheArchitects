@@ -8,6 +8,8 @@ interface AudioState {
   alarmSound: HTMLAudioElement | null;
   explosionSound: HTMLAudioElement | null;
   isMuted: boolean;
+  musicVolume: number;
+  effectsVolume: number;
   
   // Setter functions
   setBackgroundMusic: (music: HTMLAudioElement) => void;
@@ -22,6 +24,10 @@ interface AudioState {
   playSuccess: () => void;
   playAlarm: () => void;
   playExplosion: () => void;
+  
+  // Volume controls
+  setMusicVolume: (volume: number) => void;
+  setEffectsVolume: (volume: number) => void;
 }
 
 export const useAudio = create<AudioState>()(
@@ -33,6 +39,8 @@ export const useAudio = create<AudioState>()(
       alarmSound: null,
       explosionSound: null,
       isMuted: false, // Start unmuted by default
+      musicVolume: 0.7, // Default music volume (0-1)
+      effectsVolume: 0.8, // Default effects volume (0-1)
       
       setBackgroundMusic: (music) => set({ backgroundMusic: music }),
       setHitSound: (sound) => set({ hitSound: sound }),
@@ -130,11 +138,28 @@ export const useAudio = create<AudioState>()(
             console.log("Explosion sound play prevented:", error);
           });
         }
+      },
+      
+      setMusicVolume: (volume) => {
+        set({ musicVolume: volume });
+        const { backgroundMusic, isMuted } = get();
+        if (backgroundMusic && !isMuted) {
+          backgroundMusic.volume = volume;
+        }
+      },
+      
+      setEffectsVolume: (volume) => {
+        set({ effectsVolume: volume });
+        // Future sound effects will use this volume
       }
     }),
     {
       name: "audio-settings", // localStorage key
-      partialize: (state) => ({ isMuted: state.isMuted }), // only persist the muted state
+      partialize: (state) => ({ 
+        isMuted: state.isMuted,
+        musicVolume: state.musicVolume,
+        effectsVolume: state.effectsVolume
+      }), // persist audio settings
     }
   )
 );

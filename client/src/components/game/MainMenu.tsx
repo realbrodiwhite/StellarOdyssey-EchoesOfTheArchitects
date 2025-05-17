@@ -63,10 +63,9 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
     onStart(); // Navigate to character selection
   };
   
-  const handleContinue = () => {
-    console.log("Continue button clicked");
-    start(); // Resume the game
-    onStart(); // Skip character selection if we already have a character
+  const handleLoadGame = () => {
+    console.log("Load Game button clicked");
+    setShowSaveLoadMenu(true);
   };
   
   return (
@@ -120,8 +119,8 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
         
         {showContinue && (
-          <div className="game-button outline" onClick={handleContinue}>
-            Continue
+          <div className="game-button outline" onClick={handleLoadGame}>
+            Load Game
           </div>
         )}
         
@@ -129,13 +128,30 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           Puzzle Showcase
         </div>
         
-        <div className="game-button ghost" onClick={toggleMute}>
-          {isMuted ? "Sound: Off" : "Sound: On"}
+        <div className="game-button ghost" onClick={() => setShowSettings(true)}>
+          Settings
         </div>
       </motion.div>
       
-      {/* Puzzle Selector Modal */}
+      {/* Modals */}
       {showPuzzleSelector && <PuzzleSelector onClose={() => setShowPuzzleSelector(false)} />}
+      
+      {/* Save/Load Menu */}
+      {showSaveLoadMenu && (
+        <SaveLoadMenu 
+          isOpen={showSaveLoadMenu} 
+          onClose={() => setShowSaveLoadMenu(false)} 
+          mode="load" 
+        />
+      )}
+      
+      {/* Settings Menu */}
+      {showSettings && (
+        <Settings 
+          isOpen={showSettings} 
+          onClose={() => setShowSettings(false)} 
+        />
+      )}
       
       {/* Debug buttons */}
       <div className="absolute top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 text-xs text-gray-500 z-10">
