@@ -114,7 +114,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </div>
       
-      {/* Earth with destroyed moon debris rings */}
+      {/* Earth with millions of moon debris pieces forming rings */}
       <div className="absolute z-5" style={{ 
         bottom: "35vh",
         left: "28%", 
@@ -124,76 +124,266 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         opacity: 1,
         filter: "drop-shadow(0 0 12px rgba(120,180,255,0.3))"
       }}>
-        {/* Planet body */}
+        {/* Earth body */}
         <div className="absolute rounded-full" style={{ 
           width: "100%", 
           height: "100%",
           background: "radial-gradient(circle at 35% 35%, #4ba9e0 0%, #2978a0 25%, #1c5985 50%, #0a3861 75%, #051a33 100%)",
           boxShadow: "inset -5px -5px 10px rgba(0,0,0,0.5), 0 0 5px rgba(100,200,255,0.4)"
         }}>
-          {/* Continental details */}
+          {/* North America */}
           <div className="absolute" style={{
-            width: "100%",
-            height: "100%",
-            background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='rgba(70,140,50,0.5)' d='M30,30 Q40,20 50,30 T70,30 Q75,40 65,50 T70,70 Q60,75 50,65 T30,70 Q25,60 35,50 T30,30 Z'/%3E%3C/svg%3E")`,
-            backgroundSize: "cover",
-            opacity: 0.7
+            top: "20%",
+            left: "20%",
+            width: "30%",
+            height: "25%",
+            background: "rgba(75,140,60,0.85)",
+            borderRadius: "40% 60% 70% 30% / 60% 40% 60% 40%"
+          }}></div>
+          
+          {/* South America */}
+          <div className="absolute" style={{
+            top: "45%",
+            left: "35%",
+            width: "15%",
+            height: "25%",
+            background: "rgba(85,150,70,0.85)",
+            borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%"
+          }}></div>
+          
+          {/* Europe */}
+          <div className="absolute" style={{
+            top: "25%",
+            left: "52%",
+            width: "15%",
+            height: "15%",
+            background: "rgba(70,135,55,0.85)",
+            borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%"
+          }}></div>
+          
+          {/* Africa */}
+          <div className="absolute" style={{
+            top: "40%",
+            left: "55%",
+            width: "22%",
+            height: "25%",
+            background: "rgba(150,120,60,0.85)",
+            borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%"
+          }}></div>
+          
+          {/* Asia */}
+          <div className="absolute" style={{
+            top: "20%",
+            left: "65%",
+            width: "30%",
+            height: "25%",
+            background: "rgba(80,145,65,0.85)",
+            borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%"
+          }}></div>
+          
+          {/* Australia */}
+          <div className="absolute" style={{
+            top: "60%",
+            left: "75%",
+            width: "15%",
+            height: "15%",
+            background: "rgba(160,130,70,0.85)",
+            borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%"
+          }}></div>
+          
+          {/* North pole */}
+          <div className="absolute" style={{
+            top: "5%",
+            left: "30%",
+            width: "40%",
+            height: "12%",
+            background: "rgba(230,240,255,0.9)",
+            borderRadius: "50%"
+          }}></div>
+          
+          {/* South pole */}
+          <div className="absolute" style={{
+            bottom: "5%",
+            left: "30%",
+            width: "40%",
+            height: "15%",
+            background: "rgba(230,240,255,0.9)",
+            borderRadius: "50%"
+          }}></div>
+          
+          {/* Cloud formations */}
+          <div className="absolute" style={{
+            top: "15%",
+            left: "10%", 
+            width: "30%",
+            height: "10%",
+            background: "rgba(255,255,255,0.5)",
+            borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%",
+            filter: "blur(1px)"
+          }}></div>
+          
+          <div className="absolute" style={{
+            top: "40%",
+            left: "48%", 
+            width: "30%",
+            height: "10%",
+            background: "rgba(255,255,255,0.5)",
+            borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%",
+            filter: "blur(1px)"
+          }}></div>
+          
+          <div className="absolute" style={{
+            top: "70%",
+            left: "35%", 
+            width: "25%",
+            height: "8%",
+            background: "rgba(255,255,255,0.5)",
+            borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%",
+            filter: "blur(1px)"
           }}></div>
           
           {/* Atmosphere glow */}
           <div className="absolute" style={{
-            width: "110%", 
-            height: "110%",
-            top: "-5%",
-            left: "-5%",
-            background: "radial-gradient(circle at center, transparent 50%, rgba(100,180,255,0.1) 70%, rgba(100,180,255,0.2) 90%, rgba(100,180,255,0.1) 100%)"
+            width: "120%", 
+            height: "120%",
+            top: "-10%",
+            left: "-10%",
+            background: "radial-gradient(circle at center, transparent 50%, rgba(140,200,255,0.1) 75%, rgba(140,200,255,0.2) 90%, rgba(140,200,255,0.1) 100%)",
+            borderRadius: "50%"
           }}></div>
         </div>
         
-        {/* Outer ring with debris */}
+        {/* Outer ring with dense debris pattern */}
         <div className="absolute" style={{
           width: "300%",
-          height: "5vh",
+          height: "6vh",
           top: "50%",
           left: "-100%",
           transform: "translateY(-50%) rotate(15deg)",
           borderRadius: "50%",
-          background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(150,150,170,0.4) 30%, rgba(220,220,230,0.7) 50%, rgba(150,150,170,0.4) 70%, rgba(0,0,0,0) 100%)",
-          boxShadow: "0 0 15px rgba(255,255,255,0.3)",
-          opacity: 0.85
-        }}></div>
+          overflow: "hidden",
+          opacity: 0.9
+        }}>
+          {/* Dense debris field base */}
+          <div className="absolute w-full h-full" style={{
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(200,200,215,0.3) 30%, rgba(220,220,230,0.6) 50%, rgba(200,200,215,0.3) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 15px rgba(255,255,255,0.3)"
+          }}></div>
+          
+          {/* Millions of tiny debris particles in outer ring */}
+          <div className="absolute w-full h-full">
+            {Array.from({ length: 50 }).map((_, i) => (
+              <div 
+                key={`outer-debris-${i}`}
+                className="absolute bg-white rounded-full"
+                style={{
+                  width: `${Math.random() * 0.3 + 0.1}vh`,
+                  height: `${Math.random() * 0.3 + 0.1}vh`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  opacity: 0.6 + Math.random() * 0.4,
+                  boxShadow: "0 0 2px rgba(255,255,255,0.4)"
+                }}
+              />
+            ))}
+          </div>
+        </div>
         
-        {/* Middle ring */}
+        {/* Middle dense ring */}
         <div className="absolute" style={{
           width: "240%",
-          height: "3.5vh",
+          height: "4vh",
           top: "49%",
           left: "-70%",
           transform: "translateY(-50%) rotate(-20deg)",
           borderRadius: "50%",
-          background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(180,180,200,0.5) 30%, rgba(240,240,250,0.8) 50%, rgba(180,180,200,0.5) 70%, rgba(0,0,0,0) 100%)",
-          boxShadow: "0 0 10px rgba(255,255,255,0.3)",
-          opacity: 0.9
-        }}></div>
+          overflow: "hidden",
+          opacity: 0.95
+        }}>
+          {/* Dense debris field base */}
+          <div className="absolute w-full h-full" style={{
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(210,210,225,0.4) 30%, rgba(235,235,245,0.7) 50%, rgba(210,210,225,0.4) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 10px rgba(255,255,255,0.3)"
+          }}></div>
+          
+          {/* Millions of tiny debris particles in middle ring */}
+          <div className="absolute w-full h-full">
+            {Array.from({ length: 70 }).map((_, i) => (
+              <div 
+                key={`middle-debris-${i}`}
+                className="absolute bg-white rounded-full"
+                style={{
+                  width: `${Math.random() * 0.25 + 0.05}vh`,
+                  height: `${Math.random() * 0.25 + 0.05}vh`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  opacity: 0.7 + Math.random() * 0.3,
+                  boxShadow: "0 0 2px rgba(255,255,255,0.3)"
+                }}
+              />
+            ))}
+          </div>
+        </div>
         
-        {/* Inner ring */}
+        {/* Inner dense ring */}
         <div className="absolute" style={{
           width: "160%",
-          height: "2.5vh",
+          height: "2vh",
           top: "50.5%",
           left: "-30%",
           transform: "translateY(-50%) rotate(25deg)",
           borderRadius: "50%",
-          background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(200,200,220,0.6) 30%, rgba(255,255,255,0.9) 50%, rgba(200,200,220,0.6) 70%, rgba(0,0,0,0) 100%)",
-          boxShadow: "0 0 8px rgba(255,255,255,0.3)",
-          opacity: 0.95
-        }}></div>
+          overflow: "hidden",
+          opacity: 1
+        }}>
+          {/* Dense debris field base */}
+          <div className="absolute w-full h-full" style={{
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(220,220,230,0.6) 30%, rgba(250,250,255,0.9) 50%, rgba(220,220,230,0.6) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 8px rgba(255,255,255,0.4)"
+          }}></div>
+          
+          {/* Millions of tiny debris particles in inner ring */}
+          <div className="absolute w-full h-full">
+            {Array.from({ length: 40 }).map((_, i) => (
+              <div 
+                key={`inner-debris-${i}`}
+                className="absolute bg-white rounded-full"
+                style={{
+                  width: `${Math.random() * 0.2 + 0.05}vh`,
+                  height: `${Math.random() * 0.2 + 0.05}vh`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  opacity: 0.8 + Math.random() * 0.2,
+                  boxShadow: "0 0 2px rgba(255,255,255,0.5)"
+                }}
+              />
+            ))}
+          </div>
+        </div>
         
-        {/* Larger rock chunks in rings */}
-        <div className="absolute rounded-full bg-gray-200" style={{ width: "2.2%", height: "2.2%", top: "49.3%", left: "37%", opacity: 0.85, boxShadow: "0 0 5px rgba(0,0,0,0.5)" }}></div>
-        <div className="absolute rounded-full bg-gray-300" style={{ width: "3.5%", height: "3.5%", top: "48.2%", left: "-38%", opacity: 0.9, boxShadow: "0 0 8px rgba(0,0,0,0.6)" }}></div>
-        <div className="absolute rounded-full bg-gray-200" style={{ width: "1.7%", height: "1.7%", top: "50.7%", left: "72%", opacity: 0.8, boxShadow: "0 0 4px rgba(0,0,0,0.4)" }}></div>
-        <div className="absolute rounded-full bg-gray-300" style={{ width: "2.8%", height: "2.8%", top: "49.5%", left: "-79%", opacity: 0.85, boxShadow: "0 0 6px rgba(0,0,0,0.5)" }}></div>
+        {/* Larger moon chunks scattered through rings */}
+        <div className="absolute rounded-full bg-gray-200" style={{ width: "2.7%", height: "2.7%", top: "49.3%", left: "37%", opacity: 0.9, boxShadow: "0 0 3px rgba(255,255,255,0.4)" }}></div>
+        <div className="absolute rounded-full bg-gray-300" style={{ width: "4%", height: "4%", top: "48.2%", left: "-38%", opacity: 0.95, boxShadow: "0 0 4px rgba(255,255,255,0.5)" }}></div>
+        <div className="absolute rounded-full bg-gray-200" style={{ width: "2.2%", height: "2.2%", top: "50.7%", left: "72%", opacity: 0.85, boxShadow: "0 0 3px rgba(255,255,255,0.4)" }}></div>
+        <div className="absolute rounded-full bg-gray-300" style={{ width: "3.2%", height: "3.2%", top: "49.5%", left: "-79%", opacity: 0.9, boxShadow: "0 0 4px rgba(255,255,255,0.5)" }}></div>
+        <div className="absolute rounded-full bg-gray-200" style={{ width: "1.8%", height: "1.8%", top: "50.3%", left: "-55%", opacity: 0.8, boxShadow: "0 0 2px rgba(255,255,255,0.3)" }}></div>
+        <div className="absolute rounded-full bg-gray-300" style={{ width: "2.5%", height: "2.5%", top: "49.1%", left: "93%", opacity: 0.85, boxShadow: "0 0 3px rgba(255,255,255,0.4)" }}></div>
+        <div className="absolute rounded-full bg-gray-200" style={{ width: "2.1%", height: "2.1%", top: "50.9%", left: "25%", opacity: 0.9, boxShadow: "0 0 3px rgba(255,255,255,0.4)" }}></div>
+        <div className="absolute rounded-full bg-gray-300" style={{ width: "3.6%", height: "3.6%", top: "48.7%", left: "-95%", opacity: 0.95, boxShadow: "0 0 4px rgba(255,255,255,0.5)" }}></div>
+        
+        {/* Earth's shadow cast on rings */}
+        <div className="absolute" style={{
+          width: "170%",
+          height: "15vh",
+          top: "45%", 
+          left: "-35%",
+          background: "radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.2) 60%, transparent 90%)",
+          transform: "translateY(-50%) rotate(15deg)",
+          borderRadius: "50%",
+          opacity: 0.7,
+          pointerEvents: "none",
+          filter: "blur(3px)"
+        }}></div>
       </div>
       
       {/* Game title */}
