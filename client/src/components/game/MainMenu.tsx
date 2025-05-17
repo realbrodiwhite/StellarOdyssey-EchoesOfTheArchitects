@@ -98,8 +98,8 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="flex flex-col items-center gap-3">
-          <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl"><span className="text-blue-400">STELLAR</span> ODYSSEY</div>
-          <div className="text-sm sm:text-base md:text-lg lg:text-xl tracking-[2.5em] font-light shimmer-text">ECHOES OF THE ARCHITECTS</div>
+          <div className="text-[5rem] sm:text-[6rem] md:text-[8rem] lg:text-[10rem]"><span className="text-blue-400">STELLAR</span> ODYSSEY</div>
+          <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-[2.5em] font-light shimmer-text">ECHOES OF THE ARCHITECTS</div>
         </div>
       </motion.div>
       
