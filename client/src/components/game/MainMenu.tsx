@@ -114,14 +114,15 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </div>
       
-      {/* Earth-like planet with moon debris rings */}
+      {/* Earth-like planet with moon debris rings - more prominent */}
       <div className="absolute z-5" style={{ 
-        bottom: "10vh",
+        bottom: "15vh",
         left: "50%", 
         transform: "translateX(-50%)",
-        width: "5vh",
-        height: "5vh",
-        opacity: 0.8
+        width: "25vh",
+        height: "25vh",
+        opacity: 1,
+        filter: "drop-shadow(0 0 15px rgba(120,180,255,0.3))"
       }}>
         {/* Realistic Earth-like planet body */}
         <div className="absolute rounded-full" style={{ 
@@ -154,11 +155,11 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         {/* First major ring - wider, more visible */}
         <div className="absolute" style={{
           width: "250%",
-          height: "0.7vh",
+          height: "1.5vh",
           top: "50%",
           left: "-75%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(220,220,220,0.1) 10%, rgba(220,220,220,0.5) 20%, rgba(220,220,220,0.7) 50%, rgba(220,220,220,0.5) 80%, rgba(220,220,220,0.1) 90%, transparent 100%)",
-          boxShadow: "0 0 3px rgba(255,255,255,0.3)",
+          background: "linear-gradient(90deg, transparent 0%, rgba(220,220,220,0.2) 10%, rgba(220,220,220,0.6) 20%, rgba(220,220,220,0.8) 50%, rgba(220,220,220,0.6) 80%, rgba(220,220,220,0.2) 90%, transparent 100%)",
+          boxShadow: "0 0 5px rgba(255,255,255,0.4)",
           transform: "translateY(-50%) rotate(15deg) perspective(10px) rotateX(2deg)",
           borderRadius: "50%"
         }}></div>
@@ -166,11 +167,11 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         {/* Second major ring - also wide and visible */}
         <div className="absolute" style={{
           width: "220%",
-          height: "0.6vh",
+          height: "1.2vh",
           top: "49%",
           left: "-60%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,200,0.1) 10%, rgba(200,200,200,0.6) 30%, rgba(200,200,200,0.8) 50%, rgba(200,200,200,0.6) 70%, rgba(200,200,200,0.1) 90%, transparent 100%)",
-          boxShadow: "0 0 2px rgba(255,255,255,0.25)",
+          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,200,0.2) 10%, rgba(200,200,200,0.7) 30%, rgba(200,200,200,0.9) 50%, rgba(200,200,200,0.7) 70%, rgba(200,200,200,0.2) 90%, transparent 100%)",
+          boxShadow: "0 0 4px rgba(255,255,255,0.35)",
           transform: "translateY(-50%) rotate(-20deg) perspective(8px) rotateX(-3deg)",
           borderRadius: "50%"
         }}></div>
