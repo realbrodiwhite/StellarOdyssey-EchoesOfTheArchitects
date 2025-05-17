@@ -69,7 +69,6 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   const [showEmergencyEncounter, setShowEmergencyEncounter] = useState(false); // Will show after ship launch
   
   // Contextual ambient lighting states
-  const [environmentPreset, setEnvironmentPreset] = useState<"night" | "apartment" | "city" | "dawn" | "forest" | "lobby" | "park" | "studio" | "sunset" | "warehouse">("night");
   const [ambientIntensity, setAmbientIntensity] = useState<number>(0.3);
   const [hemisphereIntensity, setHemisphereIntensity] = useState<number>(0.1);
   const [hemisphereColor, setHemisphereColor] = useState<string>("#88ccff");
@@ -87,17 +86,19 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     if (!location) return;
     
     // Default space lighting
-    let preset: "night" | "apartment" | "city" | "dawn" | "forest" | "lobby" | "park" | "studio" | "sunset" | "warehouse" = "night";
     let ambIntensity = 0.3;
     let hemiIntensity = 0.1;
     let hemiColor = "#88ccff";
     let hemiGroundColor = "#884466";
     
+    // Log lighting changes for debugging
+    console.log(`Updating lighting for location: ${location.name} (${location.type})`);
+    
     switch (location.type) {
       case LocationType.Planet:
         // Check for planet description to determine type
         if (location.description.toLowerCase().includes("desert")) {
-          preset = "sunset";
+          // Desert planet - warm orange/yellow lighting
           ambIntensity = 0.5;
           hemiIntensity = 0.2;
           hemiColor = "#ffbb77";
@@ -105,35 +106,34 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         } else if (location.description.toLowerCase().includes("ice") || 
                   location.description.toLowerCase().includes("arctic") || 
                   location.description.toLowerCase().includes("frozen")) {
-          preset = "dawn";
+          // Ice planet - cool blue lighting
           ambIntensity = 0.4;
           hemiIntensity = 0.15;
           hemiColor = "#aaccff";
           hemiGroundColor = "#ffffff";
         } else if (location.description.toLowerCase().includes("jungle") || 
                   location.description.toLowerCase().includes("forest")) {
-          preset = "forest";
+          // Jungle planet - green-tinted lighting
           ambIntensity = 0.2;
           hemiIntensity = 0.15;
           hemiColor = "#88cc88";
           hemiGroundColor = "#335533";
         } else if (location.description.toLowerCase().includes("volcanic") || 
                   location.description.toLowerCase().includes("lava")) {
-          preset = "sunset";
+          // Volcanic planet - red/orange lighting
           ambIntensity = 0.5;
           hemiIntensity = 0.2;
           hemiColor = "#ff7744";
           hemiGroundColor = "#661100";
         } else if (location.description.toLowerCase().includes("ocean") || 
                   location.description.toLowerCase().includes("water")) {
-          preset = "city";
+          // Ocean planet - deep blue lighting
           ambIntensity = 0.35;
           hemiIntensity = 0.15;
           hemiColor = "#55aaff";
           hemiGroundColor = "#00448a";
         } else {
-          // Default terrestrial planet settings
-          preset = "park";
+          // Default terrestrial planet settings - balanced lighting
           ambIntensity = 0.4;
           hemiIntensity = 0.15;
           hemiColor = "#aaddff";
@@ -142,7 +142,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         break;
 
       case LocationType.Space:
-        preset = "night";
+        // Space - dark with stars visible
         ambIntensity = 0.3;
         hemiIntensity = 0.1;
         hemiColor = "#88ccff";
@@ -150,7 +150,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         break;
 
       case LocationType.Station:
-        preset = "apartment";
+        // Space station - artificial lighting
         ambIntensity = 0.4;
         hemiIntensity = 0.15;
         hemiColor = "#ccccdd";
@@ -158,7 +158,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         break;
 
       case LocationType.Derelict:
-        preset = "night";
+        // Abandoned/derelict - dark, eerie lighting
         ambIntensity = 0.2;
         hemiIntensity = 0.05;
         hemiColor = "#445566";
@@ -168,13 +168,13 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
       case LocationType.Anomaly:
         // For anomalies, check for void energy
         if (location.environmentEffects?.some(effect => effect.type === "voidEnergy")) {
-          preset = "night";
+          // Void energy anomaly - purple/mystical lighting
           ambIntensity = 0.25;
           hemiIntensity = 0.1;
           hemiColor = "#9966cc";
           hemiGroundColor = "#331144";
         } else {
-          preset = "lobby";
+          // Standard anomaly - strange balanced lighting
           ambIntensity = 0.3;
           hemiIntensity = 0.1;
           hemiColor = "#aabbcc";
@@ -183,7 +183,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         break;
 
       case LocationType.Ruins:
-        preset = "sunset";
+        // Ancient ruins - warm, dusty lighting
         ambIntensity = 0.25;
         hemiIntensity = 0.1;
         hemiColor = "#ddbb99";
@@ -191,7 +191,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         break;
 
       case LocationType.Settlement:
-        preset = "city";
+        // Settlement - bright, welcoming lighting
         ambIntensity = 0.4;
         hemiIntensity = 0.15;
         hemiColor = "#ccccdd";
@@ -199,7 +199,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         break;
 
       default:
-        preset = "night";
+        // Default space lighting
         ambIntensity = 0.3;
         hemiIntensity = 0.1;
         hemiColor = "#88ccff";
@@ -238,11 +238,13 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     }
     
     // Apply the lighting settings
-    setEnvironmentPreset(preset as "night" | "apartment" | "city" | "dawn" | "forest" | "lobby" | "park" | "studio" | "sunset" | "warehouse");
     setAmbientIntensity(ambIntensity);
     setHemisphereIntensity(hemiIntensity);
     setHemisphereColor(hemiColor);
     setHemisphereGroundColor(hemiGroundColor);
+    
+    // Log the lighting configuration being applied
+    console.log(`Applied lighting for ${location.name}: ambient=${ambIntensity}, hemisphere=${hemiIntensity}, hemisphereColor=${hemiColor}, groundColor=${hemiGroundColor}`);
   };
   
   // Helper function to mix colors
@@ -571,6 +573,13 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
             <div className="text-xs text-blue-300">Current Location:</div>
             <div className="font-medium">{currentLocation?.name || "Unknown"}</div>
             <div className="text-xs text-gray-400">{currentLocation?.type} - {currentLocation?.region || "Unknown Region"}</div>
+            
+            {/* Display current lighting settings */}
+            <div className="mt-2 text-xs text-purple-300">Ambient Lighting:</div>
+            <div className="text-xs flex">
+              <span className="inline-block w-3 h-3 mr-1 rounded-full" style={{backgroundColor: hemisphereColor}}></span>
+              <span>Intensity: {hemisphereIntensity.toFixed(1)}</span>
+            </div>
           </div>
           
           <div className="mt-2 pt-2 border-t border-gray-700">

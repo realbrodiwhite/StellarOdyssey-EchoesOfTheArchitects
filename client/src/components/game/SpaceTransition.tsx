@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, Environment, PerspectiveCamera, useAnimations } from '@react-three/drei';
+import { useGLTF, PerspectiveCamera, useAnimations } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface SpaceTransitionProps {
@@ -889,8 +889,10 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
           <ambientLight intensity={0.3} />
           <pointLight position={[0, 10, 5]} intensity={1} />
           
-          {/* Environment for reflections */}
-          <Environment preset="night" />
+          {/* Custom lighting for reflections */}
+          <ambientLight intensity={0.3} />
+          <directionalLight position={[10, 10, 5]} intensity={1} color="#aabbff" />
+          <directionalLight position={[-8, 5, -10]} intensity={0.3} color="#334455" />
         </Canvas>
       </div>
       
