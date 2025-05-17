@@ -12,18 +12,18 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
   const { 
     isMuted, 
     toggleMute, 
-    musicVolume, 
+    musicVolume = 0.7, 
     setMusicVolume, 
-    effectsVolume, 
+    effectsVolume = 0.8, 
     setEffectsVolume 
-  } = useAudio();
+  } = useAudio.getState();
   
   const { 
     controlsOpacity, 
     setControlsOpacity,
     mobileControlType,
     setMobileControlType
-  } = useGame();
+  } = useGame.getState();
   
   // Local state for volume sliders
   const [musicVol, setMusicVol] = useState(musicVolume * 100);

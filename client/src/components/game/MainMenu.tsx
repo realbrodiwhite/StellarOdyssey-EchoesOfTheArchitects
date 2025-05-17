@@ -4,6 +4,8 @@ import { useAudio } from "@/lib/stores/useAudio";
 import { useGame } from "@/lib/stores/useGame";
 import { useCharacter } from "@/lib/stores/useCharacter";
 import PuzzleSelector from "./PuzzleSelector";
+import SaveLoadMenu from "./SaveLoadMenu";
+import Settings from "./Settings";
 
 interface MainMenuProps {
   onStart: () => void;
@@ -137,21 +139,17 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       {showPuzzleSelector && <PuzzleSelector onClose={() => setShowPuzzleSelector(false)} />}
       
       {/* Save/Load Menu */}
-      {showSaveLoadMenu && (
-        <SaveLoadMenu 
-          isOpen={showSaveLoadMenu} 
-          onClose={() => setShowSaveLoadMenu(false)} 
-          mode="load" 
-        />
-      )}
+      <SaveLoadMenu 
+        isOpen={showSaveLoadMenu} 
+        onClose={() => setShowSaveLoadMenu(false)} 
+        mode="load" 
+      />
       
       {/* Settings Menu */}
-      {showSettings && (
-        <Settings 
-          isOpen={showSettings} 
-          onClose={() => setShowSettings(false)} 
-        />
-      )}
+      <Settings 
+        isOpen={showSettings} 
+        onClose={() => setShowSettings(false)} 
+      />
       
       {/* Debug buttons */}
       <div className="absolute top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 text-xs text-gray-500 z-10">
