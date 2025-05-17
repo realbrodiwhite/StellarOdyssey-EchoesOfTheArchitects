@@ -15,8 +15,10 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
   const { character, resetCharacter } = useCharacter();
   const [showContinue, setShowContinue] = useState(false);
   const [showPuzzleSelector, setShowPuzzleSelector] = useState(false);
+  const [showSaveLoadMenu, setShowSaveLoadMenu] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   
-  // Check if there's a saved character to show continue option
+  // Check if there's a saved character to show load game option
   useEffect(() => {
     setShowContinue(character && character.id !== '');
   }, [character]);

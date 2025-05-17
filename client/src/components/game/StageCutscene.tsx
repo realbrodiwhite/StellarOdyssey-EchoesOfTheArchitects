@@ -12,7 +12,7 @@ interface StageCutsceneProps {
 }
 
 // Define the cutscene content for each stage transition
-const cutsceneContent = {
+const cutsceneContent: Record<number, {title: string, text: string, background: string}> = {
   // End of Stage 1 - Beginning of Stage 2
   1: {
     title: "A New Journey Begins",
@@ -52,7 +52,7 @@ const StageCutscene: React.FC<StageCutsceneProps> = ({ stageNumber, onComplete }
   const { character } = useCharacter();
   
   // Determine cutscene content based on stage
-  const content = cutsceneContent[stageNumber] || {
+  const content = cutsceneContent[stageNumber as keyof typeof cutsceneContent] || {
     title: "The Journey Continues",
     text: "Your adventures continue as you venture deeper into the cosmos.",
     background: "bg-gradient-to-b from-gray-900 to-black"
