@@ -139,43 +139,29 @@
   position: relative;
   z-index: 1;
   font-weight: 600;
-  background: linear-gradient(
-    90deg,
-    rgba(160, 160, 160, 0.5) 0%,
-    rgba(165, 165, 165, 0.52) 20%,
-    rgba(170, 170, 170, 0.54) 30%,
-    rgba(175, 175, 175, 0.56) 40%,
-    rgba(180, 180, 180, 0.58) 50%,
-    rgba(175, 175, 175, 0.56) 60%,
-    rgba(170, 170, 170, 0.54) 70%,
-    rgba(165, 165, 165, 0.52) 80%,
-    rgba(160, 160, 160, 0.5) 100%
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmerEffect 30s ease-in-out infinite alternate;
   position: relative;
   overflow: hidden;
 }
 
-.shimmer-text::after {
-  content: '';
+.shimmer-text::before {
+  content: "";
   position: absolute;
   top: 0;
-  left: -100%;
-  width: 10%;
-  height: 100%;
+  left: 5%; /* Start at 5% */
+  width: 90%; /* Only use 90% of text width */
+  height: 20%; /* Smaller shimmer height, only at top */
   background: linear-gradient(
     90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    transparent 100%
+    rgba(160, 160, 160, 0.5) 0%,
+    rgba(180, 180, 180, 0.7) 50%,
+    rgba(160, 160, 160, 0.5) 100%
   );
-  animation: reflectionMove 35s ease-in-out infinite alternate;
-  transform: skewX(10deg); /* Changed to positive angle to face the direction of movement */
+  background-size: 200% 100%;
+  animation: shimmerEffect 20s ease-in-out infinite alternate;
+  z-index: 2;
 }
+
+/* Animation keyframes defined below */
 
 @keyframes shimmerEffect {
   0% {
@@ -189,17 +175,7 @@
   }
 }
 
-@keyframes reflectionMove {
-  0% {
-    left: -10%;
-  }
-  50% {
-    left: 110%;
-  }
-  100% {
-    left: -10%;
-  }
-}
+/* Removed unused animation */
 
 .tall-thin-title {
   font-weight: 800;
