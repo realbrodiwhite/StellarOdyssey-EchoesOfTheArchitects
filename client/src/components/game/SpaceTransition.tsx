@@ -20,7 +20,7 @@ const SpaceshipModel = ({
   const { scene: shipModel } = useGLTF('/models/spaceship.glb') as any;
   const [modelLoaded, setModelLoaded] = useState(false);
   
-  // Thruster effects
+  // Subtle blue engine glow effect only (no yellow thrusters)
   const thrusterRef = useRef<THREE.Group>(null);
   const engineGlowRef = useRef<THREE.PointLight>(null);
   
@@ -69,7 +69,12 @@ const SpaceshipModel = ({
   }, []);
   
   return (
-    <group ref={groupRef} position={position} rotation={rotation} scale={[scale, scale, scale]}>
+    <group 
+      ref={groupRef} 
+      position={new THREE.Vector3(position[0], position[1], position[2])} 
+      rotation={new THREE.Euler(rotation[0], rotation[1], rotation[2])} 
+      scale={new THREE.Vector3(scale, scale, scale)}
+    >
       {modelLoaded ? (
         // Render the actual 3D model
         <primitive 
@@ -166,9 +171,9 @@ const Stars = ({ count = 2000 }) => {
 };
 
 // Planet for intro scene
-const Planet = ({ position = [50, -60, -150] }) => {
+const Planet = ({ position = [50, -60, -150] as [number, number, number] }) => {
   return (
-    <mesh position={position}>
+    <mesh position={new THREE.Vector3(position[0], position[1], position[2])}>
       <sphereGeometry args={[40, 64, 64]} />
       <meshStandardMaterial 
         color="#4488aa" 
@@ -403,13 +408,13 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
     // Show title after a delay
     const titleTimer = setTimeout(() => {
       setShowTitle(true);
-    }, 3000);
+    }, 1500); // Show title sooner with the shorter animation
     
     // Set timeout to match the total animation duration for a smooth transition
     const animationTimer = setTimeout(() => {
       setIsActive(false);
       onComplete();
-    }, 17500);
+    }, 8000); // Match our new animation duration of ~7 seconds plus a small buffer
     
     return () => {
       clearTimeout(titleTimer);
