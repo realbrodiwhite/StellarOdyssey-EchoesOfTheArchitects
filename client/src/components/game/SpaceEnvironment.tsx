@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { 
-  Environment, 
   Stars,
   useKeyboardControls
 } from "@react-three/drei";
@@ -239,7 +238,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     }
     
     // Apply the lighting settings
-    setEnvironmentPreset(preset);
+    setEnvironmentPreset(preset as "night" | "apartment" | "city" | "dawn" | "forest" | "lobby" | "park" | "studio" | "sunset" | "warehouse");
     setAmbientIntensity(ambIntensity);
     setHemisphereIntensity(hemiIntensity);
     setHemisphereColor(hemiColor);
@@ -268,6 +267,10 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
       // Set the objective message through the ship's automated system
       setCurrentObjective("Mission: Deliver urgent cargo to Proxima Outpost");
     }
+    
+    // Update lighting settings based on the current location
+    updateLightingForLocation(currentLocation);
+    console.log(`Updated lighting for location: ${currentLocation?.name} (${currentLocation?.type})`);
   }, [currentLocation?.id]);
   
   // This effect is no longer needed as we're using the 113-second timer instead
@@ -471,10 +474,24 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   
   return (
     <>
-      {/* Environment lighting - dynamic based on location type */}
-      <Environment preset={environmentPreset} />
+      {/* Custom contextual lighting setup for different planet types */}
+      {/* Main directional light (sun/star) */}
+      <directionalLight 
+        position={[10, 10, 5]} 
+        intensity={1.5} 
+        castShadow 
+        shadow-mapSize={[1024, 1024]}
+        color={hemisphereColor}
+      />
       
-      {/* Ambient lighting - dynamic intensity and colors */}
+      {/* Fill light from opposite side */}
+      <directionalLight 
+        position={[-8, 5, -10]} 
+        intensity={0.3 * hemisphereIntensity} 
+        color={hemisphereGroundColor}
+      />
+      
+      {/* Ambient and hemisphere lighting for overall scene illumination */}
       <ambientLight intensity={ambientIntensity} />
       <hemisphereLight 
         intensity={hemisphereIntensity} 

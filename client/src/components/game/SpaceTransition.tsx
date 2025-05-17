@@ -840,8 +840,10 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
               castShadow 
             />
             
-            {/* Environment adds realistic reflections */}
-            <Environment preset="night" />
+            {/* Custom lighting for reflections */}
+            <ambientLight intensity={0.3} />
+            <directionalLight position={[10, 10, 5]} intensity={1} color="#aabbff" />
+            <directionalLight position={[-8, 5, -10]} intensity={0.3} color="#334455" />
           </Canvas>
         </div>
         
