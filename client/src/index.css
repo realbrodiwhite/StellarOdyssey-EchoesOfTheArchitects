@@ -70,6 +70,9 @@
   letter-spacing: 0.01em; /* Even tighter spacing between characters */
   font-style: italic;
   margin-right: 0.5em; /* Further increased spacing between words */
+  font-weight: 300;
+  font-stretch: condensed;
+  transform: scaleX(0.85); /* Make the text thinner horizontally while maintaining height */
   background-image: linear-gradient(180deg, 
     #ffffff 0%, 
     #a0e0ff 15%, 
@@ -85,6 +88,7 @@
   color: transparent;
   position: relative;
   z-index: 1;
+  transform-origin: left center;
 }
 
 /* Forest green effect for ODYSSEY text */
@@ -217,21 +221,21 @@
   box-shadow: 0 0 15px rgba(0, 150, 255, 0.4);
 }
 
-.active-button {
-  animation: pulse 2s infinite;
-  border-image: linear-gradient(to right, transparent, #30cf30, transparent) 1;
-  background: linear-gradient(to right, rgba(0, 60, 0, 0.1), rgba(0, 60, 0, 0.4), rgba(0, 60, 0, 0.1));
+.pulse-button {
+  animation: pulse 3s infinite;
+  border-image: linear-gradient(to right, transparent, #30a0cf, transparent) 1;
+  background: linear-gradient(to right, rgba(0, 40, 60, 0.1), rgba(0, 40, 60, 0.3), rgba(0, 40, 60, 0.1));
 }
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 5px rgba(0, 255, 0, 0.4);
+    box-shadow: 0 0 5px rgba(60, 180, 255, 0.2);
   }
   50% {
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+    box-shadow: 0 0 10px rgba(60, 180, 255, 0.4);
   }
   100% {
-    box-shadow: 0 0 5px rgba(0, 255, 0, 0.4);
+    box-shadow: 0 0 5px rgba(60, 180, 255, 0.2);
   }
 }
 

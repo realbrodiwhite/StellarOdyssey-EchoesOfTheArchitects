@@ -133,42 +133,27 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
       >
         <motion.div 
-          className={`menu-button px-8 py-3 text-white text-xl w-64 text-center button-animation ${activeButton === 'newGame' ? 'active-button' : ''}`} 
+          className={`menu-button px-8 py-3 text-white text-xl w-64 text-center ${activeButton === 'newGame' ? 'pulse-button' : ''}`} 
           onClick={handleNewGame}
           onMouseEnter={() => setActiveButton('newGame')}
-          whileHover={{ 
-            scale: 1.05,
-            boxShadow: "0 0 15px rgba(100, 220, 255, 0.8)" 
-          }}
-          whileTap={{ scale: 0.95 }}
         >
           NEW GAME
         </motion.div>
         
         {showContinue && (
           <motion.div 
-            className={`menu-button px-8 py-3 text-white text-xl w-64 text-center button-animation ${activeButton === 'loadGame' ? 'active-button' : ''}`} 
+            className={`menu-button px-8 py-3 text-white text-xl w-64 text-center ${activeButton === 'loadGame' ? 'pulse-button' : ''}`} 
             onClick={handleLoadGame}
             onMouseEnter={() => setActiveButton('loadGame')}
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 0 15px rgba(100, 220, 255, 0.8)" 
-            }}
-            whileTap={{ scale: 0.95 }}
           >
             LOAD GAME
           </motion.div>
         )}
         
         <motion.div 
-          className={`menu-button px-8 py-3 text-white text-xl w-64 text-center button-animation ${activeButton === 'settings' ? 'active-button' : ''}`} 
+          className={`menu-button px-8 py-3 text-white text-xl w-64 text-center ${activeButton === 'settings' ? 'pulse-button' : ''}`} 
           onClick={() => setShowSettings(true)}
           onMouseEnter={() => setActiveButton('settings')}
-          whileHover={{ 
-            scale: 1.05,
-            boxShadow: "0 0 15px rgba(100, 220, 255, 0.8)" 
-          }}
-          whileTap={{ scale: 0.95 }}
         >
           SETTINGS
         </motion.div>
