@@ -19,13 +19,15 @@
 }
 
 .tall-thin-title {
-  font-stretch: condensed;
-  font-weight: 600;
-  letter-spacing: -0.1em;
-  line-height: 0.9;
-  transform: scaleY(1.6) scaleX(0.65);
+  font-family: 'Impact', 'Arial Narrow', sans-serif;
+  font-stretch: expanded;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  transform: scaleY(1.9) scaleX(0.55);
   transform-origin: center;
   white-space: nowrap;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 @layer base {
