@@ -64,48 +64,70 @@
   }
 }
 
-/* Title text effect */
-.title-text {
-  margin: 0;
-  padding: 0;
+/* STELLAR text styling */
+.stellar-text {
+  font-family: "Stargaze", "Orbitron", "Arial Black", sans-serif;
+  letter-spacing: 0.01em;
+  font-style: italic;
+  margin-right: 0;
+  padding-right: 0;
+  font-weight: 300;
+  font-stretch: condensed;
+  transform: scaleX(0.85);
   line-height: 1;
-  letter-spacing: 0;
-  position: relative;
-  
-  /* First 7 characters have Stargaze font and blue gradient */
-  background-image: linear-gradient(
-    90deg,
-    #ffffff 0%,
-    #a0e0ff 15%,
-    #80c0ff 30%,
-    #60a0ff 37%,
-    #4080ff 42%,
-    #2060ff 43%,
-    
-    /* Last 7 characters have Polaris font and green gradient */
-    #f0fff0 43.1%,
-    #c0ffc0 55%,
-    #90ef90 65%,
-    #60df60 75%,
-    #40cf40 85%,
-    #20af20 95%,
-    #008f00 100%
+  background-image: linear-gradient(180deg, 
+    #ffffff 0%, 
+    #a0e0ff 15%, 
+    #80c0ff 30%, 
+    #60a0ff 45%, 
+    #4080ff 60%, 
+    #2060ff 75%, 
+    #0040ff 90%, 
+    #0020ff 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: transparent;
   color: transparent;
-  
-  /* Font styling for the entire text */
-  font-family: "Stargaze", "Polaris", sans-serif;
-  font-weight: 500;
+  position: relative;
+  z-index: 1;
+  transform-origin: left center;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ODYSSEY text styling */
+.odyssey-text {
+  font-family: "Polaris", "Derelict", "Arial Black", sans-serif;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
   font-style: normal;
-  
-  /* Text shadow effects */
+  font-weight: 900;
+  font-stretch: expanded;
+  line-height: 1;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  background-image: linear-gradient(180deg, 
+    #f0fff0 0%, 
+    #c0ffc0 15%, 
+    #90ef90 30%, 
+    #60df60 45%, 
+    #40cf40 60%, 
+    #20af20 75%, 
+    #008f00 90%, 
+    #007000 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 3px rgba(0, 100, 0, 0.3);
+  position: relative;
+  z-index: 1;
   text-shadow: 
-    0 0 5px rgba(255, 255, 255, 0.3),
-    0 0 10px rgba(100, 200, 255, 0.2),
-    0 0 15px rgba(0, 255, 100, 0.15);
+    0 0 5px rgba(255, 255, 255, 0.1),
+    0 0 10px rgba(0, 255, 0, 0.15),
+    0 0 15px rgba(0, 255, 0, 0.1);
 }
 
 /* Subtitle text effect */
