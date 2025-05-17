@@ -160,7 +160,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.8 }}
       >
-        © 2025 Brodi Branded Inc.
+        © 2025 Stellar Odyssey, Inc. All rights reserved.
       </motion.div>
     </div>
   );

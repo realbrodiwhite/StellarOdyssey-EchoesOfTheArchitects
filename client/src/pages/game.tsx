@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { KeyboardControls } from "@react-three/drei";
 import { useAudio } from "../lib/stores/useAudio";
 import { useGame, GameState as GameStateType } from "../lib/stores/useGame";
+import { useGameProgress, GameStage } from "../lib/stores/useGameProgress";
 import MainMenu from "../components/game/MainMenu";
 import CharacterSelection from "../components/game/CharacterSelection";
 import SpaceEnvironment from "../components/game/SpaceEnvironment";
@@ -11,6 +12,7 @@ import Combat from "../components/game/Combat";
 import Puzzle from "../components/game/Puzzle";
 import SpaceTransition from "../components/game/SpaceTransition";
 import StarQuestManager from "../components/game/StarQuestManager";
+import GameProgressController from "../components/game/GameProgressController";
 import { Controls } from "../lib/types";
 
 // Define controls for keyboard input
@@ -182,12 +184,28 @@ const Game = () => {
     }
   };
 
+  // Handle progress through the story sequence (intro → act1 → cutscene1 → act2 → etc.)
+  const { currentStage, advanceStage } = useGameProgress();
+  
+  // Handle progress transitions
+  const handleProgressComplete = () => {
+    // If we're in the game state, we can continue with the next act or cutscene
+    if (gameState === 'game') {
+      advanceStage();
+    }
+  };
+  
   return (
     <div className="w-full h-full">
       {renderGameComponent()}
       
-      {/* Star Quest story system that activates during gameplay */}
-      {gameState === 'game' && <StarQuestManager />}
+      {/* Game progress and act flow controller */}
+      {gameState === 'game' && (
+        <>
+          <GameProgressController onComplete={handleProgressComplete} />
+          <StarQuestManager />
+        </>
+      )}
     </div>
   );
 };
