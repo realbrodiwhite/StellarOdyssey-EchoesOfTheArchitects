@@ -114,6 +114,49 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </div>
       
+      {/* Saturn-like planet with intersecting rings */}
+      <div className="absolute z-5" style={{ 
+        bottom: "15vh",
+        left: "50%", 
+        transform: "translateX(-50%)",
+        width: "50vh",
+        height: "50vh",
+        opacity: 0.4
+      }}>
+        {/* Planet body */}
+        <div className="absolute rounded-full bg-gradient-to-br from-amber-700 to-amber-950" style={{ 
+          width: "100%", 
+          height: "100%",
+          boxShadow: "inset -10px -10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(255,180,100,0.2)"
+        }}></div>
+        
+        {/* First ring - angled at 25 degrees */}
+        <div className="absolute" style={{
+          width: "180%",
+          height: "25px",
+          top: "50%",
+          left: "-40%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(255,200,150,0.7) 20%, rgba(255,200,150,0.8) 50%, rgba(255,200,150,0.7) 80%, transparent 100%)",
+          transform: "translateY(-50%) rotate(25deg)",
+          boxShadow: "0 0 10px rgba(255,200,150,0.4)",
+          borderRadius: "100%",
+          overflow: "hidden"
+        }}></div>
+        
+        {/* Second ring - angled at -35 degrees, crossing the first ring */}
+        <div className="absolute" style={{
+          width: "160%",
+          height: "18px",
+          top: "50%",
+          left: "-30%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(220,170,120,0.7) 20%, rgba(220,170,120,0.8) 50%, rgba(220,170,120,0.7) 80%, transparent 100%)",
+          transform: "translateY(-50%) rotate(-35deg)",
+          boxShadow: "0 0 8px rgba(220,170,120,0.3)",
+          borderRadius: "100%",
+          overflow: "hidden"
+        }}></div>
+      </div>
+      
       {/* Game title */}
       <div
         className="font-bold text-white mb-8 sm:mb-10 md:mb-12 z-10 px-4 text-center"
