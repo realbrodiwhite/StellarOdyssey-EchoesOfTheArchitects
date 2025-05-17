@@ -114,26 +114,26 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       
       {/* Menu buttons */}
       <motion.div
-        className="flex flex-col gap-2 z-10 w-full max-w-[180px] px-4 mt-6"
+        className="flex flex-col sm:flex-row gap-2 z-10 w-full max-w-[150px] sm:max-w-[400px] justify-center px-4 mt-6"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
       >
-        <div className="game-button text-xs py-1.5" onClick={handleNewGame}>
+        <div className="game-button text-[10px] py-1 px-3" onClick={handleNewGame}>
           New Game
         </div>
         
         {showContinue && (
-          <div className="game-button text-xs py-1.5 outline" onClick={handleLoadGame}>
+          <div className="game-button text-[10px] py-1 px-3 outline" onClick={handleLoadGame}>
             Load Game
           </div>
         )}
         
-        <div className="game-button text-xs py-1.5 outline" onClick={() => setShowPuzzleSelector(true)}>
+        <div className="game-button text-[10px] py-1 px-3 outline" onClick={() => setShowPuzzleSelector(true)}>
           Puzzle Showcase
         </div>
         
-        <div className="game-button text-xs py-1.5 ghost" onClick={() => setShowSettings(true)}>
+        <div className="game-button text-[10px] py-1 px-3 ghost" onClick={() => setShowSettings(true)}>
           Settings
         </div>
       </motion.div>
