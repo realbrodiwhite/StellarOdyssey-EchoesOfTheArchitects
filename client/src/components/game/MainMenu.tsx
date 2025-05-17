@@ -114,13 +114,13 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </div>
       
-      {/* Earth-like planet with moon debris rings - more prominent */}
+      {/* Earth-like planet with moon debris rings - moved left and up */}
       <div className="absolute z-5" style={{ 
-        bottom: "15vh",
-        left: "50%", 
+        bottom: "30vh",
+        left: "30%", 
         transform: "translateX(-50%)",
-        width: "25vh",
-        height: "25vh",
+        width: "20vh",
+        height: "20vh",
         opacity: 1,
         filter: "drop-shadow(0 0 15px rgba(120,180,255,0.3))"
       }}>
@@ -150,84 +150,85 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           }}></div>
         </div>
         
-        {/* Dramatic moon debris rings */}
+        {/* Improved moon debris rings - different sizes and better visibility */}
         
-        {/* First major ring - wider, more visible */}
+        {/* First major ring - largest, outer ring */}
+        <div className="absolute" style={{
+          width: "320%",
+          height: "0.9vh",
+          top: "50%",
+          left: "-110%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(230,230,240,0.15) 15%, rgba(230,230,240,0.5) 35%, rgba(230,230,240,0.7) 50%, rgba(230,230,240,0.5) 65%, rgba(230,230,240,0.15) 85%, transparent 100%)",
+          boxShadow: "0 0 5px rgba(255,255,255,0.4)",
+          transform: "translateY(-50%) rotate(12deg)",
+          borderRadius: "50%"
+        }}></div>
+        
+        {/* Second major ring - medium width, different angle */}
         <div className="absolute" style={{
           width: "250%",
-          height: "1.5vh",
-          top: "50%",
-          left: "-75%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(220,220,220,0.2) 10%, rgba(220,220,220,0.6) 20%, rgba(220,220,220,0.8) 50%, rgba(220,220,220,0.6) 80%, rgba(220,220,220,0.2) 90%, transparent 100%)",
-          boxShadow: "0 0 5px rgba(255,255,255,0.4)",
-          transform: "translateY(-50%) rotate(15deg) perspective(10px) rotateX(2deg)",
-          borderRadius: "50%"
-        }}></div>
-        
-        {/* Second major ring - also wide and visible */}
-        <div className="absolute" style={{
-          width: "220%",
           height: "1.2vh",
           top: "49%",
-          left: "-60%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,200,0.2) 10%, rgba(200,200,200,0.7) 30%, rgba(200,200,200,0.9) 50%, rgba(200,200,200,0.7) 70%, rgba(200,200,200,0.2) 90%, transparent 100%)",
-          boxShadow: "0 0 4px rgba(255,255,255,0.35)",
-          transform: "translateY(-50%) rotate(-20deg) perspective(8px) rotateX(-3deg)",
+          left: "-75%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(210,210,220,0.2) 20%, rgba(210,210,220,0.8) 40%, rgba(210,210,220,0.95) 50%, rgba(210,210,220,0.8) 60%, rgba(210,210,220,0.2) 80%, transparent 100%)",
+          boxShadow: "0 0 6px rgba(255,255,255,0.4)",
+          transform: "translateY(-50%) rotate(-18deg)",
           borderRadius: "50%"
         }}></div>
         
-        {/* Third ring - thinner, less visible */}
+        {/* Third medium-visible ring - closer to planet */}
         <div className="absolute" style={{
-          width: "190%",
-          height: "0.2vh",
+          width: "180%",
+          height: "0.8vh",
           top: "50.5%",
-          left: "-45%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(180,180,180,0.05) 20%, rgba(180,180,180,0.2) 50%, rgba(180,180,180,0.05) 80%, transparent 100%)",
-          transform: "translateY(-50%) rotate(30deg)",
+          left: "-40%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(190,190,200,0.15) 15%, rgba(190,190,200,0.5) 40%, rgba(190,190,200,0.6) 50%, rgba(190,190,200,0.5) 60%, rgba(190,190,200,0.15) 85%, transparent 100%)",
+          boxShadow: "0 0 3px rgba(255,255,255,0.2)",
+          transform: "translateY(-50%) rotate(28deg)",
           borderRadius: "50%"
         }}></div>
         
-        {/* Fourth ring - thin, angled differently */}
-        <div className="absolute" style={{
-          width: "280%",
-          height: "0.15vh",
-          top: "49%",
-          left: "-90%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(190,190,190,0.03) 20%, rgba(190,190,190,0.15) 50%, rgba(190,190,190,0.03) 80%, transparent 100%)",
-          transform: "translateY(-50%) rotate(-35deg)",
-          borderRadius: "50%"
-        }}></div>
-        
-        {/* Fifth ring - very thin, inner ring */}
-        <div className="absolute" style={{
-          width: "140%",
-          height: "0.1vh",
-          top: "50.2%",
-          left: "-20%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,200,0.02) 30%, rgba(200,200,200,0.1) 50%, rgba(200,200,200,0.02) 70%, transparent 100%)",
-          transform: "translateY(-50%) rotate(7deg)",
-          borderRadius: "50%"
-        }}></div>
-        
-        {/* Sixth ring - very thin, outer ring */}
+        {/* Fourth barely visible ring - thin, outer */}
         <div className="absolute" style={{
           width: "350%",
-          height: "0.08vh",
-          top: "49.8%",
+          height: "0.3vh",
+          top: "50.3%",
           left: "-125%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(160,160,160,0.01) 30%, rgba(160,160,160,0.08) 50%, rgba(160,160,160,0.01) 70%, transparent 100%)",
+          background: "linear-gradient(90deg, transparent 0%, rgba(180,180,190,0.03) 30%, rgba(180,180,190,0.15) 50%, rgba(180,180,190,0.03) 70%, transparent 100%)",
           transform: "translateY(-50%) rotate(-5deg)",
           borderRadius: "50%"
         }}></div>
         
-        {/* Seventh ring - dust ring */}
+        {/* Fifth barely visible ring - thin, inner */}
         <div className="absolute" style={{
-          width: "400%",
-          height: "0.05vh",
-          top: "50.4%",
-          left: "-150%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(150,150,150,0.01) 30%, rgba(150,150,150,0.04) 50%, rgba(150,150,150,0.01) 70%, transparent 100%)",
-          transform: "translateY(-50%) rotate(0deg)",
+          width: "150%",
+          height: "0.25vh",
+          top: "49.8%",
+          left: "-25%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,210,0.02) 30%, rgba(200,200,210,0.12) 50%, rgba(200,200,210,0.02) 70%, transparent 100%)",
+          transform: "translateY(-50%) rotate(5deg)",
+          borderRadius: "50%"
+        }}></div>
+        
+        {/* Sixth extremely faint ring - dust, inner */}
+        <div className="absolute" style={{
+          width: "130%",
+          height: "0.15vh",
+          top: "50.1%",
+          left: "-15%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(190,190,200,0.01) 30%, rgba(190,190,200,0.06) 50%, rgba(190,190,200,0.01) 70%, transparent 100%)",
+          transform: "translateY(-50%) rotate(-8deg)",
+          borderRadius: "50%"
+        }}></div>
+        
+        {/* Seventh extremely faint ring - dust, outer */}
+        <div className="absolute" style={{
+          width: "380%",
+          height: "0.1vh",
+          top: "49.6%",
+          left: "-140%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(170,170,180,0.01) 30%, rgba(170,170,180,0.04) 50%, rgba(170,170,180,0.01) 70%, transparent 100%)",
+          transform: "translateY(-50%) rotate(2deg)",
           borderRadius: "50%"
         }}></div>
         
