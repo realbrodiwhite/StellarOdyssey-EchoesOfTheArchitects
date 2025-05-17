@@ -257,39 +257,39 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
             }}></div>
           </div>
           
-          {/* Antarctica - highly detailed ice cap */}
+          {/* Antarctica - more realistic ice coverage with gradual blending */}
           <div className="absolute" style={{
-            bottom: "2%",
-            left: "30%",
-            width: "40%",
-            height: "15%",
-            background: "linear-gradient(to bottom, rgba(180,200,220,0.6) 0%, rgba(210,230,250,0.7) 100%)",
-            clipPath: "ellipse(50% 50% at 50% 70%)",
-            boxShadow: "inset 0px -2px 6px rgba(255,255,255,0.3)",
-            opacity: 0.8
+            bottom: "0%",
+            left: "15%",
+            width: "70%",
+            height: "25%",
+            background: "radial-gradient(ellipse at center, rgba(220,240,255,0.7) 0%, rgba(210,230,250,0.5) 40%, rgba(200,220,240,0.3) 70%, rgba(190,210,230,0.1) 90%, transparent 100%)",
+            transform: "perspective(500px) rotateX(-40deg)",
+            opacity: 0.7,
+            filter: "blur(1px)"
           }}>
-            {/* Antarctica ice texture */}
+            {/* Antarctica ice texture - more natural */}
             <div className="absolute w-full h-full" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E")`,
-              opacity: 0.8
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E")`,
+              opacity: 0.5
             }}></div>
           </div>
           
-          {/* Arctic ice cap */}
+          {/* Arctic ice cap - more natural coverage and blending */}
           <div className="absolute" style={{
-            top: "2%",
-            left: "30%",
-            width: "40%",
-            height: "12%",
-            background: "linear-gradient(to top, rgba(180,200,220,0.6) 0%, rgba(210,230,250,0.7) 100%)",
-            clipPath: "ellipse(50% 50% at 50% 30%)",
-            boxShadow: "inset 0px 2px 6px rgba(255,255,255,0.3)",
-            opacity: 0.8
+            top: "0%",
+            left: "20%",
+            width: "60%",
+            height: "20%",
+            background: "radial-gradient(ellipse at center, rgba(220,240,255,0.7) 0%, rgba(210,230,250,0.5) 40%, rgba(200,220,240,0.3) 70%, rgba(190,210,230,0.1) 90%, transparent 100%)",
+            transform: "perspective(500px) rotateX(40deg)",
+            opacity: 0.7,
+            filter: "blur(1px)"
           }}>
-            {/* Arctic ice texture */}
+            {/* Arctic ice texture - more natural */}
             <div className="absolute w-full h-full" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E")`,
-              opacity: 0.8
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E")`,
+              opacity: 0.5
             }}></div>
           </div>
           
@@ -439,17 +439,17 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           }}></div>
         </div>
         
-        {/* Ultra-realistic outer ring with high-detail debris pattern */}
+        {/* Realistic outer ring with accurate orbital mechanics */}
         <div className="absolute" style={{
-          width: "320%",
-          height: "7vh",
+          width: "300%",
+          height: "3.5vh",
           top: "50%",
-          left: "-110%",
-          transform: "translateY(-50%) rotate(15deg)",
+          left: "-100%",
+          transform: "translateY(-50%) rotate(5deg)",
           borderRadius: "50%",
           overflow: "hidden",
           opacity: 0.85,
-          filter: "drop-shadow(0 0 8px rgba(100,120,200,0.1))"
+          filter: "drop-shadow(0 0 6px rgba(100,120,200,0.1))"
         }}>
           {/* High-detail debris field base with realistic gradient */}
           <div className="absolute w-full h-full" style={{
@@ -490,17 +490,17 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           </div>
         </div>
         
-        {/* Ultra-detailed middle ring with complex visual layers */}
+        {/* Middle ring with realistic orbital alignment */}
         <div className="absolute" style={{
-          width: "260%",
-          height: "4.5vh",
-          top: "49%",
-          left: "-80%",
-          transform: "translateY(-50%) rotate(-20deg)",
+          width: "250%",
+          height: "2.8vh",
+          top: "50%",
+          left: "-75%",
+          transform: "translateY(-50%) rotate(0deg)",
           borderRadius: "50%",
           overflow: "hidden",
           opacity: 0.9,
-          filter: "drop-shadow(0 0 6px rgba(100,120,200,0.1))"
+          filter: "drop-shadow(0 0 5px rgba(100,120,200,0.08))"
         }}>
           {/* Photorealistic debris field base layer */}
           <div className="absolute w-full h-full" style={{
@@ -542,17 +542,17 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           </div>
         </div>
         
-        {/* Ultra-realistic inner ring with advanced optical effects */}
+        {/* Inner ring with proper planetary orbital mechanics */}
         <div className="absolute" style={{
-          width: "180%",
-          height: "2.8vh",
-          top: "50.5%",
-          left: "-40%",
-          transform: "translateY(-50%) rotate(25deg)",
+          width: "170%",
+          height: "1.8vh",
+          top: "50%",
+          left: "-35%",
+          transform: "translateY(-50%) rotate(0deg)",
           borderRadius: "50%",
           overflow: "hidden",
           opacity: 0.95,
-          filter: "drop-shadow(0 0 4px rgba(100,120,200,0.1))"
+          filter: "drop-shadow(0 0 3px rgba(100,120,200,0.08))"
         }}>
           {/* High-density debris field base with enhanced realism */}
           <div className="absolute w-full h-full" style={{
