@@ -787,16 +787,45 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
   const [isActive, setIsActive] = useState(true);
   const [showTitle, setShowTitle] = useState(false);
   
-  // Add custom styles for title overlay to remove italics
+  // Add custom styles for title overlay to use the new fonts and remove italics
   useEffect(() => {
     const titleStyle = document.createElement('style');
     titleStyle.textContent = `
+      .title-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      
       .title-overlay h1 {
         font-style: normal !important;
-        font-family: 'Stargaze', 'Orbitron', sans-serif;
+        text-align: center;
       }
+      
       .title-overlay p {
         font-style: normal !important;
+        margin-top: 1rem;
+      }
+      
+      .jumper-font {
+        color: #e0f2ff;
+        text-shadow: 0 0 10px #4a88ff, 0 0 20px #0055ff, 0 0 30px #0033aa;
+        letter-spacing: 0.15em;
+        font-size: 5.5rem;
+        line-height: 1;
+        transform: perspective(500px) rotateX(5deg);
+        margin-bottom: 0.2em;
+      }
+      
+      .awakening-font {
+        color: #ffd700;
+        text-shadow: 0 0 10px #ff9900, 0 0 20px #ff6600, 0 0 30px #cc3300;
+        letter-spacing: 0.12em;
+        font-size: 4.2rem;
+        line-height: 1;
+        font-weight: normal;
+        transform: perspective(500px) rotateX(-5deg) scale(0.95);
       }
     `;
     document.head.appendChild(titleStyle);

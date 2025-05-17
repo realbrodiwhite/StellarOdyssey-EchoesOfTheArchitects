@@ -29,8 +29,6 @@
   font-style: normal;
   font-weight: bold;
   display: block;
-  font-size: 1.2em;
-  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
@@ -39,8 +37,6 @@
   font-style: normal;
   font-weight: normal;
   display: block;
-  font-size: 1.5em;
-  letter-spacing: 0.05em;
 }
 
 @layer base {
