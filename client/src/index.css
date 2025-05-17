@@ -69,10 +69,12 @@
   font-family: "Stargaze", "Orbitron", "Arial Black", sans-serif;
   letter-spacing: 0.01em; /* Even tighter spacing between characters */
   font-style: italic;
-  margin-right: 0.1em; /* Reduced spacing between words */
+  margin-right: 0; /* No spacing between words */
+  padding-right: 0;
   font-weight: 300;
   font-stretch: condensed;
   transform: scaleX(0.85); /* Make the text thinner horizontally while maintaining height */
+  line-height: 1; /* Ensure consistent height */
   background-image: linear-gradient(180deg, 
     #ffffff 0%, 
     #a0e0ff 15%, 
@@ -89,18 +91,23 @@
   position: relative;
   z-index: 1;
   transform-origin: left center;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Strange effect for ODYSSEY text */
 .forest-green-text {
   font-family: "Polaris", "Derelict", "Arial Black", sans-serif;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.01em; /* Reduced letter spacing */
   text-transform: uppercase;
   font-style: normal;
   font-weight: 900;
   font-stretch: expanded;
-  transform: scaleY(1.2); /* Stretch vertically */
-  transform-origin: center center;
+  line-height: 1; /* Ensure consistent height */
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
   background-image: linear-gradient(180deg, 
     #f0fff0 0%, 
     #c0ffc0 15%, 
