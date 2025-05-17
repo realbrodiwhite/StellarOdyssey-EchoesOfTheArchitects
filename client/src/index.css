@@ -170,7 +170,7 @@
   height: 100%;
   position: absolute;
   transform-style: preserve-3d;
-  animation: rotateStarField 240s linear infinite;
+  animation: rotateStarField 480s linear infinite;
 }
 
 @keyframes rotateStarField {
