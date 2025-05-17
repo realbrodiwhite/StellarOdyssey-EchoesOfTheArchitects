@@ -69,7 +69,7 @@
   font-family: "Stargaze", "Orbitron", "Arial Black", sans-serif;
   letter-spacing: 0.01em; /* Even tighter spacing between characters */
   font-style: italic;
-  margin-right: 0.5em; /* Further increased spacing between words */
+  margin-right: 0.1em; /* Reduced spacing between words */
   font-weight: 300;
   font-stretch: condensed;
   transform: scaleX(0.85); /* Make the text thinner horizontally while maintaining height */
