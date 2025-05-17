@@ -15,6 +15,7 @@ interface Tip {
   text: string;
   context: string[];
   voiceover?: string; // Path to audio file
+  voiceoverClass?: CharacterClass; // Which class provides this voiceover
   characterClasses?: CharacterClass[]; // Which classes this tip is most relevant for
 }
 
@@ -36,117 +37,188 @@ const LoadingScreenTips: React.FC<LoadingScreenTipsProps> = ({
     {
       text: "The Architects' technology responds differently to each character class. Engineers can interface with it more efficiently.",
       context: ['general', 'exploration'],
+      voiceover: '/sounds/voiceovers/engineer_tip_1.mp3',
+      voiceoverClass: CharacterClass.Engineer,
       characterClasses: [CharacterClass.Engineer]
     },
     {
       text: "Scientists can analyze alien artifacts and gain additional insights about their purpose and history.",
       context: ['general', 'exploration', 'puzzle'],
+      voiceover: '/sounds/voiceovers/scientist_tip_1.mp3',
+      voiceoverClass: CharacterClass.Scientist,
       characterClasses: [CharacterClass.Scientist]
     },
     {
       text: "Diplomats can negotiate better terms with alien factions and may avoid certain combat encounters entirely.",
       context: ['general', 'exploration'],
+      voiceover: '/sounds/voiceovers/diplomat_tip_1.mp3',
+      voiceoverClass: CharacterClass.Diplomat,
       characterClasses: [CharacterClass.Diplomat]
     },
     {
       text: "Pilots maneuver more efficiently in space, making them ideal for exploration missions.",
       context: ['general', 'exploration'],
+      voiceover: '/sounds/voiceovers/pilot_tip_1.mp3',
+      voiceoverClass: CharacterClass.Pilot,
       characterClasses: [CharacterClass.Pilot]
     },
     {
       text: "Soldiers excel in combat situations, gaining bonuses to damage and defense.",
       context: ['general', 'combat'],
+      voiceover: '/sounds/voiceovers/soldier_tip_1.mp3',
+      voiceoverClass: CharacterClass.Soldier,
       characterClasses: [CharacterClass.Soldier]
     },
     {
       text: "Mercenaries can access unique upgrade paths for weapons and armor.",
       context: ['general', 'combat'],
+      voiceover: '/sounds/voiceovers/mercenary_tip_1.mp3',
+      voiceoverClass: CharacterClass.Mercenary,
       characterClasses: [CharacterClass.Mercenary]
     },
     {
       text: "Explorers can find hidden locations and uncover secret paths through challenging terrain.",
       context: ['general', 'exploration'],
+      voiceover: '/sounds/voiceovers/explorer_tip_1.mp3',
+      voiceoverClass: CharacterClass.Explorer,
       characterClasses: [CharacterClass.Explorer]
     },
     
     // Combat tips
     {
       text: "Energy weapons are effective against shields, while kinetic weapons deal more damage to armor.",
-      context: ['combat']
+      context: ['combat'],
+      voiceover: '/sounds/voiceovers/soldier_combat_tip_1.mp3',
+      voiceoverClass: CharacterClass.Soldier
     },
     {
       text: "Some enemies have weaknesses to specific damage types. Experiment to find the most effective approach.",
-      context: ['combat']
+      context: ['combat'],
+      voiceover: '/sounds/voiceovers/mercenary_combat_tip_1.mp3',
+      voiceoverClass: CharacterClass.Mercenary
     },
     {
       text: "Party formation matters in combat. Placing tanks in front can protect more vulnerable allies.",
-      context: ['combat']
+      context: ['combat'],
+      voiceover: '/sounds/voiceovers/captain_combat_tip_1.mp3',
+      voiceoverClass: CharacterClass.Captain
     },
     
     // Exploration tips
     {
       text: "Scan planets thoroughly before landing. Some hazards aren't visible from orbit.",
-      context: ['exploration']
+      context: ['exploration'],
+      voiceover: '/sounds/voiceovers/explorer_exploration_tip_1.mp3',
+      voiceoverClass: CharacterClass.Explorer
     },
     {
       text: "Derelict ships often contain valuable technology, but may also harbor automated defense systems.",
-      context: ['exploration']
+      context: ['exploration'],
+      voiceover: '/sounds/voiceovers/smuggler_exploration_tip_1.mp3',
+      voiceoverClass: CharacterClass.Smuggler
     },
     {
       text: "The Void Entities become more active in regions with high concentrations of Architect artifacts.",
-      context: ['exploration', 'story']
+      context: ['exploration', 'story'],
+      voiceover: '/sounds/voiceovers/scientist_exploration_tip_1.mp3',
+      voiceoverClass: CharacterClass.Scientist
     },
     
     // Puzzle tips
     {
       text: "Many Architect puzzles have multiple solutions, each yielding different rewards.",
-      context: ['puzzle']
+      context: ['puzzle'],
+      voiceover: '/sounds/voiceovers/engineer_puzzle_tip_1.mp3',
+      voiceoverClass: CharacterClass.Engineer
     },
     {
       text: "Technical skills help with mechanical puzzles, while scientific knowledge aids with research-based challenges.",
-      context: ['puzzle']
+      context: ['puzzle'],
+      voiceover: '/sounds/voiceovers/scientist_puzzle_tip_1.mp3',
+      voiceoverClass: CharacterClass.Scientist
     },
     {
       text: "If you're stuck on a puzzle, consider using a different character's skills or approaching it from a new angle.",
-      context: ['puzzle']
+      context: ['puzzle'],
+      voiceover: '/sounds/voiceovers/hacker_puzzle_tip_1.mp3',
+      voiceoverClass: CharacterClass.Hacker
     },
     
     // Story tips
     {
       text: "Your reputation with factions affects how they respond to you in future encounters.",
-      context: ['story', 'general']
+      context: ['story', 'general'],
+      voiceover: '/sounds/voiceovers/diplomat_story_tip_1.mp3',
+      voiceoverClass: CharacterClass.Diplomat
     },
     {
       text: "The mysteries of the Architects are tied to the sudden appearance of the anomalies throughout the galaxy.",
-      context: ['story']
+      context: ['story'],
+      voiceover: '/sounds/voiceovers/scientist_story_tip_1.mp3',
+      voiceoverClass: CharacterClass.Scientist
     },
     {
       text: "Each faction has their own theory about the Architects. Listen carefully to piece together the truth.",
-      context: ['story']
+      context: ['story'],
+      voiceover: '/sounds/voiceovers/explorer_story_tip_1.mp3',
+      voiceoverClass: CharacterClass.Explorer
     }
   ];
 
   useEffect(() => {
-    // Select tips relevant to the current context and character class
-    const relevantTips = tips.filter(tip => 
-      tip.context.includes(context) && 
-      (!tip.characterClasses || 
-       !character?.class || 
-       tip.characterClasses.includes(character.class))
+    // Select tips relevant to the current context
+    let relevantTips = tips.filter(tip => tip.context.includes(context));
+    
+    // First priority: Tips specific to character's class
+    let characterSpecificTips = relevantTips.filter(tip => 
+      tip.characterClasses && 
+      character?.class && 
+      tip.characterClasses.includes(character.class)
     );
     
-    if (relevantTips.length > 0) {
-      // Choose a random tip from the relevant ones
-      const randomTip = relevantTips[Math.floor(Math.random() * relevantTips.length)];
+    // Second priority: Tips with voiceovers from character's class
+    let characterVoiceoverTips = relevantTips.filter(tip => 
+      tip.voiceoverClass && 
+      character?.class && 
+      tip.voiceoverClass === character.class
+    );
+    
+    // Select tips in order of priority
+    let selectedTips = characterSpecificTips.length > 0 ? characterSpecificTips : 
+                      (characterVoiceoverTips.length > 0 ? characterVoiceoverTips : relevantTips);
+    
+    if (selectedTips.length > 0) {
+      // Choose a random tip from the selected ones
+      const randomTip = selectedTips[Math.floor(Math.random() * selectedTips.length)];
       setCurrentTip(randomTip);
       
       // If this tip has voiceover, load it
       if (randomTip.voiceover) {
-        const audio = new Audio(randomTip.voiceover);
-        setTipAudio(audio);
-        audio.play().catch(error => {
-          console.log("Tip voiceover autoplay prevented:", error);
-        });
+        try {
+          const audio = new Audio(randomTip.voiceover);
+          
+          // Set up audio event handlers
+          audio.onloadedmetadata = () => {
+            console.log(`Voiceover loaded: ${randomTip.voiceover}, duration: ${audio.duration}s`);
+          };
+          
+          audio.onended = () => {
+            console.log("Voiceover playback completed");
+          };
+          
+          audio.onerror = (e) => {
+            console.error("Error loading voiceover:", e);
+          };
+          
+          setTipAudio(audio);
+          
+          // Play the audio with fallback handling
+          audio.play().catch(error => {
+            console.log("Tip voiceover autoplay prevented:", error);
+          });
+        } catch (error) {
+          console.error("Failed to create audio for voiceover:", error);
+        }
       }
     }
     

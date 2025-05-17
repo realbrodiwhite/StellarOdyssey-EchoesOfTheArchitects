@@ -97,15 +97,20 @@ const Game = () => {
     }
   };
 
+  // Target state tracking for loading screen
+  const [targetGameState, setTargetGameState] = useState<GameStateType | null>(null);
+  
   const handleCharacterSelected = () => {
     console.log("Character selected, starting game");
     start(); // This will set phase to "playing"
     
-    // Small delay to allow character data to be processed
-    setTimeout(() => {
-      setGameState("game");
-      console.log("Game state set to: game");
-    }, 300);
+    // Set loading context to exploration for initial game load
+    setLoadingContext('exploration');
+    
+    // Set the target state and transition to loading screen
+    setTargetGameState('game');
+    setGameState("loading");
+    console.log("Loading game with exploration context");
   };
 
   // State for loading context
@@ -127,8 +132,16 @@ const Game = () => {
         return <LoadingScreenTips 
           context={loadingContext}
           onComplete={() => {
-            console.log("Loading complete");
-            // Implement transition to target state
+            console.log("Loading complete, transitioning to", targetGameState);
+            // Transition to target state if it's set
+            if (targetGameState) {
+              setGameState(targetGameState);
+              // Reset target state after transition
+              setTargetGameState(null);
+            } else {
+              // Fallback to game state if no target specified
+              setGameState("game");
+            }
           }}
           minDisplayTime={5000}
         />;
@@ -157,8 +170,18 @@ const Game = () => {
               <color attach="background" args={["#000000"]} />
               <Suspense fallback={null}>
                 <SpaceEnvironment
-                  onEnterCombat={() => setGameState("combat")}
-                  onEnterPuzzle={() => setGameState("puzzle")}
+                  onEnterCombat={() => {
+                    // Set combat context and target state
+                    setLoadingContext('combat');
+                    setTargetGameState('combat');
+                    setGameState("loading");
+                  }}
+                  onEnterPuzzle={() => {
+                    // Set puzzle context and target state
+                    setLoadingContext('puzzle');
+                    setTargetGameState('puzzle');
+                    setGameState("loading");
+                  }}
                 />
               </Suspense>
             </Canvas>

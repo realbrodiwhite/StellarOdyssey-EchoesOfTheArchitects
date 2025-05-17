@@ -143,19 +143,19 @@
   animation: glowEffect 5s ease-in-out infinite alternate;
 }
 
-/* Animation keyframes for slow glow effect */
+/* Animation keyframes for slow glow effect with increased contrast */
 @keyframes glowEffect {
   0% {
-    color: rgba(160, 160, 160, 0.7);
-    text-shadow: 0 0 5px rgba(180, 180, 180, 0.1);
+    color: rgba(140, 140, 140, 0.5); /* Darker */
+    text-shadow: 0 0 3px rgba(160, 160, 160, 0.05);
   }
   50% {
-    color: rgba(200, 200, 200, 1);
-    text-shadow: 0 0 10px rgba(200, 200, 200, 0.5);
+    color: rgba(230, 230, 230, 1); /* Brighter */
+    text-shadow: 0 0 15px rgba(220, 220, 220, 0.7); /* Stronger glow */
   }
   100% {
-    color: rgba(160, 160, 160, 0.7);
-    text-shadow: 0 0 5px rgba(180, 180, 180, 0.1);
+    color: rgba(140, 140, 140, 0.5); /* Darker */
+    text-shadow: 0 0 3px rgba(160, 160, 160, 0.05);
   }
 }
 
