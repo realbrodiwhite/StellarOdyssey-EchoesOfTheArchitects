@@ -119,54 +119,54 @@ const GameUI = ({
           <Button 
             variant="outline" 
             size="icon" 
-            className="bg-gray-800 bg-opacity-80"
+            className="bg-gray-800 bg-opacity-80 w-[24px] h-[24px] p-0.5"
             onClick={() => setShowInventory(true)}
           >
-            <Package size={18} />
+            <Package size={12} />
           </Button>
           <Button 
             variant="outline" 
             size="icon" 
-            className="bg-gray-800 bg-opacity-80"
+            className="bg-gray-800 bg-opacity-80 w-[24px] h-[24px] p-0.5"
             onClick={() => setShowPartyManager(true)}
           >
-            <Users size={18} />
+            <Users size={12} />
           </Button>
           <Button 
             variant="outline" 
             size="icon" 
-            className="bg-gray-800 bg-opacity-80"
+            className="bg-gray-800 bg-opacity-80 w-[24px] h-[24px] p-0.5"
             onClick={onRequestHint}
           >
-            <HelpCircle size={18} />
+            <HelpCircle size={12} />
           </Button>
           <Button 
             variant="outline" 
             size="icon" 
-            className="bg-gray-800 bg-opacity-80"
+            className="bg-gray-800 bg-opacity-80 w-[24px] h-[24px] p-0.5"
             onClick={onToggleSound}
           >
-            {isSoundOn ? <Volume2 size={18} /> : <VolumeX size={18} />}
+            {isSoundOn ? <Volume2 size={12} /> : <VolumeX size={12} />}
           </Button>
           <Button 
             variant="outline" 
             size="icon" 
-            className="bg-gray-800 bg-opacity-80"
+            className="bg-gray-800 bg-opacity-80 w-[24px] h-[24px] p-0.5"
             onClick={() => setShowMenu(!showMenu)}
           >
-            <Menu size={18} />
+            <Menu size={12} />
           </Button>
         </div>
       </div>
       
-      {/* Controls help */}
-      <div className="fixed bottom-4 left-4 bg-gray-900 bg-opacity-80 p-3 rounded-lg z-20 text-sm">
-        <div className="text-white font-semibold mb-1">Controls:</div>
-        <div className="text-gray-300">WASD / Arrows: Move</div>
-        <div className="text-gray-300">E / Space: Interact</div>
-        <div className="text-gray-300">I: Inventory</div>
-        <div className="text-gray-300">H: Hint</div>
-        <div className="text-gray-300">ESC: Menu</div>
+      {/* Controls help - adaptive for desktop/mobile */}
+      <div className="fixed bottom-4 left-4 bg-gray-900 bg-opacity-80 p-2 rounded-lg z-20 text-xs md:text-sm max-w-[150px] md:max-w-none">
+        <div className="text-white font-semibold mb-0.5 md:mb-1 text-[10px] md:text-sm">Controls:</div>
+        <div className="text-gray-300 text-[10px] md:text-sm">WASD / Arrows: Move</div>
+        <div className="text-gray-300 text-[10px] md:text-sm">E / Space: Interact</div>
+        <div className="text-gray-300 text-[10px] md:text-sm">I: Inventory</div>
+        <div className="text-gray-300 text-[10px] md:text-sm">H: Hint</div>
+        <div className="text-gray-300 text-[10px] md:text-sm">ESC: Menu</div>
       </div>
       
       {/* Game menu modal */}
