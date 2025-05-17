@@ -123,37 +123,110 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         height: "50vh",
         opacity: 0.4
       }}>
-        {/* Planet body */}
-        <div className="absolute rounded-full bg-gradient-to-br from-amber-700 to-amber-950" style={{ 
+        {/* Earth-like planet body */}
+        <div className="absolute rounded-full" style={{ 
           width: "100%", 
           height: "100%",
-          boxShadow: "inset -10px -10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(255,180,100,0.2)"
+          background: "radial-gradient(circle at 30% 30%, #1f6e9c 0%, #2a5d8c 40%, #0c3b5d 80%, #051c2e 100%)",
+          boxShadow: "inset -15px -15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(100,200,255,0.3)",
+          overflow: "hidden"
+        }}>
+          {/* Continental details */}
+          <div className="absolute" style={{
+            width: "100%",
+            height: "100%",
+            background: "radial-gradient(ellipse at 60% 40%, transparent 0%, transparent 30%, rgba(120,180,70,0.3) 31%, rgba(120,180,70,0.2) 45%, transparent 50%, transparent 100%), radial-gradient(ellipse at 30% 70%, transparent 0%, transparent 40%, rgba(120,180,70,0.3) 41%, rgba(120,180,70,0.2) 60%, transparent 65%, transparent 100%)",
+            filter: "blur(5px)"
+          }}></div>
+          
+          {/* Cloud cover */}
+          <div className="absolute" style={{
+            width: "100%",
+            height: "100%",
+            background: "radial-gradient(ellipse at 30% 30%, transparent 0%, transparent 40%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.1) 60%, transparent 70%), radial-gradient(ellipse at 70% 60%, transparent 0%, transparent 40%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.1) 70%, transparent 75%)",
+            filter: "blur(8px)"
+          }}></div>
+        </div>
+        
+        {/* Ring system from moon debris - multiple rings at different angles */}
+        
+        {/* Main thick ring at 20 degrees */}
+        <div className="absolute" style={{
+          width: "170%",
+          height: "15px",
+          top: "50%",
+          left: "-35%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(180,180,180,0.1) 10%, rgba(180,180,180,0.3) 30%, rgba(180,180,180,0.6) 50%, rgba(180,180,180,0.3) 70%, rgba(180,180,180,0.1) 90%, transparent 100%)",
+          transform: "translateY(-50%) rotate(20deg)",
+          boxShadow: "0 0 8px rgba(200,200,200,0.2)",
+          borderRadius: "100%"
         }}></div>
         
-        {/* First ring - angled at 25 degrees */}
+        {/* Secondary thick ring at -15 degrees */}
         <div className="absolute" style={{
           width: "180%",
-          height: "25px",
+          height: "12px",
           top: "50%",
           left: "-40%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(255,200,150,0.7) 20%, rgba(255,200,150,0.8) 50%, rgba(255,200,150,0.7) 80%, transparent 100%)",
-          transform: "translateY(-50%) rotate(25deg)",
-          boxShadow: "0 0 10px rgba(255,200,150,0.4)",
-          borderRadius: "100%",
-          overflow: "hidden"
+          background: "linear-gradient(90deg, transparent 0%, rgba(190,190,190,0.1) 10%, rgba(190,190,190,0.4) 30%, rgba(190,190,190,0.5) 50%, rgba(190,190,190,0.4) 70%, rgba(190,190,190,0.1) 90%, transparent 100%)",
+          transform: "translateY(-50%) rotate(-15deg)",
+          boxShadow: "0 0 8px rgba(200,200,200,0.15)",
+          borderRadius: "100%"
         }}></div>
         
-        {/* Second ring - angled at -35 degrees, crossing the first ring */}
+        {/* Third thin ring at 35 degrees */}
         <div className="absolute" style={{
           width: "160%",
-          height: "18px",
+          height: "5px",
           top: "50%",
           left: "-30%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(220,170,120,0.7) 20%, rgba(220,170,120,0.8) 50%, rgba(220,170,120,0.7) 80%, transparent 100%)",
-          transform: "translateY(-50%) rotate(-35deg)",
-          boxShadow: "0 0 8px rgba(220,170,120,0.3)",
-          borderRadius: "100%",
-          overflow: "hidden"
+          background: "linear-gradient(90deg, transparent 0%, rgba(170,170,170,0.05) 20%, rgba(170,170,170,0.2) 50%, rgba(170,170,170,0.05) 80%, transparent 100%)",
+          transform: "translateY(-50%) rotate(35deg)",
+          boxShadow: "0 0 5px rgba(200,200,200,0.1)",
+          borderRadius: "100%"
+        }}></div>
+        
+        {/* Fourth thin ring at -30 degrees */}
+        <div className="absolute" style={{
+          width: "175%",
+          height: "4px",
+          top: "49%",
+          left: "-37.5%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,200,0.05) 20%, rgba(200,200,200,0.2) 50%, rgba(200,200,200,0.05) 80%, transparent 100%)",
+          transform: "translateY(-50%) rotate(-30deg)",
+          boxShadow: "0 0 4px rgba(200,200,200,0.1)",
+          borderRadius: "100%"
+        }}></div>
+        
+        {/* Fifth very thin ring at 5 degrees */}
+        <div className="absolute" style={{
+          width: "165%",
+          height: "2px",
+          top: "51%",
+          left: "-32.5%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(210,210,210,0.05) 30%, rgba(210,210,210,0.15) 50%, rgba(210,210,210,0.05) 70%, transparent 100%)",
+          transform: "translateY(-50%) rotate(5deg)",
+          borderRadius: "100%"
+        }}></div>
+        
+        {/* First visible moon chunk */}
+        <div className="absolute rounded-full bg-gray-300" style={{
+          width: "8%",
+          height: "8%",
+          top: "35%",
+          left: "80%",
+          boxShadow: "inset -1px -1px 3px rgba(0,0,0,0.5)",
+          transform: "rotate(20deg)"
+        }}></div>
+        
+        {/* Second visible moon chunk */}
+        <div className="absolute rounded-full bg-gray-400" style={{
+          width: "10%",
+          height: "10%",
+          top: "56%",
+          left: "-5%",
+          boxShadow: "inset -1px -1px 3px rgba(0,0,0,0.5)",
+          transform: "rotate(-15deg)"
         }}></div>
       </div>
       
