@@ -124,100 +124,100 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         opacity: 1,
         filter: "drop-shadow(0 0 12px rgba(120,180,255,0.3))"
       }}>
-        {/* Earth body */}
+        {/* Earth body - darker dusk appearance */}
         <div className="absolute rounded-full" style={{ 
           width: "100%", 
           height: "100%",
-          background: "radial-gradient(circle at 35% 35%, #4ba9e0 0%, #2978a0 25%, #1c5985 50%, #0a3861 75%, #051a33 100%)",
-          boxShadow: "inset -5px -5px 10px rgba(0,0,0,0.5), 0 0 5px rgba(100,200,255,0.4)"
+          background: "radial-gradient(circle at 35% 35%, #2a6b9e 0%, #1b5275 25%, #0e3a53 50%, #06243e 75%, #031626 100%)",
+          boxShadow: "inset -5px -5px 10px rgba(0,0,0,0.7), 0 0 5px rgba(80,140,200,0.3)"
         }}>
-          {/* North America */}
+          {/* North America - darker dusk colors */}
           <div className="absolute" style={{
             top: "20%",
             left: "20%",
             width: "30%",
             height: "25%",
-            background: "rgba(75,140,60,0.85)",
+            background: "rgba(45,85,35,0.7)",
             borderRadius: "40% 60% 70% 30% / 60% 40% 60% 40%"
           }}></div>
           
-          {/* South America */}
+          {/* South America - darker dusk colors */}
           <div className="absolute" style={{
             top: "45%",
             left: "35%",
             width: "15%",
             height: "25%",
-            background: "rgba(85,150,70,0.85)",
+            background: "rgba(55,95,45,0.7)",
             borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%"
           }}></div>
           
-          {/* Europe */}
+          {/* Europe - darker dusk colors */}
           <div className="absolute" style={{
             top: "25%",
             left: "52%",
             width: "15%",
             height: "15%",
-            background: "rgba(70,135,55,0.85)",
+            background: "rgba(40,80,35,0.7)",
             borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%"
           }}></div>
           
-          {/* Africa */}
+          {/* Africa - darker dusk colors */}
           <div className="absolute" style={{
             top: "40%",
             left: "55%",
             width: "22%",
             height: "25%",
-            background: "rgba(150,120,60,0.85)",
+            background: "rgba(90,70,40,0.7)",
             borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%"
           }}></div>
           
-          {/* Asia */}
+          {/* Asia - darker dusk colors */}
           <div className="absolute" style={{
             top: "20%",
             left: "65%",
             width: "30%",
             height: "25%",
-            background: "rgba(80,145,65,0.85)",
+            background: "rgba(50,90,40,0.7)",
             borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%"
           }}></div>
           
-          {/* Australia */}
+          {/* Australia - darker dusk colors */}
           <div className="absolute" style={{
             top: "60%",
             left: "75%",
             width: "15%",
             height: "15%",
-            background: "rgba(160,130,70,0.85)",
+            background: "rgba(100,80,45,0.7)",
             borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%"
           }}></div>
           
-          {/* North pole */}
+          {/* North pole - darker dusk colors */}
           <div className="absolute" style={{
             top: "5%",
             left: "30%",
             width: "40%",
             height: "12%",
-            background: "rgba(230,240,255,0.9)",
+            background: "rgba(180,200,220,0.7)",
             borderRadius: "50%"
           }}></div>
           
-          {/* South pole */}
+          {/* South pole - darker dusk colors */}
           <div className="absolute" style={{
             bottom: "5%",
             left: "30%",
             width: "40%",
             height: "15%",
-            background: "rgba(230,240,255,0.9)",
+            background: "rgba(180,200,220,0.7)",
             borderRadius: "50%"
           }}></div>
           
-          {/* Cloud formations */}
+          {/* Cloud formations - dusk appearance */}
           <div className="absolute" style={{
             top: "15%",
             left: "10%", 
             width: "30%",
             height: "10%",
-            background: "rgba(255,255,255,0.5)",
+            background: "rgba(200,200,220,0.3)",
             borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%",
             filter: "blur(1px)"
           }}></div>
@@ -227,7 +227,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
             left: "48%", 
             width: "30%",
             height: "10%",
-            background: "rgba(255,255,255,0.5)",
+            background: "rgba(200,200,220,0.3)",
             borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%",
             filter: "blur(1px)"
           }}></div>
@@ -237,23 +237,31 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
             left: "35%", 
             width: "25%",
             height: "8%",
-            background: "rgba(255,255,255,0.5)",
+            background: "rgba(200,200,220,0.3)",
             borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%",
             filter: "blur(1px)"
           }}></div>
           
-          {/* Atmosphere glow */}
+          {/* Sunset highlight on one edge */}
+          <div className="absolute" style={{
+            width: "100%", 
+            height: "100%",
+            background: "linear-gradient(130deg, rgba(255,140,80,0.2) 0%, transparent 30%)",
+            borderRadius: "50%"
+          }}></div>
+          
+          {/* Atmosphere glow - dusk appearance */}
           <div className="absolute" style={{
             width: "120%", 
             height: "120%",
             top: "-10%",
             left: "-10%",
-            background: "radial-gradient(circle at center, transparent 50%, rgba(140,200,255,0.1) 75%, rgba(140,200,255,0.2) 90%, rgba(140,200,255,0.1) 100%)",
+            background: "radial-gradient(circle at center, transparent 50%, rgba(90,140,200,0.1) 75%, rgba(90,140,200,0.15) 90%, rgba(90,140,200,0.1) 100%)",
             borderRadius: "50%"
           }}></div>
         </div>
         
-        {/* Outer ring with dense debris pattern */}
+        {/* Outer ring with dense debris pattern - darker dusk appearance */}
         <div className="absolute" style={{
           width: "300%",
           height: "6vh",
@@ -262,34 +270,35 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           transform: "translateY(-50%) rotate(15deg)",
           borderRadius: "50%",
           overflow: "hidden",
-          opacity: 0.9
+          opacity: 0.8
         }}>
-          {/* Dense debris field base */}
+          {/* Dense debris field base - darker appearance */}
           <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(200,200,215,0.3) 30%, rgba(220,220,230,0.6) 50%, rgba(200,200,215,0.3) 70%, rgba(0,0,0,0) 100%)",
-            boxShadow: "0 0 15px rgba(255,255,255,0.3)"
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(150,150,170,0.2) 30%, rgba(180,180,200,0.45) 50%, rgba(150,150,170,0.2) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 10px rgba(200,200,255,0.2)"
           }}></div>
           
-          {/* Millions of tiny debris particles in outer ring */}
+          {/* Millions of tiny debris particles in outer ring - dusk appearance */}
           <div className="absolute w-full h-full">
             {Array.from({ length: 50 }).map((_, i) => (
               <div 
                 key={`outer-debris-${i}`}
-                className="absolute bg-white rounded-full"
+                className="absolute rounded-full"
                 style={{
                   width: `${Math.random() * 0.3 + 0.1}vh`,
                   height: `${Math.random() * 0.3 + 0.1}vh`,
                   top: `${Math.random() * 100}%`,
                   left: `${Math.random() * 100}%`,
-                  opacity: 0.6 + Math.random() * 0.4,
-                  boxShadow: "0 0 2px rgba(255,255,255,0.4)"
+                  opacity: 0.5 + Math.random() * 0.3,
+                  background: "rgba(180,180,200,0.7)",
+                  boxShadow: "0 0 2px rgba(200,200,255,0.3)"
                 }}
               />
             ))}
           </div>
         </div>
         
-        {/* Middle dense ring */}
+        {/* Middle dense ring - darker dusk appearance */}
         <div className="absolute" style={{
           width: "240%",
           height: "4vh",
@@ -298,34 +307,40 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           transform: "translateY(-50%) rotate(-20deg)",
           borderRadius: "50%",
           overflow: "hidden",
-          opacity: 0.95
+          opacity: 0.85
         }}>
-          {/* Dense debris field base */}
+          {/* Dense debris field base - darker appearance */}
           <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(210,210,225,0.4) 30%, rgba(235,235,245,0.7) 50%, rgba(210,210,225,0.4) 70%, rgba(0,0,0,0) 100%)",
-            boxShadow: "0 0 10px rgba(255,255,255,0.3)"
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(160,160,180,0.3) 30%, rgba(190,190,210,0.55) 50%, rgba(160,160,180,0.3) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 8px rgba(200,200,255,0.2)"
           }}></div>
           
-          {/* Millions of tiny debris particles in middle ring */}
+          {/* Sunset highlight on part of the ring */}
+          <div className="absolute w-full h-full" style={{
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 40%, rgba(255,140,80,0.15) 50%, rgba(0,0,0,0) 60%)",
+          }}></div>
+          
+          {/* Millions of tiny debris particles in middle ring - dusk appearance */}
           <div className="absolute w-full h-full">
             {Array.from({ length: 70 }).map((_, i) => (
               <div 
                 key={`middle-debris-${i}`}
-                className="absolute bg-white rounded-full"
+                className="absolute rounded-full"
                 style={{
                   width: `${Math.random() * 0.25 + 0.05}vh`,
                   height: `${Math.random() * 0.25 + 0.05}vh`,
                   top: `${Math.random() * 100}%`,
                   left: `${Math.random() * 100}%`,
-                  opacity: 0.7 + Math.random() * 0.3,
-                  boxShadow: "0 0 2px rgba(255,255,255,0.3)"
+                  opacity: 0.6 + Math.random() * 0.3,
+                  background: "rgba(180,180,200,0.7)",
+                  boxShadow: "0 0 2px rgba(200,200,255,0.2)"
                 }}
               />
             ))}
           </div>
         </div>
         
-        {/* Inner dense ring */}
+        {/* Inner dense ring - darker dusk appearance */}
         <div className="absolute" style={{
           width: "160%",
           height: "2vh",
@@ -334,55 +349,60 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           transform: "translateY(-50%) rotate(25deg)",
           borderRadius: "50%",
           overflow: "hidden",
-          opacity: 1
+          opacity: 0.9
         }}>
-          {/* Dense debris field base */}
+          {/* Dense debris field base - darker appearance */}
           <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(220,220,230,0.6) 30%, rgba(250,250,255,0.9) 50%, rgba(220,220,230,0.6) 70%, rgba(0,0,0,0) 100%)",
-            boxShadow: "0 0 8px rgba(255,255,255,0.4)"
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(170,170,190,0.5) 30%, rgba(200,200,220,0.7) 50%, rgba(170,170,190,0.5) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 6px rgba(200,200,255,0.3)"
           }}></div>
           
-          {/* Millions of tiny debris particles in inner ring */}
+          {/* Millions of tiny debris particles in inner ring - dusk appearance */}
           <div className="absolute w-full h-full">
             {Array.from({ length: 40 }).map((_, i) => (
               <div 
                 key={`inner-debris-${i}`}
-                className="absolute bg-white rounded-full"
+                className="absolute rounded-full"
                 style={{
                   width: `${Math.random() * 0.2 + 0.05}vh`,
                   height: `${Math.random() * 0.2 + 0.05}vh`,
                   top: `${Math.random() * 100}%`,
                   left: `${Math.random() * 100}%`,
-                  opacity: 0.8 + Math.random() * 0.2,
-                  boxShadow: "0 0 2px rgba(255,255,255,0.5)"
+                  opacity: 0.7 + Math.random() * 0.2,
+                  background: "rgba(190,190,210,0.8)",
+                  boxShadow: "0 0 2px rgba(200,200,255,0.4)"
                 }}
               />
             ))}
           </div>
         </div>
         
-        {/* Larger moon chunks scattered through rings */}
-        <div className="absolute rounded-full bg-gray-200" style={{ width: "2.7%", height: "2.7%", top: "49.3%", left: "37%", opacity: 0.9, boxShadow: "0 0 3px rgba(255,255,255,0.4)" }}></div>
-        <div className="absolute rounded-full bg-gray-300" style={{ width: "4%", height: "4%", top: "48.2%", left: "-38%", opacity: 0.95, boxShadow: "0 0 4px rgba(255,255,255,0.5)" }}></div>
-        <div className="absolute rounded-full bg-gray-200" style={{ width: "2.2%", height: "2.2%", top: "50.7%", left: "72%", opacity: 0.85, boxShadow: "0 0 3px rgba(255,255,255,0.4)" }}></div>
-        <div className="absolute rounded-full bg-gray-300" style={{ width: "3.2%", height: "3.2%", top: "49.5%", left: "-79%", opacity: 0.9, boxShadow: "0 0 4px rgba(255,255,255,0.5)" }}></div>
-        <div className="absolute rounded-full bg-gray-200" style={{ width: "1.8%", height: "1.8%", top: "50.3%", left: "-55%", opacity: 0.8, boxShadow: "0 0 2px rgba(255,255,255,0.3)" }}></div>
-        <div className="absolute rounded-full bg-gray-300" style={{ width: "2.5%", height: "2.5%", top: "49.1%", left: "93%", opacity: 0.85, boxShadow: "0 0 3px rgba(255,255,255,0.4)" }}></div>
-        <div className="absolute rounded-full bg-gray-200" style={{ width: "2.1%", height: "2.1%", top: "50.9%", left: "25%", opacity: 0.9, boxShadow: "0 0 3px rgba(255,255,255,0.4)" }}></div>
-        <div className="absolute rounded-full bg-gray-300" style={{ width: "3.6%", height: "3.6%", top: "48.7%", left: "-95%", opacity: 0.95, boxShadow: "0 0 4px rgba(255,255,255,0.5)" }}></div>
+        {/* Larger moon chunks scattered through rings - darker dusk appearance */}
+        <div className="absolute rounded-full bg-gray-500" style={{ width: "2.7%", height: "2.7%", top: "49.3%", left: "37%", opacity: 0.7, boxShadow: "0 0 3px rgba(200,200,255,0.3)" }}></div>
+        <div className="absolute rounded-full bg-gray-600" style={{ width: "4%", height: "4%", top: "48.2%", left: "-38%", opacity: 0.8, boxShadow: "0 0 4px rgba(200,200,255,0.4)" }}></div>
+        <div className="absolute rounded-full bg-gray-500" style={{ width: "2.2%", height: "2.2%", top: "50.7%", left: "72%", opacity: 0.7, boxShadow: "0 0 3px rgba(200,200,255,0.3)" }}></div>
+        <div className="absolute rounded-full bg-gray-600" style={{ width: "3.2%", height: "3.2%", top: "49.5%", left: "-79%", opacity: 0.75, boxShadow: "0 0 4px rgba(200,200,255,0.4)" }}></div>
+        <div className="absolute rounded-full bg-gray-500" style={{ width: "1.8%", height: "1.8%", top: "50.3%", left: "-55%", opacity: 0.7, boxShadow: "0 0 2px rgba(200,200,255,0.25)" }}></div>
+        <div className="absolute rounded-full bg-gray-600" style={{ width: "2.5%", height: "2.5%", top: "49.1%", left: "93%", opacity: 0.75, boxShadow: "0 0 3px rgba(200,200,255,0.3)" }}></div>
+        <div className="absolute rounded-full bg-gray-500" style={{ width: "2.1%", height: "2.1%", top: "50.9%", left: "25%", opacity: 0.7, boxShadow: "0 0 3px rgba(200,200,255,0.3)" }}></div>
+        <div className="absolute rounded-full bg-gray-600" style={{ width: "3.6%", height: "3.6%", top: "48.7%", left: "-95%", opacity: 0.8, boxShadow: "0 0 4px rgba(200,200,255,0.4)" }}></div>
         
-        {/* Earth's shadow cast on rings */}
+        {/* Subtle orange/amber highlight on chunks catching "sunset" light */}
+        <div className="absolute rounded-full bg-amber-700" style={{ width: "2.3%", height: "2.3%", top: "48.5%", left: "52%", opacity: 0.5, boxShadow: "0 0 3px rgba(255,170,100,0.3)" }}></div>
+        <div className="absolute rounded-full bg-amber-600" style={{ width: "1.9%", height: "1.9%", top: "49.2%", left: "-45%", opacity: 0.45, boxShadow: "0 0 2px rgba(255,170,100,0.25)" }}></div>
+        
+        {/* Earth's shadow cast on rings - deeper shadow for dusk */}
         <div className="absolute" style={{
-          width: "170%",
-          height: "15vh",
-          top: "45%", 
-          left: "-35%",
-          background: "radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.2) 60%, transparent 90%)",
+          width: "180%",
+          height: "16vh",
+          top: "44%", 
+          left: "-38%",
+          background: "radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.3) 60%, transparent 90%)",
           transform: "translateY(-50%) rotate(15deg)",
           borderRadius: "50%",
-          opacity: 0.7,
+          opacity: 0.8,
           pointerEvents: "none",
-          filter: "blur(3px)"
+          filter: "blur(4px)"
         }}></div>
       </div>
       
