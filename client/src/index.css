@@ -134,7 +134,7 @@
 .shimmer-text {
   font-family: "Lens", "Orbitron", "Arial", sans-serif;
   color: #a0a0a0;
-  letter-spacing: 0.6em; /* Increased letter spacing */
+  letter-spacing: 1.2em; /* Doubled letter spacing */
   text-transform: uppercase;
   position: relative;
   z-index: 1;
