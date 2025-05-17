@@ -21,10 +21,11 @@
 .tall-thin-title {
   font-stretch: condensed;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.1em;
   line-height: 0.9;
-  transform: scaleY(1.5) scaleX(0.75);
+  transform: scaleY(1.6) scaleX(0.65);
   transform-origin: center;
+  white-space: nowrap;
 }
 
 @layer base {

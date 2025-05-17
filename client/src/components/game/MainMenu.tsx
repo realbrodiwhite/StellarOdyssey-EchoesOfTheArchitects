@@ -105,28 +105,28 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       
 
       
-      {/* Menu buttons */}
+      {/* Menu buttons - scaled to be 20% of title size */}
       <motion.div
-        className="flex flex-col sm:flex-row gap-2 sm:gap-4 z-10 w-full max-w-[80px] sm:max-w-[250px] justify-center px-2 mt-2 scale-75"
+        className="flex flex-col sm:flex-row gap-2 sm:gap-4 z-10 w-full max-w-[80px] sm:max-w-[250px] justify-center px-2 mt-4 scale-50"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
       >
-        <div className="game-button text-[6px] py-0.5 px-1.5 whitespace-nowrap" onClick={handleNewGame}>
+        <div className="game-button text-[4px] py-0.5 px-1.5 whitespace-nowrap" onClick={handleNewGame}>
           New Game
         </div>
         
         {showContinue && (
-          <div className="game-button text-[6px] py-0.5 px-1.5 whitespace-nowrap outline" onClick={handleLoadGame}>
+          <div className="game-button text-[4px] py-0.5 px-1.5 whitespace-nowrap outline" onClick={handleLoadGame}>
             Load Game
           </div>
         )}
         
-        <div className="game-button text-[6px] py-0.5 px-1.5 whitespace-nowrap outline" onClick={() => setShowPuzzleSelector(true)}>
+        <div className="game-button text-[4px] py-0.5 px-1.5 whitespace-nowrap outline" onClick={() => setShowPuzzleSelector(true)}>
           Puzzle Showcase
         </div>
         
-        <div className="game-button text-[6px] py-0.5 px-1.5 whitespace-nowrap ghost" onClick={() => setShowSettings(true)}>
+        <div className="game-button text-[4px] py-0.5 px-1.5 whitespace-nowrap ghost" onClick={() => setShowSettings(true)}>
           Settings
         </div>
       </motion.div>
