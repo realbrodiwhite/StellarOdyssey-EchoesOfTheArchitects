@@ -122,10 +122,6 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           </div>
         )}
         
-        <div className="game-button outline text-xs py-1 px-3 whitespace-nowrap" onClick={() => setShowPuzzleSelector(true)}>
-          Puzzle Showcase
-        </div>
-        
         <div className="game-button ghost text-xs py-1 px-3 whitespace-nowrap" onClick={() => setShowSettings(true)}>
           Settings
         </div>
