@@ -103,37 +103,30 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </motion.div>
       
-      <motion.div
-        className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-10 md:mb-12 text-center max-w-xs sm:max-w-sm md:max-w-md z-10 px-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-      >
-        A space-themed adventure for critical thinkers and strategists
-      </motion.div>
+
       
       {/* Menu buttons */}
       <motion.div
-        className="flex flex-col sm:flex-row gap-4 sm:gap-8 z-10 w-full max-w-[150px] sm:max-w-[500px] justify-center px-4 mt-6"
+        className="flex flex-col sm:flex-row gap-3 sm:gap-6 z-10 w-full max-w-[130px] sm:max-w-[400px] justify-center px-4 mt-3"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
       >
-        <div className="game-button text-[10px] py-1 px-3 whitespace-nowrap" onClick={handleNewGame}>
+        <div className="game-button text-[8px] py-0.5 px-2 whitespace-nowrap" onClick={handleNewGame}>
           New Game
         </div>
         
         {showContinue && (
-          <div className="game-button text-[10px] py-1 px-3 whitespace-nowrap outline" onClick={handleLoadGame}>
+          <div className="game-button text-[8px] py-0.5 px-2 whitespace-nowrap outline" onClick={handleLoadGame}>
             Load Game
           </div>
         )}
         
-        <div className="game-button text-[10px] py-1 px-3 whitespace-nowrap outline" onClick={() => setShowPuzzleSelector(true)}>
+        <div className="game-button text-[8px] py-0.5 px-2 whitespace-nowrap outline" onClick={() => setShowPuzzleSelector(true)}>
           Puzzle Showcase
         </div>
         
-        <div className="game-button text-[10px] py-1 px-3 whitespace-nowrap ghost" onClick={() => setShowSettings(true)}>
+        <div className="game-button text-[8px] py-0.5 px-2 whitespace-nowrap ghost" onClick={() => setShowSettings(true)}>
           Settings
         </div>
       </motion.div>
