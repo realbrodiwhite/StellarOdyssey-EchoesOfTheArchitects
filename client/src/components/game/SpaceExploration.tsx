@@ -1770,30 +1770,38 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
           selectedTarget={selectedTarget}
         />
         
-        {/* Navigation UI - Button for star map */}
+        {/* EVE-like Navigation Interface Button */}
         <div
           style={{
             position: 'absolute',
             bottom: '20px',
             right: '20px',
-            backgroundColor: 'rgba(30, 60, 100, 0.7)',
+            backgroundColor: 'rgba(20, 30, 50, 0.85)',
             color: 'white',
-            padding: '15px',
-            borderRadius: '50%',
-            width: '60px',
-            height: '60px',
+            padding: '12px',
+            borderRadius: '6px',
+            width: 'auto',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '24px',
+            fontSize: '14px',
             touchAction: 'none',
             userSelect: 'none',
             cursor: 'pointer',
-            boxShadow: '0 0 15px rgba(100, 200, 255, 0.8)'
+            border: '1px solid rgba(100, 180, 255, 0.4)',
+            boxShadow: '0 0 10px rgba(60, 120, 200, 0.5)'
           }}
           onClick={onNavigate}
         >
-          <span style={{ fontWeight: 'bold' }}>N</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ 
+              width: '16px', 
+              height: '16px', 
+              borderRadius: '50%', 
+              backgroundColor: 'rgba(100, 180, 255, 0.8)' 
+            }}></div>
+            <span style={{ fontWeight: 'bold' }}>Navigation Console</span>
+          </div>
         </div>
       </Html>
       
