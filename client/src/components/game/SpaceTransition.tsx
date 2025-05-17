@@ -190,9 +190,9 @@ const IntroCamera = ({ onAnimationComplete }: { onAnimationComplete: () => void 
   const [blackoutPhase, setBlackoutPhase] = useState(false);
   const [awakeningPhase, setAwakeningPhase] = useState(false);
   
-  // Reference for overlay elements
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const flashRef = useRef<HTMLDivElement>(null);
+  // References for dynamically created elements
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  const flashRef = useRef<HTMLDivElement | null>(null);
   
   // Sound effect reference
   const impactSoundRef = useRef<HTMLAudioElement | null>(null);
@@ -206,34 +206,90 @@ const IntroCamera = ({ onAnimationComplete }: { onAnimationComplete: () => void 
     let time = 0;
     const animationDuration = 8; // seconds - matches new ship animation duration
     
-    // Create overlay elements for dramatic effect
-    const blackOverlay = document.createElement('div');
-    blackOverlay.style.position = 'absolute';
-    blackOverlay.style.top = '0';
-    blackOverlay.style.left = '0';
-    blackOverlay.style.width = '100%';
-    blackOverlay.style.height = '100%';
-    blackOverlay.style.backgroundColor = 'black';
-    blackOverlay.style.opacity = '0';
-    blackOverlay.style.transition = 'opacity 0.5s';
-    blackOverlay.style.zIndex = '100';
-    document.querySelector('.intro-scene-3d')?.appendChild(blackOverlay);
+    // Instead of direct DOM manipulation, we'll track state for overlay effects
+    const container = document.querySelector('.intro-scene-3d');
+    let blackoutActive = false;
+    let flashActive = false;
     
-    // Flash element for "eyes opening" effect
-    const flashElement = document.createElement('div');
-    flashElement.style.position = 'absolute';
-    flashElement.style.top = '0';
-    flashElement.style.left = '0';
-    flashElement.style.width = '100%';
-    flashElement.style.height = '100%';
-    flashElement.style.backgroundColor = 'white';
-    flashElement.style.opacity = '0';
-    flashElement.style.zIndex = '101';
-    document.querySelector('.intro-scene-3d')?.appendChild(flashElement);
+    // Create a function to handle blackout effect
+    const setBlackout = (active: boolean) => {
+      if (!container) return;
+      
+      if (active && !blackoutActive) {
+        // Add blackout overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'blackout-overlay';
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'black';
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.5s';
+        overlay.style.zIndex = '100';
+        container.appendChild(overlay);
+        
+        // Trigger fade in
+        setTimeout(() => {
+          overlay.style.opacity = '1';
+        }, 10);
+        
+        blackoutActive = true;
+      } else if (!active && blackoutActive) {
+        // Remove blackout overlay
+        const overlay = document.getElementById('blackout-overlay');
+        if (overlay) {
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            overlay.remove();
+          }, 500);
+        }
+        blackoutActive = false;
+      }
+    };
     
-    // Store references
-    overlayRef.current = blackOverlay;
-    flashRef.current = flashElement;
+    // Create a function to handle flash effect
+    const triggerFlash = () => {
+      if (!container || flashActive) return;
+      
+      // Add flash overlay
+      const flash = document.createElement('div');
+      flash.id = 'flash-overlay';
+      flash.style.position = 'absolute';
+      flash.style.top = '0';
+      flash.style.left = '0';
+      flash.style.width = '100%';
+      flash.style.height = '100%';
+      flash.style.backgroundColor = 'white';
+      flash.style.opacity = '0';
+      flash.style.transition = 'opacity 0.15s';
+      flash.style.zIndex = '101';
+      container.appendChild(flash);
+      
+      // Sequence of flashes
+      flashActive = true;
+      
+      // First flash
+      setTimeout(() => {
+        flash.style.opacity = '1';
+        setTimeout(() => {
+          flash.style.opacity = '0';
+          // Second flash
+          setTimeout(() => {
+            flash.style.opacity = '0.8';
+            setTimeout(() => {
+              flash.style.opacity = '0';
+              // Clean up
+              setTimeout(() => {
+                flash.remove();
+                flashActive = false;
+              }, 500);
+            }, 100);
+          }, 200);
+        }, 150);
+      }, 10);
+    };
     
     const animateCamera = () => {
       time += 0.016; // ~60fps
