@@ -120,7 +120,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           <div className="text-[3.5rem] sm:text-[4.5rem] md:text-[5.5rem] lg:text-[6.3rem] title-container flex flex-row items-center justify-center">
             <span className="space-text">STELLAR</span><span className="forest-green-text">ODYSSEY</span>
           </div>
-          <div className="text-[0.45rem] sm:text-[0.585rem] md:text-[0.72rem] lg:text-[0.9rem] tracking-[2.7em] w-4/5 mx-auto text-center font-semibold shimmer-text mt-0">ECHOES OF THE ARCHITECT</div>
+          <div className="text-[0.45rem] sm:text-[0.585rem] md:text-[0.72rem] lg:text-[0.9rem] tracking-[2.7em] w-4/5 mx-auto text-center font-semibold shimmer-text mt-0">ECHOES OF THE ARCHITECTS</div>
         </div>
       </div>
       
