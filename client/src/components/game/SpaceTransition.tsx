@@ -99,22 +99,16 @@ const SpaceshipModel = ({
         </group>
       )}
       
-      {/* Engine thruster effects */}
+      {/* Engine glow effects - removed yellow arrow/thrusters */}
       <group ref={thrusterRef} position={[0, 0, 2.5]}>
-        {/* Engine glow - yellow point light */}
+        {/* Engine glow - blue point light */}
         <pointLight
           ref={engineGlowRef}
           position={[0, 0, 0]}
           distance={5}
-          intensity={1.2}
-          color="#ffaa00"
+          intensity={0.8}
+          color="#5577FF"
         />
-        
-        {/* Engine exhaust cone */}
-        <mesh position={[0, 0, 1]} rotation={[0, 0, 0]}>
-          <coneGeometry args={[0.5, 3, 16]} />
-          <meshBasicMaterial color="#ffaa44" transparent opacity={0.7} />
-        </mesh>
       </group>
     </group>
   );
