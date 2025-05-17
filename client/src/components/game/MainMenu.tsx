@@ -114,8 +114,8 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </div>
       
-      {/* Earth with millions of moon debris pieces forming rings */}
-      <div className="absolute z-5" style={{ 
+      {/* Realistic Earth with millions of moon debris pieces forming rings - integrated with star rotation */}
+      <div className="absolute z-5 earth-container" style={{ 
         bottom: "35vh",
         left: "28%", 
         transform: "translateX(-50%)",
@@ -124,253 +124,464 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         opacity: 1,
         filter: "drop-shadow(0 0 12px rgba(120,180,255,0.3))"
       }}>
-        {/* Earth body - darker dusk appearance */}
-        <div className="absolute rounded-full" style={{ 
+        {/* High-detail realistic Earth body with photo-realistic textures */}
+        <div className="absolute rounded-full overflow-hidden" style={{ 
           width: "100%", 
           height: "100%",
-          background: "radial-gradient(circle at 35% 35%, #2a6b9e 0%, #1b5275 25%, #0e3a53 50%, #06243e 75%, #031626 100%)",
-          boxShadow: "inset -5px -5px 10px rgba(0,0,0,0.7), 0 0 5px rgba(80,140,200,0.3)"
+          background: "radial-gradient(circle at 35% 35%, #1a5b8e 0%, #0b4265 25%, #063143 50%, #05233e 75%, #021626 100%)",
+          boxShadow: "inset -5px -5px 10px rgba(0,0,0,0.8), 0 0 8px rgba(80,140,200,0.3)",
+          transform: "rotate(-23.5deg)", // Earth's axial tilt
+          position: "relative"
         }}>
-          {/* North America - darker dusk colors */}
+          {/* Base realistic ocean texture with depth variations */}
           <div className="absolute" style={{
-            top: "20%",
-            left: "20%",
-            width: "30%",
-            height: "25%",
-            background: "rgba(45,85,35,0.7)",
-            borderRadius: "40% 60% 70% 30% / 60% 40% 60% 40%"
+            width: "100%",
+            height: "100%",
+            background: "radial-gradient(circle at 40% 40%, #14395c 0%, #0c2e4a 35%, #082235 65%, #051a2c 100%)",
+            opacity: 0.95
           }}></div>
           
-          {/* South America - darker dusk colors */}
+          {/* Detailed land mass texture base layer */}
           <div className="absolute" style={{
-            top: "45%",
+            width: "100%",
+            height: "100%",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200' preserveAspectRatio='none'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E")`,
+            opacity: 0.9
+          }}></div>
+          
+          {/* North America - highly detailed shape */}
+          <div className="absolute" style={{
+            top: "18%",
+            left: "22%",
+            width: "28%",
+            height: "22%",
+            background: "rgba(40,75,35,0.7)",
+            clipPath: "polygon(10% 0%, 30% 5%, 50% 0%, 70% 5%, 85% 15%, 95% 30%, 100% 45%, 90% 60%, 80% 75%, 70% 85%, 55% 95%, 40% 100%, 25% 90%, 15% 75%, 5% 60%, 0% 40%, 5% 20%)",
+            boxShadow: "inset 1px 1px 3px rgba(255,255,255,0.1)",
+            opacity: 0.8
+          }}>
+            {/* North America texture detail */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E")`,
+              opacity: 0.7
+            }}></div>
+          </div>
+          
+          {/* South America - highly detailed shape */}
+          <div className="absolute" style={{
+            top: "42%",
             left: "35%",
             width: "15%",
             height: "25%",
-            background: "rgba(55,95,45,0.7)",
-            borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%"
-          }}></div>
-          
-          {/* Europe - darker dusk colors */}
-          <div className="absolute" style={{
-            top: "25%",
-            left: "52%",
-            width: "15%",
-            height: "15%",
-            background: "rgba(40,80,35,0.7)",
-            borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%"
-          }}></div>
-          
-          {/* Africa - darker dusk colors */}
-          <div className="absolute" style={{
-            top: "40%",
-            left: "55%",
-            width: "22%",
-            height: "25%",
-            background: "rgba(90,70,40,0.7)",
-            borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%"
-          }}></div>
-          
-          {/* Asia - darker dusk colors */}
-          <div className="absolute" style={{
-            top: "20%",
-            left: "65%",
-            width: "30%",
-            height: "25%",
             background: "rgba(50,90,40,0.7)",
-            borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%"
-          }}></div>
+            clipPath: "polygon(30% 0%, 60% 5%, 80% 15%, 100% 30%, 95% 50%, 90% 70%, 75% 85%, 60% 100%, 40% 95%, 20% 85%, 0% 70%, 5% 40%, 15% 20%)",
+            boxShadow: "inset 1px 1px 3px rgba(255,255,255,0.1)",
+            opacity: 0.8
+          }}>
+            {/* South America texture detail */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E")`,
+              opacity: 0.7
+            }}></div>
+          </div>
           
-          {/* Australia - darker dusk colors */}
+          {/* Europe - highly detailed shape */}
+          <div className="absolute" style={{
+            top: "22%",
+            left: "52%",
+            width: "13%",
+            height: "12%",
+            background: "rgba(45,85,40,0.7)",
+            clipPath: "polygon(0% 20%, 20% 0%, 40% 5%, 65% 15%, 85% 10%, 100% 30%, 90% 50%, 80% 70%, 60% 85%, 40% 100%, 20% 90%, 5% 60%)",
+            boxShadow: "inset 1px 1px 3px rgba(255,255,255,0.1)",
+            opacity: 0.8
+          }}>
+            {/* Europe texture detail */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E")`,
+              opacity: 0.7
+            }}></div>
+          </div>
+          
+          {/* Africa - highly detailed shape */}
+          <div className="absolute" style={{
+            top: "35%",
+            left: "54%",
+            width: "20%",
+            height: "28%",
+            background: "rgba(80,65,40,0.7)",
+            clipPath: "polygon(20% 0%, 50% 5%, 80% 0%, 100% 20%, 90% 40%, 95% 60%, 85% 80%, 65% 100%, 45% 95%, 25% 85%, 10% 65%, 0% 40%, 5% 20%)",
+            boxShadow: "inset 1px 1px 3px rgba(255,255,255,0.1)",
+            opacity: 0.8
+          }}>
+            {/* Africa texture detail */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E")`,
+              opacity: 0.7
+            }}></div>
+          </div>
+          
+          {/* Asia - highly detailed shape */}
+          <div className="absolute" style={{
+            top: "18%",
+            left: "65%",
+            width: "28%",
+            height: "26%",
+            background: "rgba(55,85,45,0.7)",
+            clipPath: "polygon(0% 35%, 10% 15%, 25% 0%, 50% 5%, 70% 15%, 90% 10%, 100% 30%, 95% 50%, 85% 70%, 70% 85%, 50% 100%, 30% 85%, 10% 65%)",
+            boxShadow: "inset 1px 1px 3px rgba(255,255,255,0.1)",
+            opacity: 0.8
+          }}>
+            {/* Asia texture detail */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E")`,
+              opacity: 0.7
+            }}></div>
+          </div>
+          
+          {/* Australia - highly detailed shape */}
           <div className="absolute" style={{
             top: "60%",
             left: "75%",
-            width: "15%",
-            height: "15%",
-            background: "rgba(100,80,45,0.7)",
-            borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%"
-          }}></div>
+            width: "14%",
+            height: "14%",
+            background: "rgba(95,75,45,0.7)",
+            clipPath: "polygon(15% 0%, 40% 5%, 65% 0%, 90% 15%, 100% 40%, 90% 65%, 75% 85%, 50% 100%, 25% 90%, 10% 70%, 0% 40%, 5% 20%)",
+            boxShadow: "inset 1px 1px 3px rgba(255,255,255,0.1)",
+            opacity: 0.8
+          }}>
+            {/* Australia texture detail */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E")`,
+              opacity: 0.7
+            }}></div>
+          </div>
           
-          {/* North pole - darker dusk colors */}
+          {/* Antarctica - highly detailed ice cap */}
           <div className="absolute" style={{
-            top: "5%",
+            bottom: "2%",
+            left: "30%",
+            width: "40%",
+            height: "15%",
+            background: "linear-gradient(to bottom, rgba(180,200,220,0.6) 0%, rgba(210,230,250,0.7) 100%)",
+            clipPath: "ellipse(50% 50% at 50% 70%)",
+            boxShadow: "inset 0px -2px 6px rgba(255,255,255,0.3)",
+            opacity: 0.8
+          }}>
+            {/* Antarctica ice texture */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E")`,
+              opacity: 0.8
+            }}></div>
+          </div>
+          
+          {/* Arctic ice cap */}
+          <div className="absolute" style={{
+            top: "2%",
             left: "30%",
             width: "40%",
             height: "12%",
-            background: "rgba(180,200,220,0.7)",
-            borderRadius: "50%"
-          }}></div>
+            background: "linear-gradient(to top, rgba(180,200,220,0.6) 0%, rgba(210,230,250,0.7) 100%)",
+            clipPath: "ellipse(50% 50% at 50% 30%)",
+            boxShadow: "inset 0px 2px 6px rgba(255,255,255,0.3)",
+            opacity: 0.8
+          }}>
+            {/* Arctic ice texture */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E")`,
+              opacity: 0.8
+            }}></div>
+          </div>
           
-          {/* South pole - darker dusk colors */}
-          <div className="absolute" style={{
-            bottom: "5%",
-            left: "30%",
-            width: "40%",
-            height: "15%",
-            background: "rgba(180,200,220,0.7)",
-            borderRadius: "50%"
-          }}></div>
-          
-          {/* Cloud formations - dusk appearance */}
+          {/* Realistic cloud systems - low pressure systems */}
           <div className="absolute" style={{
             top: "15%",
-            left: "10%", 
-            width: "30%",
-            height: "10%",
-            background: "rgba(200,200,220,0.3)",
-            borderRadius: "60% 40% 60% 40% / 40% 60% 40% 60%",
-            filter: "blur(1px)"
-          }}></div>
+            left: "15%", 
+            width: "40%",
+            height: "15%",
+            background: "rgba(200,200,220,0.25)",
+            clipPath: "url(#cloud-path-1)",
+            filter: "blur(2px)",
+            opacity: 0.7,
+            animation: "cloudDrift1 120s linear infinite"
+          }}>
+            <svg width="0" height="0">
+              <defs>
+                <clipPath id="cloud-path-1">
+                  <path d="M10,50 Q20,20 40,30 Q60,5 80,20 Q95,10 100,40 Q85,65 60,60 Q40,80 20,65 Q5,70 10,50 Z"></path>
+                </clipPath>
+              </defs>
+            </svg>
+            {/* Cloud texture */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`,
+              opacity: 0.6
+            }}></div>
+          </div>
           
+          {/* Realistic cloud systems - high altitude cirrus */}
           <div className="absolute" style={{
-            top: "40%",
-            left: "48%", 
-            width: "30%",
-            height: "10%",
-            background: "rgba(200,200,220,0.3)",
-            borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%",
-            filter: "blur(1px)"
-          }}></div>
+            top: "30%",
+            left: "45%", 
+            width: "35%",
+            height: "15%",
+            background: "rgba(200,200,220,0.2)",
+            clipPath: "url(#cloud-path-2)",
+            filter: "blur(2px)",
+            opacity: 0.6,
+            animation: "cloudDrift2 150s linear infinite"
+          }}>
+            <svg width="0" height="0">
+              <defs>
+                <clipPath id="cloud-path-2">
+                  <path d="M5,40 Q15,20 35,30 Q55,10 75,25 Q90,15 95,35 Q80,50 60,45 Q40,65 20,55 Q5,60 5,40 Z"></path>
+                </clipPath>
+              </defs>
+            </svg>
+            {/* Cloud texture */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`,
+              opacity: 0.6
+            }}></div>
+          </div>
           
+          {/* Realistic cloud systems - storm system */}
           <div className="absolute" style={{
-            top: "70%",
-            left: "35%", 
-            width: "25%",
-            height: "8%",
-            background: "rgba(200,200,220,0.3)",
-            borderRadius: "40% 60% 40% 60% / 60% 40% 60% 40%",
-            filter: "blur(1px)"
-          }}></div>
+            top: "60%",
+            left: "30%", 
+            width: "45%",
+            height: "18%",
+            background: "rgba(200,200,220,0.25)",
+            clipPath: "url(#cloud-path-3)",
+            filter: "blur(2px)",
+            opacity: 0.7,
+            animation: "cloudDrift3 140s linear infinite"
+          }}>
+            <svg width="0" height="0">
+              <defs>
+                <clipPath id="cloud-path-3">
+                  <path d="M15,45 Q25,15 45,25 Q70,5 85,25 Q100,15 100,45 Q85,70 65,60 Q45,80 25,65 Q5,75 15,45 Z"></path>
+                </clipPath>
+              </defs>
+            </svg>
+            {/* Cloud texture */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`,
+              opacity: 0.6
+            }}></div>
+          </div>
           
-          {/* Sunset highlight on one edge */}
+          {/* Realistic cloud systems - thin wispy clouds */}
+          <div className="absolute" style={{
+            top: "10%",
+            left: "60%", 
+            width: "30%",
+            height: "12%",
+            background: "rgba(200,200,220,0.15)",
+            clipPath: "url(#cloud-path-4)",
+            filter: "blur(1px)",
+            opacity: 0.5,
+            animation: "cloudDrift4 160s linear infinite"
+          }}>
+            <svg width="0" height="0">
+              <defs>
+                <clipPath id="cloud-path-4">
+                  <path d="M5,30 Q25,10 45,25 Q65,5 85,15 Q95,35 75,45 Q55,25 35,45 Q15,35 5,30 Z"></path>
+                </clipPath>
+              </defs>
+            </svg>
+            {/* Cloud texture */}
+            <div className="absolute w-full h-full" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`,
+              opacity: 0.5
+            }}></div>
+          </div>
+          
+          {/* Sunset highlight on one edge - more detailed with glow */}
           <div className="absolute" style={{
             width: "100%", 
             height: "100%",
-            background: "linear-gradient(130deg, rgba(255,140,80,0.2) 0%, transparent 30%)",
+            background: "linear-gradient(130deg, rgba(255,140,80,0.2) 0%, rgba(255,140,80,0.1) 15%, transparent 30%)",
             borderRadius: "50%"
           }}></div>
           
-          {/* Atmosphere glow - dusk appearance */}
+          {/* Atmospheric refraction effect at edges */}
           <div className="absolute" style={{
-            width: "120%", 
-            height: "120%",
-            top: "-10%",
-            left: "-10%",
-            background: "radial-gradient(circle at center, transparent 50%, rgba(90,140,200,0.1) 75%, rgba(90,140,200,0.15) 90%, rgba(90,140,200,0.1) 100%)",
-            borderRadius: "50%"
+            width: "103%", 
+            height: "103%",
+            top: "-1.5%",
+            left: "-1.5%",
+            background: "radial-gradient(circle at center, transparent 85%, rgba(120,180,255,0.2) 95%, rgba(140,200,255,0.3) 100%)",
+            borderRadius: "50%",
+            filter: "blur(1px)"
+          }}></div>
+          
+          {/* Realistic atmospheric glow - multi-layered for depth */}
+          <div className="absolute" style={{
+            width: "125%", 
+            height: "125%",
+            top: "-12.5%",
+            left: "-12.5%",
+            background: "radial-gradient(circle at center, transparent 60%, rgba(80,130,200,0.05) 75%, rgba(90,140,200,0.1) 85%, rgba(100,150,210,0.15) 95%, rgba(80,130,200,0.05) 100%)",
+            borderRadius: "50%",
+            opacity: 0.9
+          }}></div>
+          
+          {/* Outer atmospheric glow for realism */}
+          <div className="absolute" style={{
+            width: "150%", 
+            height: "150%",
+            top: "-25%",
+            left: "-25%",
+            background: "radial-gradient(circle at center, transparent 75%, rgba(60,110,180,0.03) 85%, rgba(70,120,190,0.06) 95%, rgba(50,100,170,0.02) 100%)",
+            borderRadius: "50%",
+            opacity: 0.7
           }}></div>
         </div>
         
-        {/* Outer ring with dense debris pattern - darker dusk appearance */}
+        {/* Ultra-realistic outer ring with high-detail debris pattern */}
         <div className="absolute" style={{
-          width: "300%",
-          height: "6vh",
+          width: "320%",
+          height: "7vh",
           top: "50%",
-          left: "-100%",
+          left: "-110%",
           transform: "translateY(-50%) rotate(15deg)",
           borderRadius: "50%",
           overflow: "hidden",
-          opacity: 0.8
+          opacity: 0.85,
+          filter: "drop-shadow(0 0 8px rgba(100,120,200,0.1))"
         }}>
-          {/* Dense debris field base - darker appearance */}
+          {/* High-detail debris field base with realistic gradient */}
           <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(150,150,170,0.2) 30%, rgba(180,180,200,0.45) 50%, rgba(150,150,170,0.2) 70%, rgba(0,0,0,0) 100%)",
-            boxShadow: "0 0 10px rgba(200,200,255,0.2)"
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(140,145,165,0.2) 25%, rgba(170,175,195,0.45) 50%, rgba(140,145,165,0.2) 75%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 12px rgba(180,190,230,0.15)"
           }}></div>
           
-          {/* Millions of tiny debris particles in outer ring - dusk appearance */}
+          {/* Intricate debris texture overlay for enhanced realism */}
+          <div className="absolute w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='100' viewBox='0 0 400 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E")`,
+            opacity: 0.7
+          }}></div>
+          
+          {/* Complex dust pattern to simulate millions of tiny particles */}
+          <div className="absolute w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100' viewBox='0 0 200 100'%3E%3Cfilter id='starfield'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 9 -4 0 0 0 9 -4 0 0 0 9 -4 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23starfield)' opacity='0.3'/%3E%3C/svg%3E")`,
+            opacity: 0.4
+          }}></div>
+          
+          {/* Larger debris particles in outer ring - precisely positioned */}
           <div className="absolute w-full h-full">
-            {Array.from({ length: 50 }).map((_, i) => (
+            {Array.from({ length: 80 }).map((_, i) => (
               <div 
                 key={`outer-debris-${i}`}
                 className="absolute rounded-full"
                 style={{
-                  width: `${Math.random() * 0.3 + 0.1}vh`,
-                  height: `${Math.random() * 0.3 + 0.1}vh`,
+                  width: `${Math.random() * 0.35 + 0.1}vh`,
+                  height: `${Math.random() * 0.35 + 0.1}vh`,
                   top: `${Math.random() * 100}%`,
                   left: `${Math.random() * 100}%`,
                   opacity: 0.5 + Math.random() * 0.3,
-                  background: "rgba(180,180,200,0.7)",
-                  boxShadow: "0 0 2px rgba(200,200,255,0.3)"
+                  background: `rgba(${170 + Math.floor(Math.random() * 20)},${170 + Math.floor(Math.random() * 20)},${190 + Math.floor(Math.random() * 20)},0.7)`,
+                  boxShadow: `0 0 ${Math.random() * 2 + 1}px rgba(200,200,255,0.3)`,
+                  transform: `rotate(${Math.random() * 360}deg)`
                 }}
               />
             ))}
           </div>
         </div>
         
-        {/* Middle dense ring - darker dusk appearance */}
+        {/* Ultra-detailed middle ring with complex visual layers */}
         <div className="absolute" style={{
-          width: "240%",
-          height: "4vh",
+          width: "260%",
+          height: "4.5vh",
           top: "49%",
-          left: "-70%",
+          left: "-80%",
           transform: "translateY(-50%) rotate(-20deg)",
           borderRadius: "50%",
           overflow: "hidden",
-          opacity: 0.85
+          opacity: 0.9,
+          filter: "drop-shadow(0 0 6px rgba(100,120,200,0.1))"
         }}>
-          {/* Dense debris field base - darker appearance */}
+          {/* Photorealistic debris field base layer */}
           <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(160,160,180,0.3) 30%, rgba(190,190,210,0.55) 50%, rgba(160,160,180,0.3) 70%, rgba(0,0,0,0) 100%)",
-            boxShadow: "0 0 8px rgba(200,200,255,0.2)"
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(150,155,175,0.3) 30%, rgba(180,185,205,0.55) 50%, rgba(150,155,175,0.3) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 10px rgba(180,190,230,0.15)"
           }}></div>
           
-          {/* Sunset highlight on part of the ring */}
+          {/* Complex dust pattern with radial distribution */}
           <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 40%, rgba(255,140,80,0.15) 50%, rgba(0,0,0,0) 60%)",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100' viewBox='0 0 200 100'%3E%3Cfilter id='dustfield'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 9 -4 0 0 0 9 -4 0 0 0 9 -4 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23dustfield)' opacity='0.2'/%3E%3C/svg%3E")`,
+            opacity: 0.5
           }}></div>
           
-          {/* Millions of tiny debris particles in middle ring - dusk appearance */}
+          {/* Sunset highlight creating realistic light refraction on particles */}
+          <div className="absolute w-full h-full" style={{
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 35%, rgba(255,160,100,0.15) 50%, rgba(0,0,0,0) 65%)",
+            mixBlendMode: "color-dodge"
+          }}></div>
+          
+          {/* Precision-placed debris particles in middle ring with variation */}
           <div className="absolute w-full h-full">
-            {Array.from({ length: 70 }).map((_, i) => (
+            {Array.from({ length: 100 }).map((_, i) => (
               <div 
                 key={`middle-debris-${i}`}
-                className="absolute rounded-full"
+                className="absolute"
+                style={{
+                  width: `${Math.random() * 0.3 + 0.05}vh`,
+                  height: `${Math.random() * 0.3 + 0.05}vh`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  opacity: 0.6 + Math.random() * 0.3,
+                  background: `rgba(${170 + Math.floor(Math.random() * 20)},${170 + Math.floor(Math.random() * 20)},${190 + Math.floor(Math.random() * 20)},0.75)`,
+                  boxShadow: `0 0 ${Math.random() * 2 + 1}px rgba(200,200,255,0.25)`,
+                  borderRadius: Math.random() > 0.3 ? '50%' : `${Math.random() * 50 + 20}% ${Math.random() * 50 + 20}% ${Math.random() * 50 + 20}% ${Math.random() * 50 + 20}%`,
+                  transform: `rotate(${Math.random() * 360}deg)`
+                }}
+              />
+            ))}
+          </div>
+        </div>
+        
+        {/* Ultra-realistic inner ring with advanced optical effects */}
+        <div className="absolute" style={{
+          width: "180%",
+          height: "2.8vh",
+          top: "50.5%",
+          left: "-40%",
+          transform: "translateY(-50%) rotate(25deg)",
+          borderRadius: "50%",
+          overflow: "hidden",
+          opacity: 0.95,
+          filter: "drop-shadow(0 0 4px rgba(100,120,200,0.1))"
+        }}>
+          {/* High-density debris field base with enhanced realism */}
+          <div className="absolute w-full h-full" style={{
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(160,165,185,0.5) 30%, rgba(190,195,215,0.7) 50%, rgba(160,165,185,0.5) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 8px rgba(180,190,230,0.2)"
+          }}></div>
+          
+          {/* Fine dust texture for incredible detail */}
+          <div className="absolute w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100' viewBox='0 0 200 100'%3E%3Cfilter id='finedust'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 9 -4 0 0 0 9 -4 0 0 0 9 -4 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23finedust)' opacity='0.25'/%3E%3C/svg%3E")`,
+            opacity: 0.6
+          }}></div>
+          
+          {/* Micro-debris particles in inner ring - ultra high detail */}
+          <div className="absolute w-full h-full">
+            {Array.from({ length: 120 }).map((_, i) => (
+              <div 
+                key={`inner-debris-${i}`}
+                className="absolute"
                 style={{
                   width: `${Math.random() * 0.25 + 0.05}vh`,
                   height: `${Math.random() * 0.25 + 0.05}vh`,
                   top: `${Math.random() * 100}%`,
                   left: `${Math.random() * 100}%`,
-                  opacity: 0.6 + Math.random() * 0.3,
-                  background: "rgba(180,180,200,0.7)",
-                  boxShadow: "0 0 2px rgba(200,200,255,0.2)"
-                }}
-              />
-            ))}
-          </div>
-        </div>
-        
-        {/* Inner dense ring - darker dusk appearance */}
-        <div className="absolute" style={{
-          width: "160%",
-          height: "2vh",
-          top: "50.5%",
-          left: "-30%",
-          transform: "translateY(-50%) rotate(25deg)",
-          borderRadius: "50%",
-          overflow: "hidden",
-          opacity: 0.9
-        }}>
-          {/* Dense debris field base - darker appearance */}
-          <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(170,170,190,0.5) 30%, rgba(200,200,220,0.7) 50%, rgba(170,170,190,0.5) 70%, rgba(0,0,0,0) 100%)",
-            boxShadow: "0 0 6px rgba(200,200,255,0.3)"
-          }}></div>
-          
-          {/* Millions of tiny debris particles in inner ring - dusk appearance */}
-          <div className="absolute w-full h-full">
-            {Array.from({ length: 40 }).map((_, i) => (
-              <div 
-                key={`inner-debris-${i}`}
-                className="absolute rounded-full"
-                style={{
-                  width: `${Math.random() * 0.2 + 0.05}vh`,
-                  height: `${Math.random() * 0.2 + 0.05}vh`,
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  opacity: 0.7 + Math.random() * 0.2,
-                  background: "rgba(190,190,210,0.8)",
-                  boxShadow: "0 0 2px rgba(200,200,255,0.4)"
+                  opacity: 0.7 + Math.random() * 0.25,
+                  background: `rgba(${180 + Math.floor(Math.random() * 20)},${180 + Math.floor(Math.random() * 20)},${200 + Math.floor(Math.random() * 20)},0.8)`,
+                  boxShadow: `0 0 ${Math.random() * 1.5 + 0.5}px rgba(200,200,255,0.3)`,
+                  borderRadius: Math.random() > 0.4 ? '50%' : `${Math.random() * 50 + 30}% ${Math.random() * 50 + 30}% ${Math.random() * 50 + 30}% ${Math.random() * 50 + 30}%`,
+                  transform: `rotate(${Math.random() * 360}deg)`
                 }}
               />
             ))}

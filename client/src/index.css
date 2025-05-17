@@ -174,12 +174,71 @@
   animation: rotateStarField 480s linear infinite;
 }
 
+/* Earth container animation that syncs with star rotation */
+.earth-container {
+  transform-style: preserve-3d;
+  animation: rotateEarth 480s linear infinite;
+  z-index: 5;
+}
+
 @keyframes rotateStarField {
   0% {
     transform: rotateZ(0deg);
   }
   100% {
     transform: rotateZ(360deg);
+  }
+}
+
+@keyframes rotateEarth {
+  0% {
+    transform: translateX(-50%) rotateZ(0deg);
+  }
+  100% {
+    transform: translateX(-50%) rotateZ(360deg);
+  }
+}
+
+/* Cloud drift animations - each with different speeds */
+@keyframes cloudDrift1 {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes cloudDrift2 {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes cloudDrift3 {
+  0% {
+    transform: translateX(0%) translateY(0%);
+  }
+  50% {
+    transform: translateX(30%) translateY(5%);
+  }
+  100% {
+    transform: translateX(0%) translateY(0%);
+  }
+}
+
+@keyframes cloudDrift4 {
+  0% {
+    transform: translateX(0%) translateY(0%);
+  }
+  50% {
+    transform: translateX(-30%) translateY(-5%);
+  }
+  100% {
+    transform: translateX(0%) translateY(0%);
   }
 }
 
