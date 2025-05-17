@@ -192,7 +192,7 @@ const IntroCamera = ({ onAnimationComplete }: { onAnimationComplete: () => void 
   useEffect(() => {
     let frame: number;
     let time = 0;
-    const animationDuration = 17; // seconds
+    const animationDuration = 7; // seconds - matches ship animation duration
     
     const animateCamera = () => {
       time += 0.016; // ~60fps
@@ -201,46 +201,58 @@ const IntroCamera = ({ onAnimationComplete }: { onAnimationComplete: () => void 
         // Normalized time from 0 to 1 for the full animation
         const t = Math.min(time / animationDuration, 1);
         
-        // Camera flight path
-        if (t < 0.3) {
-          // Start with a view of the planet
-          const startT = t / 0.3;
+        // Camera flight path that complements the ship animation
+        if (t < 0.4) {
+          // First phase: wide establishing shot, seeing ship approach
+          const startT = t / 0.4;
+          const easeIn = Math.pow(startT, 2); // ease-in for smoother transition
+          
+          // Position camera to see ship come in from bottom right
           cameraRef.current.position.set(
-            50 + startT * -30, 
-            10 - startT * 10, 
-            30 - startT * 60
+            20 - easeIn * 15, // Move from right to center
+            15 - easeIn * 5, // Start higher and come down
+            0 // Stay at same depth
           );
-          cameraRef.current.lookAt(50, -40, -150);
-        } else if (t < 0.5) {
-          // Transition to spaceship view
-          const transT = (t - 0.3) / 0.2;
-          cameraRef.current.position.set(
-            20 - transT * 30, 
-            0, 
-            -30 - transT * 40
-          );
-          cameraRef.current.lookAt(-20 * transT, 0, -150);
-        } else if (t < 0.8) {
-          // Follow spaceship as it flies
-          const shipT = (t - 0.5) / 0.3;
-          const shipX = -10 - shipT * 80;
-          const shipZ = -70 - shipT * 300;
+          
+          // Look at where the ship will be entering
+          const lookX = 30 - easeIn * 30; // Look from right to center
+          const lookY = -20 + easeIn * 20; // Look from bottom to center
+          cameraRef.current.lookAt(lookX, lookY, -100);
+          
+        } else if (t < 0.6) {
+          // Second phase: hold on ship as it pauses in center
+          const holdT = (t - 0.4) / 0.2;
+          
+          // Subtle camera movement for visual interest
+          const wobble = Math.sin(holdT * Math.PI * 3) * 0.3;
           
           cameraRef.current.position.set(
-            shipX + 15 - shipT * 20, 
-            8 - shipT * 5, 
-            shipZ + 40 + shipT * 20
+            wobble, // Subtle sideway movement
+            10 + wobble, // Maintain height with subtle movement
+            0 // Maintain depth
           );
-          cameraRef.current.lookAt(shipX, 0, shipZ - 10);
+          
+          // Look directly at ship in center
+          cameraRef.current.lookAt(0, 0, -80);
+          
         } else {
-          // Final camera position focused on distant stars
-          const finalT = (t - 0.8) / 0.2;
+          // Third phase: follow ship as it accelerates left
+          const warpT = (t - 0.6) / 0.4;
+          const easeOut = Math.pow(warpT, 2); // Quadratic ease-out
+          
+          // Calculate ship position during warp
+          const shipX = -easeOut * 200;
+          const shipZ = -80 - easeOut * 50;
+          
+          // Position camera to follow behind and slightly to the right
           cameraRef.current.position.set(
-            -95 + finalT * -20, 
-            3 - finalT * 3, 
-            -40 - finalT * 40
+            shipX + 20 + warpT * 10, // Trailing behind with increasing distance
+            10 - easeOut * 5, // Lower slightly as we accelerate
+            0 + warpT * 30 // Stay behind ship
           );
-          cameraRef.current.lookAt(-200, 0, -500);
+          
+          // Look ahead of ship in direction of travel
+          cameraRef.current.lookAt(shipX - 50, 0, -100);
         }
       }
       
@@ -273,14 +285,14 @@ const IntroCamera = ({ onAnimationComplete }: { onAnimationComplete: () => void 
   );
 };
 
-// Animated ship for intro
+// Animated ship for intro - new animation path
 const AnimatedShip = () => {
   const shipRef = useRef<THREE.Group>(null);
   
   useEffect(() => {
     let frame: number;
     let time = 0;
-    const animationDuration = 17; // seconds
+    const animationDuration = 7; // shorter animation duration
     
     const animateShip = () => {
       time += 0.016; // ~60fps
@@ -289,56 +301,78 @@ const AnimatedShip = () => {
         // Normalized time from 0 to 1 for the full animation
         const t = Math.min(time / animationDuration, 1);
         
-        // Ship starts appearing at 30% into the animation
-        if (t < 0.3) {
-          shipRef.current.visible = false;
-        } else {
-          shipRef.current.visible = true;
+        // Ship is visible throughout the animation
+        shipRef.current.visible = true;
+        
+        if (t < 0.4) {
+          // Ship enters from bottom right corner
+          const entryT = t / 0.4; // normalized 0-1 for this phase
+          const easeIn = Math.pow(entryT, 2); // ease-in for smoother start
           
-          if (t < 0.5) {
-            // Ship enters from the right
-            const entryT = (t - 0.3) / 0.2;
-            shipRef.current.position.set(
-              40 - entryT * 50, 
-              0, 
-              -70
-            );
-            // Initial slight banking as it enters
-            shipRef.current.rotation.set(
-              0,
-              Math.PI + Math.PI / 8 * (1 - entryT),
-              -Math.PI / 16 * (1 - entryT)
-            );
-          } else if (t < 0.8) {
-            // Ship flies through space
-            const flyT = (t - 0.5) / 0.3;
-            shipRef.current.position.set(
-              -10 - flyT * 80, 
-              0, 
-              -70 - flyT * 300
-            );
-            // Slight banking for flight dynamics
-            const bankAngle = Math.sin(flyT * Math.PI * 2) * Math.PI / 20;
-            shipRef.current.rotation.set(
-              0,
-              Math.PI,
-              bankAngle
-            );
-          } else {
-            // Ship accelerates to warp speed
-            const warpT = (t - 0.8) / 0.2;
-            const eased = 1 - Math.pow(1 - warpT, 3); // Cubic ease out for smoother acceleration
-            shipRef.current.position.set(
-              -90 - eased * 300, 
-              0, 
-              -370 - eased * 800
-            );
-            // Stabilize for warp
-            shipRef.current.rotation.set(0, Math.PI, 0);
-            
-            // Scale down to appear to be getting farther away
-            const scale = Math.max(0.5, 1 - eased * 0.6);
-            shipRef.current.scale.set(scale * 2.5, scale * 2.5, scale * 2.5);
+          // Position: from bottom right to center
+          shipRef.current.position.set(
+            50 - easeIn * 50, // X: from right (50) to center (0)
+            -30 + easeIn * 30, // Y: from bottom (-30) to center (0)
+            -100 + easeIn * 20 // Z: approaching viewer slightly
+          );
+          
+          // Rotation: banking as it enters
+          shipRef.current.rotation.set(
+            Math.PI / 12 * (1 - easeIn), // slight pitch adjustment
+            Math.PI + Math.PI / 8 * (1 - easeIn), // turning toward center
+            Math.PI / 10 * (1 - easeIn) // banking
+          );
+          
+          // Scale: consistent
+          shipRef.current.scale.set(2.5, 2.5, 2.5);
+        } 
+        else if (t < 0.6) {
+          // Ship hovers in center for a moment
+          const hoverT = (t - 0.4) / 0.2; // normalized 0-1 for this phase
+          const hover = Math.sin(hoverT * Math.PI * 2) * 0.05; // subtle hover effect
+          
+          shipRef.current.position.set(
+            hover, // subtle X movement
+            hover * 2, // subtle Y movement
+            -80 + hover * 5 // slight Z adjustment
+          );
+          
+          // Rotation: face forward with slight movement
+          shipRef.current.rotation.set(
+            hover * 0.1, // subtle pitch
+            Math.PI + hover * 0.1, // subtle yaw
+            hover * 0.1 // subtle roll
+          );
+          
+          // Scale: consistent
+          shipRef.current.scale.set(2.5, 2.5, 2.5);
+        } 
+        else {
+          // Ship accelerates to warp speed to the left
+          const warpT = (t - 0.6) / 0.4; // normalized 0-1 for this phase
+          const easeOut = Math.pow(warpT, 3); // cubic ease-out for dramatic acceleration
+          
+          // Position: rapidly zoom off to the left
+          shipRef.current.position.set(
+            -easeOut * 200, // X: accelerate left
+            0, // Y: maintain height
+            -80 - easeOut * 50 // Z: move slightly away from camera
+          );
+          
+          // Rotation: steady at high speed
+          shipRef.current.rotation.set(
+            0,
+            Math.PI - Math.PI / 4 * easeOut, // gradually turn left
+            0
+          );
+          
+          // Scale: consistent
+          shipRef.current.scale.set(2.5, 2.5, 2.5);
+          
+          // Add "blur" effect with scaling on Z axis during acceleration
+          if (warpT > 0.7) {
+            const stretchFactor = 1 + (warpT - 0.7) / 0.3 * 1.5;
+            shipRef.current.scale.set(2.5, 2.5, 2.5 * stretchFactor);
           }
         }
       }
