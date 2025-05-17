@@ -114,31 +114,160 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </div>
       
-      {/* Realistic Earth with millions of moon debris pieces forming rings - integrated with star rotation */}
+      {/* Ultra-realistic Earth with millions of moon debris pieces forming rings - integrated with star rotation */}
       <div className="absolute z-5 earth-container" style={{ 
         bottom: "35vh",
         left: "28%", 
         transform: "translateX(-50%)",
-        width: "22vh",
-        height: "22vh",
+        width: "25vh",
+        height: "25vh",
         opacity: 1,
-        filter: "drop-shadow(0 0 12px rgba(120,180,255,0.3))"
+        filter: "drop-shadow(0 0 18px rgba(120,180,255,0.4))"
       }}>
-        {/* High-detail realistic Earth body with photo-realistic textures */}
+        {/* High-detail realistic Earth body with 8K-like photo-realistic textures - now with darker nighttime appearance */}
         <div className="absolute rounded-full overflow-hidden" style={{ 
           width: "100%", 
           height: "100%",
-          background: "radial-gradient(circle at 35% 35%, #1a5b8e 0%, #0b4265 25%, #063143 50%, #05233e 75%, #021626 100%)",
-          boxShadow: "inset -5px -5px 10px rgba(0,0,0,0.8), 0 0 8px rgba(80,140,200,0.3)",
+          background: "radial-gradient(circle at 35% 35%, #1a5b8e 0%, #0b4265 20%, #063143 45%, #05233e 70%, #021221 100%)",
+          boxShadow: "inset -8px -8px 15px rgba(0,0,0,0.9), 0 0 12px rgba(80,140,200,0.4)",
           transform: "rotate(-23.5deg)", // Earth's axial tilt
           position: "relative"
         }}>
-          {/* Base realistic ocean texture with depth variations */}
+          {/* Deep ocean texture with enhanced depth variations - darker for night side */}
           <div className="absolute" style={{
             width: "100%",
             height: "100%",
-            background: "radial-gradient(circle at 40% 40%, #14395c 0%, #0c2e4a 35%, #082235 65%, #051a2c 100%)",
-            opacity: 0.95
+            background: "radial-gradient(circle at 40% 40%, #14395c 0%, #0c2e4a 30%, #072030 65%, #021220 100%)",
+            opacity: 0.98
+          }}></div>
+          
+          {/* Night side city lights layer - visible in the dark areas */}
+          <div className="absolute" style={{
+            width: "100%",
+            height: "100%",
+            background: "linear-gradient(135deg, transparent 30%, rgba(0,0,0,0.8) 70%)",
+            opacity: 0.8
+          }}></div>
+          
+          {/* North America city lights - concentrated along coastlines and major population centers */}
+          <div className="absolute city-lights north-america" style={{
+            top: "20%",
+            left: "27%",
+            width: "22%",
+            height: "18%",
+            backgroundImage: `radial-gradient(1px 1px at 85% 20%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 75% 25%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 65% 30%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 60% 40%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 55% 50%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(2px 2px at 45% 45%, rgba(255, 240, 180, 0.9) 100%, transparent),
+                             radial-gradient(2px 2px at 40% 35%, rgba(255, 240, 180, 0.9) 100%, transparent),
+                             radial-gradient(2px 2px at 30% 30%, rgba(255, 240, 180, 0.9) 100%, transparent)`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(1px)",
+            opacity: 0.85,
+            transform: "rotate(-10deg)"
+          }}></div>
+
+          {/* Europe city lights - densely populated areas */}
+          <div className="absolute city-lights europe" style={{
+            top: "23%",
+            left: "54%",
+            width: "12%",
+            height: "8%",
+            backgroundImage: `radial-gradient(1px 1px at 20% 40%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 30% 50%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 40% 60%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 50% 50%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 60% 40%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 70% 30%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 80% 40%, rgba(255, 240, 180, 0.8) 100%, transparent)`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(1px)",
+            opacity: 0.85,
+            transform: "rotate(5deg)"
+          }}></div>
+
+          {/* Asia city lights - major urban centers in East Asia */}
+          <div className="absolute city-lights asia" style={{
+            top: "28%",
+            left: "78%",
+            width: "16%",
+            height: "15%",
+            backgroundImage: `radial-gradient(1px 1px at 30% 40%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 40% 50%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 25% 60%, rgba(255, 240, 180, 0.9) 100%, transparent),
+                             radial-gradient(2px 2px at 35% 50%, rgba(255, 240, 180, 0.9) 100%, transparent),
+                             radial-gradient(1px 1px at 40% 30%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 45% 35%, rgba(255, 240, 180, 0.8) 100%, transparent)`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(1px)",
+            opacity: 0.85,
+            transform: "rotate(15deg)"
+          }}></div>
+
+          {/* South America city lights - coastal cities */}
+          <div className="absolute city-lights south-america" style={{
+            top: "50%",
+            left: "36%",
+            width: "12%",
+            height: "15%",
+            backgroundImage: `radial-gradient(1px 1px at 20% 20%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 30% 30%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 15% 50%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 80% 70%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 90% 80%, rgba(255, 240, 180, 0.8) 100%, transparent)`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(1px)",
+            opacity: 0.8,
+            transform: "rotate(10deg)"
+          }}></div>
+
+          {/* Africa city lights - less dense, concentrated on coasts and major cities */}
+          <div className="absolute city-lights africa" style={{
+            top: "42%",
+            left: "57%",
+            width: "14%",
+            height: "20%",
+            backgroundImage: `radial-gradient(1px 1px at 10% 20%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 20% 40%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 80% 50%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 90% 70%, rgba(255, 240, 180, 0.8) 100%, transparent)`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(1px)",
+            opacity: 0.8,
+            transform: "rotate(-5deg)"
+          }}></div>
+
+          {/* Australia city lights - coastal concentration */}
+          <div className="absolute city-lights australia" style={{
+            top: "62%",
+            left: "78%",
+            width: "10%",
+            height: "10%",
+            backgroundImage: `radial-gradient(1px 1px at 10% 50%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 30% 80%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 80% 90%, rgba(255, 240, 180, 0.8) 100%, transparent),
+                             radial-gradient(1px 1px at 90% 70%, rgba(255, 240, 180, 0.8) 100%, transparent)`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(1px)",
+            opacity: 0.8
+          }}></div>
+          
+          {/* Global city lights glow effect - creates a subtle ambient glow on the night side */}
+          <div className="absolute" style={{
+            width: "100%",
+            height: "100%",
+            background: "radial-gradient(circle at 70% 50%, transparent 50%, rgba(255, 240, 180, 0.05) 80%, rgba(255, 240, 180, 0.1) 100%)",
+            filter: "blur(8px)",
+            opacity: 0.7,
+            mixBlendMode: "screen"
           }}></div>
           
           {/* Detailed land mass texture base layer */}
@@ -292,6 +421,18 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
               opacity: 0.5
             }}></div>
           </div>
+          
+          {/* Atmospheric glow effect - creates a visible atmosphere around the planet */}
+          <div className="absolute" style={{
+            top: "-5%",
+            left: "-5%",
+            width: "110%",
+            height: "110%",
+            borderRadius: "50%",
+            background: "radial-gradient(circle at center, transparent 60%, rgba(100,150,230,0.1) 75%, rgba(100,150,230,0.2) 85%, rgba(100,150,230,0.1) 95%, transparent 100%)",
+            filter: "blur(4px)",
+            opacity: 0.8
+          }}></div>
           
           {/* Realistic cloud systems - low pressure systems */}
           <div className="absolute" style={{
