@@ -64,8 +64,8 @@
   }
 }
 
-/* Futuristic space effect for POLARIS text */
-.metallic-text {
+/* Futuristic space effect for STELLAR text */
+.space-text {
   font-family: "Stargaze", "Orbitron", "Arial Black", sans-serif;
   letter-spacing: 0.01em; /* Even tighter spacing between characters */
   font-style: italic;
@@ -123,19 +123,19 @@
   font-weight: 600;
   background: linear-gradient(
     90deg,
-    rgba(160, 160, 160, 0.3) 0%,
-    rgba(160, 160, 160, 0.4) 15%,
-    rgba(230, 230, 230, 0.9) 35%,
-    rgba(200, 200, 200, 0.6) 50%,
-    rgba(230, 230, 230, 0.9) 65%,
-    rgba(160, 160, 160, 0.4) 85%,
-    rgba(160, 160, 160, 0.3) 100%
+    rgba(160, 160, 160, 0.4) 0%,
+    rgba(160, 160, 160, 0.5) 15%,
+    rgba(190, 190, 190, 0.7) 35%,
+    rgba(180, 180, 180, 0.6) 50%,
+    rgba(190, 190, 190, 0.7) 65%,
+    rgba(160, 160, 160, 0.5) 85%,
+    rgba(160, 160, 160, 0.4) 100%
   );
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: shimmerEffect 6s ease-in-out infinite alternate;
+  animation: shimmerEffect 12s ease-in-out infinite alternate;
   position: relative;
   overflow: hidden;
 }
@@ -145,15 +145,15 @@
   position: absolute;
   top: 0;
   left: -100%;
-  width: 30%;
+  width: 20%;
   height: 100%;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.15) 50%,
     transparent 100%
   );
-  animation: reflectionMove 8s ease-in-out infinite alternate;
+  animation: reflectionMove 15s ease-in-out infinite alternate;
   transform: skewX(-15deg);
 }
 
@@ -171,13 +171,13 @@
 
 @keyframes reflectionMove {
   0% {
-    left: -30%;
+    left: -20%;
   }
   50% {
-    left: 130%;
+    left: 120%;
   }
   100% {
-    left: -30%;
+    left: -20%;
   }
 }
 
