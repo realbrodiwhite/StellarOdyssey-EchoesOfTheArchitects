@@ -439,22 +439,22 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           }}></div>
         </div>
         
-        {/* Realistic outer ring with accurate orbital mechanics */}
+        {/* Dense outer ring with clear orbital structure - first major debris ring */}
         <div className="absolute" style={{
           width: "300%",
-          height: "3.5vh",
-          top: "50%",
+          height: "4.2vh",
+          top: "52%",
           left: "-100%",
-          transform: "translateY(-50%) rotate(5deg)",
+          transform: "translateY(-50%) rotate(2deg)",
           borderRadius: "50%",
           overflow: "hidden",
-          opacity: 0.85,
+          opacity: 0.9,
           filter: "drop-shadow(0 0 6px rgba(100,120,200,0.1))"
         }}>
-          {/* High-detail debris field base with realistic gradient */}
+          {/* High-detail debris field base with higher density */}
           <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(140,145,165,0.2) 25%, rgba(170,175,195,0.45) 50%, rgba(140,145,165,0.2) 75%, rgba(0,0,0,0) 100%)",
-            boxShadow: "0 0 12px rgba(180,190,230,0.15)"
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(160,165,185,0.3) 25%, rgba(195,200,215,0.65) 50%, rgba(160,165,185,0.3) 75%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 8px rgba(180,190,230,0.2)"
           }}></div>
           
           {/* Intricate debris texture overlay for enhanced realism */}
@@ -490,22 +490,22 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           </div>
         </div>
         
-        {/* Middle ring with realistic orbital alignment */}
+        {/* Second middle ring with significant gap from outer ring - clearly distinct */}
         <div className="absolute" style={{
-          width: "250%",
-          height: "2.8vh",
-          top: "50%",
-          left: "-75%",
-          transform: "translateY(-50%) rotate(0deg)",
+          width: "230%",
+          height: "3.8vh",
+          top: "44%",
+          left: "-65%",
+          transform: "translateY(-50%) rotate(-1deg)",
           borderRadius: "50%",
           overflow: "hidden",
-          opacity: 0.9,
+          opacity: 0.85,
           filter: "drop-shadow(0 0 5px rgba(100,120,200,0.08))"
         }}>
-          {/* Photorealistic debris field base layer */}
+          {/* Different density and coloration from outer ring */}
           <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(150,155,175,0.3) 30%, rgba(180,185,205,0.55) 50%, rgba(150,155,175,0.3) 70%, rgba(0,0,0,0) 100%)",
-            boxShadow: "0 0 10px rgba(180,190,230,0.15)"
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(160,170,190,0.25) 30%, rgba(190,200,220,0.5) 50%, rgba(160,170,190,0.25) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 7px rgba(180,190,230,0.12)"
           }}></div>
           
           {/* Complex dust pattern with radial distribution */}
@@ -542,22 +542,22 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           </div>
         </div>
         
-        {/* Inner ring with proper planetary orbital mechanics */}
+        {/* Third separate inner ring - highly concentrated dense core */}
         <div className="absolute" style={{
-          width: "170%",
-          height: "1.8vh",
-          top: "50%",
-          left: "-35%",
-          transform: "translateY(-50%) rotate(0deg)",
+          width: "140%",
+          height: "5.5vh",
+          top: "39%",
+          left: "-20%",
+          transform: "translateY(-50%) rotate(1deg)",
           borderRadius: "50%",
           overflow: "hidden",
-          opacity: 0.95,
-          filter: "drop-shadow(0 0 3px rgba(100,120,200,0.08))"
+          opacity: 0.92,
+          filter: "drop-shadow(0 0 4px rgba(100,120,200,0.1))"
         }}>
-          {/* High-density debris field base with enhanced realism */}
+          {/* High-concentration core with distinctive bright appearance */}
           <div className="absolute w-full h-full" style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(160,165,185,0.5) 30%, rgba(190,195,215,0.7) 50%, rgba(160,165,185,0.5) 70%, rgba(0,0,0,0) 100%)",
-            boxShadow: "0 0 8px rgba(180,190,230,0.2)"
+            background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(180,185,205,0.5) 30%, rgba(210,215,235,0.8) 50%, rgba(180,185,205,0.5) 70%, rgba(0,0,0,0) 100%)",
+            boxShadow: "0 0 10px rgba(200,210,240,0.25)"
           }}></div>
           
           {/* Fine dust texture for incredible detail */}
