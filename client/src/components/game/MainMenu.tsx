@@ -131,7 +131,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
               <div className="odyssey-text">ODYSSEY</div>
             </div>
           </div>
-          <div className="text-[0.9rem] sm:text-[0.8rem] md:text-[1rem] lg:text-[1.2rem] w-[100%] mx-auto text-center font-bold shimmer-text mt-4">ECHOES OF THE ARCHITECTS</div>
+          <div className="text-[0.6rem] sm:text-[0.8rem] md:text-[1rem] lg:text-[1.2rem] w-[100%] mx-auto text-center font-bold shimmer-text mt-4">ECHOES OF THE ARCHITECTS</div>
         </div>
       </div>
       
