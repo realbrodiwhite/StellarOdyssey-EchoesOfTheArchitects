@@ -99,7 +99,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       >
         <div className="flex flex-col items-center gap-3">
           <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl"><span className="text-blue-400">STELLAR</span> ODYSSEY</div>
-          <div className="text-sm sm:text-base md:text-lg lg:text-xl tracking-[1.5em] font-light shimmer-text">ECHOES OF THE ARCHITECTS</div>
+          <div className="text-sm sm:text-base md:text-lg lg:text-xl tracking-[2.5em] font-light shimmer-text">ECHOES OF THE ARCHITECTS</div>
         </div>
       </motion.div>
       
