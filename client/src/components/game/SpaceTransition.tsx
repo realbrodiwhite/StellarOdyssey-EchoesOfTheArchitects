@@ -476,21 +476,111 @@ const IntroCamera = ({ onAnimationComplete }: { onAnimationComplete: () => void 
   );
 };
 
-// Animated ship for intro - detailed dramatic animation sequence
+// Animated ship for intro - dramatic animation sequence exactly as described
 const AnimatedShip = () => {
   const shipRef = useRef<THREE.Group>(null);
-  const [shipWarpComplete, setShipWarpComplete] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const impactSoundRef = useRef<HTMLAudioElement | null>(null);
+  
+  // Black overlay and flash effects for transition
+  const [blackoutActive, setBlackoutActive] = useState(false);
+  const [eyesOpen, setEyesOpen] = useState(false);
   
   useEffect(() => {
-    // Initialize audio for dramatic effect
+    // Create container for overlay effects
+    const overlayContainer = document.createElement('div');
+    overlayContainer.id = 'intro-overlay-container';
+    overlayContainer.style.position = 'absolute';
+    overlayContainer.style.top = '0';
+    overlayContainer.style.left = '0';
+    overlayContainer.style.width = '100%';
+    overlayContainer.style.height = '100%';
+    overlayContainer.style.pointerEvents = 'none';
+    overlayContainer.style.zIndex = '100';
+    document.querySelector('.intro-scene-3d')?.appendChild(overlayContainer);
+    
+    // Black overlay for screen blackout
+    const blackOverlay = document.createElement('div');
+    blackOverlay.id = 'black-overlay';
+    blackOverlay.style.position = 'absolute';
+    blackOverlay.style.top = '0';
+    blackOverlay.style.left = '0';
+    blackOverlay.style.width = '100%';
+    blackOverlay.style.height = '100%';
+    blackOverlay.style.backgroundColor = 'black';
+    blackOverlay.style.opacity = '0';
+    blackOverlay.style.transition = 'opacity 0.3s ease';
+    blackOverlay.style.zIndex = '101';
+    overlayContainer.appendChild(blackOverlay);
+    
+    // White flash for "eyes opening" effect
+    const whiteFlash = document.createElement('div');
+    whiteFlash.id = 'white-flash';
+    whiteFlash.style.position = 'absolute';
+    whiteFlash.style.top = '0';
+    whiteFlash.style.left = '0';
+    whiteFlash.style.width = '100%';
+    whiteFlash.style.height = '100%';
+    whiteFlash.style.backgroundColor = 'white';
+    whiteFlash.style.opacity = '0';
+    whiteFlash.style.transition = 'opacity 0.1s ease';
+    whiteFlash.style.zIndex = '102';
+    overlayContainer.appendChild(whiteFlash);
+    
+    // Initialize audio
     audioRef.current = new Audio('/sounds/background.mp3');
     audioRef.current.volume = 0;
     
+    // Impact sound for awakening
+    impactSoundRef.current = new Audio('/sounds/hit.mp3');
+    impactSoundRef.current.volume = 0;
+    
+    // Animation setup
     let frame: number;
     let time = 0;
-    const animationDuration = 8; // full animation duration
+    const animationDuration = 10; // longer duration for more dramatic effect
     
+    // Define functions to handle overlay effects
+    const handleBlackout = () => {
+      if (blackOverlay) {
+        blackOverlay.style.opacity = '1';
+      }
+    };
+    
+    const handleEyesOpen = () => {
+      // First flash
+      if (whiteFlash) {
+        whiteFlash.style.opacity = '1';
+        setTimeout(() => {
+          if (whiteFlash) whiteFlash.style.opacity = '0';
+        }, 100);
+        
+        // Second flash
+        setTimeout(() => {
+          if (whiteFlash) whiteFlash.style.opacity = '0.8';
+          setTimeout(() => {
+            if (whiteFlash) whiteFlash.style.opacity = '0';
+          }, 80);
+        }, 250);
+      }
+      
+      // Impact sound
+      if (impactSoundRef.current) {
+        impactSoundRef.current.volume = 0.8;
+        impactSoundRef.current.play().catch(e => console.log("Impact sound prevented:", e));
+      }
+      
+      // Camera shake effect (applied to entire container)
+      const sceneContainer = document.querySelector('.intro-scene-3d');
+      if (sceneContainer) {
+        sceneContainer.classList.add('camera-shake');
+        setTimeout(() => {
+          sceneContainer.classList.remove('camera-shake');
+        }, 350);
+      }
+    };
+    
+    // Ship animation sequence
     const animateShip = () => {
       time += 0.016; // ~60fps
       
@@ -498,149 +588,190 @@ const AnimatedShip = () => {
         // Normalized time from 0 to 1 for the full animation
         const t = Math.min(time / animationDuration, 1);
         
-        // Ship is visible throughout the animation
-        shipRef.current.visible = true;
+        // Ship is visible throughout the animation until blackout
+        shipRef.current.visible = !blackoutActive;
         
-        // Phase 1: Ship flies in from bottom right (0-40% of animation)
-        if (t < 0.4) {
-          const entryT = t / 0.4; // normalized 0-1 for this phase
-          const easeIn = Math.pow(entryT, 2); // ease-in for smoother start
+        // PHASE 1: Ship flies in from bottom right (0-30% of animation)
+        if (t < 0.3) {
+          const entryT = t / 0.3;
+          // Accelerating curve for dramatic entrance
+          const easeIn = Math.pow(entryT, 2); 
           
-          // Position: dramatically from far bottom right to center
+          // Position: from far bottom right to center
           shipRef.current.position.set(
-            80 - easeIn * 80, // X: from far right (80) to center (0)
-            -50 + easeIn * 50, // Y: from way bottom (-50) to center (0)
-            -150 + easeIn * 70 // Z: approaching viewer significantly for dramatic effect
+            100 - easeIn * 100, // X: from far right to center
+            -70 + easeIn * 70, // Y: from bottom to center
+            -200 + easeIn * 100 // Z: approaching viewer
           );
           
-          // Rotation: dramatic banking as it enters
+          // Rotation: banking into the turn
           shipRef.current.rotation.set(
-            Math.PI / 8 * (1 - easeIn), // more pronounced pitch adjustment
-            Math.PI + Math.PI / 6 * (1 - easeIn), // more dramatic turning toward center
-            Math.PI / 8 * (1 - easeIn) // more dramatic banking
+            Math.PI / 6 * (1 - easeIn), // pitch
+            Math.PI + Math.PI / 4 * (1 - easeIn), // yaw - turning toward center
+            Math.PI / 6 * (1 - easeIn) // roll - banking effect
           );
           
-          // Scale: much more dramatic increase from tiny to large to simulate approaching from distance
-          const startScale = 0.2; // Start much smaller
+          // Scale: grow from tiny to full-size as it approaches
+          const startScale = 0.1; // Start very small
           const endScale = 2.5;
-          const scaleProgression = easeIn < 0.5 ? 
-            2 * easeIn * easeIn : // accelerate scale in first half
-            -1 + (4 - 2 * easeIn) * easeIn; // decelerate scale in second half
-          const currentScale = startScale + scaleProgression * (endScale - startScale);
+          const currentScale = startScale + easeIn * (endScale - startScale);
           shipRef.current.scale.set(currentScale, currentScale, currentScale);
           
-          // Start fading in the audio
+          // Fade in audio gradually
           if (audioRef.current) {
             audioRef.current.play().catch(e => console.log("Audio playback prevented:", e));
-            audioRef.current.volume = Math.min(entryT * 0.3, 0.3); // Fade in, but keep low
+            audioRef.current.volume = Math.min(entryT * 0.2, 0.2);
           }
         } 
-        // Phase 2: Ship cruises in center briefly (40-60% of animation)
-        else if (t < 0.6) {
-          const hoverT = (t - 0.4) / 0.2;
+        // PHASE 2: Ship cruises in center briefly (30-50% of animation)
+        else if (t < 0.5) {
+          const cruiseT = (t - 0.3) / 0.2;
           
-          // Subtle movement to show it's cruising
-          const driftX = Math.sin(hoverT * Math.PI) * 0.8; // gentle side-to-side
-          const driftY = Math.cos(hoverT * Math.PI * 2) * 0.3; // subtle up-down
+          // Gentle cruising motion
+          const drift = Math.sin(cruiseT * Math.PI * 2) * 0.5;
           
           shipRef.current.position.set(
-            driftX, // gentle cruising movement
-            driftY, 
-            -80 // maintain distance
+            drift, // subtle side-to-side
+            drift * 0.5, // subtle up-down
+            -100 // maintain distance
           );
           
-          // Ship aligns to forward position ready for warp
-          const alignmentFactor = Math.pow(hoverT, 0.5);
-          shipRef.current.rotation.set(
-            0, // level out
-            Math.PI, // face forward
-            0  // level out
-          );
+          // Level out rotation for stable cruising
+          shipRef.current.rotation.set(0, Math.PI, 0);
           
-          // Maintain scale
+          // Maintain full scale
           shipRef.current.scale.set(2.5, 2.5, 2.5);
           
-          // Maintain audio
+          // Maintain low audio volume
           if (audioRef.current) {
-            audioRef.current.volume = 0.3;
+            audioRef.current.volume = 0.2;
           }
         } 
-        // Phase 3: Ship zooms off to the left at incredible speed (60-80% of animation)
-        else if (t < 0.8) {
-          const warpT = (t - 0.6) / 0.2; // normalized 0-1 for this phase
+        // PHASE 3: Ship accelerates off left at 10x previous speed (50-65% of animation)
+        else if (t < 0.65) {
+          const warpT = (t - 0.5) / 0.15; // shorter, more intense warp
+          // Extremely accelerated curve
+          const acceleration = Math.pow(warpT, 3); 
           
-          // Exponential acceleration for dramatic effect
-          const acceleration = Math.pow(warpT, 4); // extremely rapid acceleration
-          
-          // Position: extremely rapid acceleration to the left
+          // Position: extremely rapid movement to left
           shipRef.current.position.set(
-            -acceleration * 500, // X: much faster acceleration left
+            -acceleration * 800, // X: extreme speed to left (10x previous)
             0, // Y: maintain height
-            -80 - acceleration * 100 // Z: more dramatic movement away
+            -100 - acceleration * 100 // Z: moving away
           );
           
-          // Rotation: steady as it warps
-          shipRef.current.rotation.set(
-            0,
-            Math.PI, // maintain forward orientation
-            0
-          );
+          // Maintain orientation for warp
+          shipRef.current.rotation.set(0, Math.PI, 0);
           
-          // Scale with stretch effect for warp
-          const stretchFactor = 1 + acceleration * 3.5; // more extreme stretching
+          // Apply stretching effect during acceleration
+          const stretchFactor = 1 + acceleration * 5; // extreme stretching
           shipRef.current.scale.set(2.5, 2.5, 2.5 * stretchFactor);
           
-          // Audio swells dramatically during warp
+          // Audio swells dramatically
           if (audioRef.current) {
-            audioRef.current.volume = 0.3 + warpT * 0.5; // Increase volume dramatically
+            audioRef.current.volume = 0.2 + acceleration * 0.6;
           }
           
-          // Signal warp completion near end of phase
-          if (warpT > 0.9 && !shipWarpComplete) {
-            setShipWarpComplete(true);
+          // Trigger blackout at end of warp
+          if (warpT > 0.9 && !blackoutActive) {
+            setBlackoutActive(true);
+            handleBlackout(); // Call function directly
           }
         } 
-        // Phase 4: Black screen, audio continues/intensifies (80-100% of animation)
-        else {
-          const fadeT = (t - 0.8) / 0.2;
+        // PHASE 4: Pitch black, audio gets louder (65-85% of animation)
+        else if (t < 0.85) {
+          const blackoutT = (t - 0.65) / 0.2;
           
-          // Ship moves completely offscreen
-          shipRef.current.position.set(-1000, 0, -1000);
+          // Hide ship during blackout
           shipRef.current.visible = false;
           
           // Audio continues to build to peak
           if (audioRef.current) {
-            // Peak volume followed by fade out
-            if (fadeT < 0.5) {
-              audioRef.current.volume = 0.8; // Peak volume
-            } else {
-              audioRef.current.volume = 0.8 * (1 - (fadeT - 0.5) * 2); // Fade out
-            }
+            audioRef.current.volume = 0.8;
+          }
+          
+          // Trigger "eyes open" near end of blackout
+          if (blackoutT > 0.8 && !eyesOpen) {
+            setEyesOpen(true);
+            handleEyesOpen(); // Directly call the function
+          }
+        }
+        // PHASE 5: Transition to gameplay (85-100% of animation)
+        else {
+          const finishT = (t - 0.85) / 0.15;
+          
+          // Hide ship
+          shipRef.current.visible = false;
+          
+          // Fade out audio
+          if (audioRef.current) {
+            audioRef.current.volume = 0.8 * (1 - finishT);
           }
         }
       }
       
-      // Continue animation as long as needed
+      // Continue animation or clean up
       if (time < animationDuration) {
         frame = requestAnimationFrame(animateShip);
       } else {
-        // Ensure audio is stopped at end of animation
+        // Clean up audio
         if (audioRef.current) {
           audioRef.current.pause();
           audioRef.current.currentTime = 0;
         }
+        if (impactSoundRef.current) {
+          impactSoundRef.current.pause();
+          impactSoundRef.current.currentTime = 0;
+        }
+        
+        // Remove overlay elements when done
+        document.getElementById('intro-overlay-container')?.remove();
       }
     };
     
+    // Start the animation
     animateShip();
     
+    // CSS for camera shake effect
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes cameraShake {
+        0% { transform: translate(0, 0) rotate(0); }
+        10% { transform: translate(-5px, -5px) rotate(-1deg); }
+        20% { transform: translate(5px, 3px) rotate(1deg); }
+        30% { transform: translate(-3px, 5px) rotate(-0.5deg); }
+        40% { transform: translate(4px, -2px) rotate(0.5deg); }
+        50% { transform: translate(-5px, 5px) rotate(-0.5deg); }
+        60% { transform: translate(5px, 0px) rotate(1deg); }
+        70% { transform: translate(-5px, 2px) rotate(-1deg); }
+        80% { transform: translate(2px, 5px) rotate(0.5deg); }
+        90% { transform: translate(-2px, -3px) rotate(-0.5deg); }
+        100% { transform: translate(0, 0) rotate(0); }
+      }
+      
+      .camera-shake {
+        animation: cameraShake 0.35s cubic-bezier(.36,.07,.19,.97) both;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Clean up
     return () => {
       cancelAnimationFrame(frame);
-      // Clean up audio
+      
+      // Stop audio
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
       }
+      if (impactSoundRef.current) {
+        impactSoundRef.current.pause();
+        impactSoundRef.current.currentTime = 0;
+      }
+      
+      // Remove overlay container and style
+      document.getElementById('intro-overlay-container')?.remove();
+      document.head.removeChild(style);
     };
   }, []);
   
