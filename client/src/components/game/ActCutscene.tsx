@@ -6,8 +6,8 @@ import { useGame } from '@/lib/stores/useGame';
 import { useCharacter } from '@/lib/stores/useCharacter';
 import { Faction } from '@/lib/types';
 
-interface StageCutsceneProps {
-  stageNumber: number;
+interface ActCutsceneProps {
+  actNumber: number;
   onComplete: () => void;
 }
 
@@ -45,14 +45,14 @@ const cutsceneContent: Record<number, {title: string, text: string, background: 
   }
 };
 
-const StageCutscene: React.FC<StageCutsceneProps> = ({ stageNumber, onComplete }) => {
+const ActCutscene: React.FC<ActCutsceneProps> = ({ actNumber, onComplete }) => {
   const [visible, setVisible] = useState(true);
   const [showContinue, setShowContinue] = useState(false);
   const { getFactionReputation } = useStory();
   const { character } = useCharacter();
   
-  // Determine cutscene content based on stage
-  const content = cutsceneContent[stageNumber as keyof typeof cutsceneContent] || {
+  // Determine cutscene content based on act
+  const content = cutsceneContent[actNumber as keyof typeof cutsceneContent] || {
     title: "The Journey Continues",
     text: "Your adventures continue as you venture deeper into the cosmos.",
     background: "bg-gradient-to-b from-gray-900 to-black"
@@ -167,4 +167,4 @@ const StageCutscene: React.FC<StageCutsceneProps> = ({ stageNumber, onComplete }
   );
 };
 
-export default StageCutscene;
+export default ActCutscene;

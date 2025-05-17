@@ -91,7 +91,7 @@ const StarQuestManager: React.FC<StarQuestManagerProps> = ({ onQuestComplete }) 
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Missions</h2>
           <Badge variant="outline" className="px-2 py-1">
-            Stage {getCurrentStage()}
+            Act {getCurrentStage()}
           </Badge>
         </div>
         

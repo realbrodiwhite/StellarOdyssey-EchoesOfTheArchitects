@@ -91,14 +91,17 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       </div>
       
       {/* Game title */}
-      <motion.h1
-        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 md:mb-8 z-10 px-4 text-center"
+      <motion.div
+        className="font-bold text-white mb-4 sm:mb-6 md:mb-8 z-10 px-4 text-center"
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <span className="text-blue-400">COSMIC</span> ODYSSEY
-      </motion.h1>
+        <div className="flex flex-col items-center gap-1">
+          <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl"><span className="text-blue-400">STELLAR</span> ODYSSEY</div>
+          <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl tracking-[0.25em] text-gray-400 font-light">ECHOES OF THE ARCHITECTS</div>
+        </div>
+      </motion.div>
       
       <motion.div
         className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-10 md:mb-12 text-center max-w-xs sm:max-w-sm md:max-w-md z-10 px-4"
@@ -164,7 +167,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.8 }}
       >
-        © 2025 Brodi Branded
+        © 2025 Brodi Branded Inc.
       </motion.div>
     </div>
   );
