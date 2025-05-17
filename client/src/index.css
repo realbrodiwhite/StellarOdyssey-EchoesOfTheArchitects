@@ -23,21 +23,7 @@
   font-style: normal;
 }
 
-/* Custom font styles for title text */
-.jumper-font {
-  font-family: 'Polaris', sans-serif;
-  font-style: normal;
-  font-weight: bold;
-  display: block;
-  text-transform: uppercase;
-}
-
-.awakening-font {
-  font-family: 'Derelict', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  display: block;
-}
+/* Remove these classes as they're now defined in the SpaceTransition component */
 
 @layer base {
   :root {

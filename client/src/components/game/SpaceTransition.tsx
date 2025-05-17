@@ -816,6 +816,7 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
         line-height: 1;
         transform: perspective(500px) rotateX(5deg);
         margin-bottom: 0.2em;
+        font-family: 'Polaris', sans-serif;
       }
       
       .awakening-font {
@@ -826,6 +827,33 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
         line-height: 1;
         font-weight: normal;
         transform: perspective(500px) rotateX(-5deg) scale(0.95);
+        font-family: 'Derelict', sans-serif;
+      }
+      
+      /* Responsive styles for mobile devices */
+      @media (max-width: 768px) {
+        .jumper-font {
+          font-size: 3.5rem;
+          letter-spacing: 0.1em;
+        }
+        
+        .awakening-font {
+          font-size: 2.8rem;
+          letter-spacing: 0.08em;
+        }
+      }
+      
+      /* Even smaller screens */
+      @media (max-width: 480px) {
+        .jumper-font {
+          font-size: 2.5rem;
+          letter-spacing: 0.08em;
+        }
+        
+        .awakening-font {
+          font-size: 2rem;
+          letter-spacing: 0.06em;
+        }
       }
     `;
     document.head.appendChild(titleStyle);
