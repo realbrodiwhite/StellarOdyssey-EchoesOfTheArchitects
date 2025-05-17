@@ -33,9 +33,9 @@
 /* Futuristic space effect for STELLAR text */
 .metallic-text {
   font-family: "Orbitron", "Rajdhani", "Audiowide", "Arial Black", sans-serif;
-  letter-spacing: 0.04em; /* Reduced spacing between characters */
+  letter-spacing: 0.01em; /* Even tighter spacing between characters */
   font-style: italic;
-  margin-right: 0.3em; /* Increased spacing between words */
+  margin-right: 0.5em; /* Further increased spacing between words */
   background-image: linear-gradient(180deg, 
     #ffffff 0%, 
     #a0e0ff 15%, 
