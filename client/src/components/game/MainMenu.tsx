@@ -117,7 +117,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         className="font-bold text-white mb-8 sm:mb-10 md:mb-12 z-10 px-4 text-center"
       >
         <div className="flex flex-col items-center gap-10">
-          <div className="text-[5.875rem] sm:text-[7.85rem] md:text-[9.8rem] lg:text-[10.75rem] tall-thin-title flex flex-row">
+          <div className="text-[4.11rem] sm:text-[5.5rem] md:text-[6.86rem] lg:text-[7.53rem] tall-thin-title flex flex-row">
             <span className="metallic-text">STELLAR</span>
             <span className="forest-green-text">ODYSSEY</span>
           </div>
