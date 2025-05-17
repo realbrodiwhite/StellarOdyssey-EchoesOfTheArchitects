@@ -32,9 +32,9 @@
     </defs>
     
     <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <!-- Engine Flames -->
+        <!-- Engine Glow - removed yellow arrow/flames -->
         <g transform="translate(190, 40)">
-            <ellipse cx="15" cy="20" rx="30" ry="15" fill="url(#engineGlow)" />
+            <ellipse cx="15" cy="20" rx="20" ry="10" fill="#5577FF" opacity="0.6" />
         </g>
         
         <!-- Main Hull - Fuselage -->

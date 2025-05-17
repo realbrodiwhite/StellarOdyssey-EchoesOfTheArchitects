@@ -473,38 +473,46 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
         
         {/* Main content with sidebar */}
         <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-2 sm:p-4">
-          {/* Character cards grid */}
+          {/* Character cards grid - optimized to fit perfectly */}
           <div className="flex-1 overflow-y-auto pr-0 lg:pr-4">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-3">
-              {uniqueClasses && uniqueClasses.length > 0 ? (
-                uniqueClasses.map((characterClass, index) => {
-                  // Get the character of the selected gender for this class
-                  const characterGroup = charactersByClass[characterClass];
-                  const character = characterGroup && characterGroup[selectedGender] && characterGroup[selectedGender][0];
-                  
-                  if (!character) return null;
-                  
-                  return (
-                    <motion.div
-                      key={`${characterClass}-${selectedGender}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05, duration: 0.5 }}
-                    >
-                      <CharacterCard 
-                        character={character}
-                        isSelected={selectedIndex === index}
-                        onClick={() => handleCharacterSelect(index)}
-                        onViewDetails={(e) => handleCharacterDetails(e, index)}
-                      />
-                    </motion.div>
-                  );
-                })
-              ) : (
-                <div className="w-full text-center text-white col-span-full">
-                  <p>Loading character templates...</p>
-                </div>
-              )}
+            <div className="flex justify-center w-full">
+              <div className="grid gap-2 sm:gap-3" style={{ 
+                  gridTemplateColumns: `repeat(${Math.min(Math.ceil(Math.sqrt(uniqueClasses.length)), uniqueClasses.length <= 12 ? 4 : 6)}, minmax(0, 1fr))`,
+                  width: '100%',
+                  maxWidth: uniqueClasses.length <= 4 ? '600px' : 
+                             uniqueClasses.length <= 9 ? '800px' : 
+                             uniqueClasses.length <= 12 ? '1000px' : '100%'
+                }}>
+                {uniqueClasses && uniqueClasses.length > 0 ? (
+                  uniqueClasses.map((characterClass, index) => {
+                    // Get the character of the selected gender for this class
+                    const characterGroup = charactersByClass[characterClass];
+                    const character = characterGroup && characterGroup[selectedGender] && characterGroup[selectedGender][0];
+                    
+                    if (!character) return null;
+                    
+                    return (
+                      <motion.div
+                        key={`${characterClass}-${selectedGender}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05, duration: 0.5 }}
+                      >
+                        <CharacterCard 
+                          character={character}
+                          isSelected={selectedIndex === index}
+                          onClick={() => handleCharacterSelect(index)}
+                          onViewDetails={(e) => handleCharacterDetails(e, index)}
+                        />
+                      </motion.div>
+                    );
+                  })
+                ) : (
+                  <div className="w-full text-center text-white col-span-full">
+                    <p>Loading character templates...</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           
