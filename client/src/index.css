@@ -119,8 +119,8 @@ canvas {
 .game-button {
   background-color: #2563eb;
   color: white;
-  padding: clamp(8px, 2vh, 14px) clamp(16px, 4vw, 24px);
-  border-radius: 8px;
+  padding: clamp(4px, 1vh, 7px) clamp(8px, 2vw, 12px);
+  border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -128,7 +128,7 @@ canvas {
   max-width: 100%;
   text-align: center;
   margin: 6px 0;
-  font-size: clamp(14px, 3vw, 18px);
+  font-size: clamp(10px, 2vw, 12px);
   display: block;
   animation: orbitButton 4s infinite;
 }
