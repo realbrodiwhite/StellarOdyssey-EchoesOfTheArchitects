@@ -39,10 +39,12 @@ const Game = () => {
     start 
   } = useGame();
   
-  // Initial animation to show title screen
+  // Show intro animation on initial load
   useEffect(() => {
     const timer = setTimeout(() => {
-      setGameState("menu");
+      // Start with transition state to show intro animation
+      setTransitionType("intro");
+      setGameState("transition");
     }, 500);
     
     return () => clearTimeout(timer);

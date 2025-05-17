@@ -588,32 +588,243 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           </div>
         </div>
         
-        {/* Larger moon chunks scattered through rings - darker dusk appearance */}
-        <div className="absolute rounded-full bg-gray-500" style={{ width: "2.7%", height: "2.7%", top: "49.3%", left: "37%", opacity: 0.7, boxShadow: "0 0 3px rgba(200,200,255,0.3)" }}></div>
-        <div className="absolute rounded-full bg-gray-600" style={{ width: "4%", height: "4%", top: "48.2%", left: "-38%", opacity: 0.8, boxShadow: "0 0 4px rgba(200,200,255,0.4)" }}></div>
-        <div className="absolute rounded-full bg-gray-500" style={{ width: "2.2%", height: "2.2%", top: "50.7%", left: "72%", opacity: 0.7, boxShadow: "0 0 3px rgba(200,200,255,0.3)" }}></div>
-        <div className="absolute rounded-full bg-gray-600" style={{ width: "3.2%", height: "3.2%", top: "49.5%", left: "-79%", opacity: 0.75, boxShadow: "0 0 4px rgba(200,200,255,0.4)" }}></div>
-        <div className="absolute rounded-full bg-gray-500" style={{ width: "1.8%", height: "1.8%", top: "50.3%", left: "-55%", opacity: 0.7, boxShadow: "0 0 2px rgba(200,200,255,0.25)" }}></div>
-        <div className="absolute rounded-full bg-gray-600" style={{ width: "2.5%", height: "2.5%", top: "49.1%", left: "93%", opacity: 0.75, boxShadow: "0 0 3px rgba(200,200,255,0.3)" }}></div>
-        <div className="absolute rounded-full bg-gray-500" style={{ width: "2.1%", height: "2.1%", top: "50.9%", left: "25%", opacity: 0.7, boxShadow: "0 0 3px rgba(200,200,255,0.3)" }}></div>
-        <div className="absolute rounded-full bg-gray-600" style={{ width: "3.6%", height: "3.6%", top: "48.7%", left: "-95%", opacity: 0.8, boxShadow: "0 0 4px rgba(200,200,255,0.4)" }}></div>
+        {/* Photorealistic moon fragments with detailed surface textures and shadows */}
+        {/* Large irregular moon fragment with cratered surface */}
+        <div className="absolute" style={{ 
+          width: "4.5%", 
+          height: "4.5%", 
+          top: "48%", 
+          left: "-38%", 
+          opacity: 0.85, 
+          background: "radial-gradient(circle at 40% 40%, #6e7073 20%, #52555a 50%, #3a3c42 80%)",
+          boxShadow: "inset -1px -1px 3px rgba(0,0,0,0.6), 0 0 4px rgba(200,200,255,0.4)",
+          borderRadius: "60% 70% 55% 65% / 65% 60% 70% 55%",
+          transform: "rotate(23deg)"
+        }}>
+          {/* Crater texture overlay */}
+          <div className="absolute w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='30' cy='30' r='8' fill='rgba(0,0,0,0.15)'/%3E%3Ccircle cx='70' cy='40' r='6' fill='rgba(0,0,0,0.1)'/%3E%3Ccircle cx='45' cy='70' r='10' fill='rgba(0,0,0,0.12)'/%3E%3Ccircle cx='20' cy='60' r='4' fill='rgba(0,0,0,0.08)'/%3E%3C/svg%3E")`,
+            borderRadius: "inherit",
+            opacity: 0.8
+          }}></div>
+        </div>
         
-        {/* Subtle orange/amber highlight on chunks catching "sunset" light */}
-        <div className="absolute rounded-full bg-amber-700" style={{ width: "2.3%", height: "2.3%", top: "48.5%", left: "52%", opacity: 0.5, boxShadow: "0 0 3px rgba(255,170,100,0.3)" }}></div>
-        <div className="absolute rounded-full bg-amber-600" style={{ width: "1.9%", height: "1.9%", top: "49.2%", left: "-45%", opacity: 0.45, boxShadow: "0 0 2px rgba(255,170,100,0.25)" }}></div>
+        {/* Medium moon fragment with jagged edges */}
+        <div className="absolute" style={{ 
+          width: "3.2%", 
+          height: "3.4%", 
+          top: "49.5%", 
+          left: "37%", 
+          opacity: 0.8, 
+          background: "radial-gradient(circle at 35% 35%, #76797e 15%, #52555a 50%, #3a3c42 85%)",
+          boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 3px rgba(200,200,255,0.35)",
+          clipPath: "polygon(10% 30%, 30% 0%, 70% 10%, 100% 30%, 90% 70%, 70% 100%, 30% 90%, 0% 60%)",
+          transform: "rotate(13deg)"
+        }}>
+          {/* Surface detail texture */}
+          <div className="absolute w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M20,20 L30,10 L40,25 L60,15 L80,25 L90,40 L80,60 L90,80 L70,90 L50,80 L30,90 L10,70 Z' fill='none' stroke='rgba(0,0,0,0.1)' stroke-width='0.5'/%3E%3C/svg%3E")`,
+            opacity: 0.7
+          }}></div>
+        </div>
         
-        {/* Earth's shadow cast on rings - deeper shadow for dusk */}
+        {/* Elongated moon fragment */}
+        <div className="absolute" style={{ 
+          width: "3.8%", 
+          height: "2.8%", 
+          top: "50.7%", 
+          left: "72%", 
+          opacity: 0.75, 
+          background: "radial-gradient(ellipse at 40% 40%, #71757a 20%, #52555a 50%, #3a3c42 80%)",
+          boxShadow: "inset -1px -1px 3px rgba(0,0,0,0.5), 0 0 3px rgba(200,200,255,0.3)",
+          borderRadius: "70% 40% 60% 50% / 50% 40% 60% 40%",
+          transform: "rotate(-17deg)"
+        }}>
+          {/* Surface ridge texture */}
+          <div className="absolute w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M10,50 Q30,40 50,50 Q70,60 90,50' fill='none' stroke='rgba(0,0,0,0.15)' stroke-width='2'/%3E%3Cpath d='M10,30 Q30,20 50,30 Q70,40 90,30' fill='none' stroke='rgba(0,0,0,0.1)' stroke-width='1.5'/%3E%3Cpath d='M10,70 Q30,60 50,70 Q70,80 90,70' fill='none' stroke='rgba(0,0,0,0.12)' stroke-width='1.8'/%3E%3C/svg%3E")`,
+            borderRadius: "inherit",
+            opacity: 0.7
+          }}></div>
+        </div>
+        
+        {/* Large irregular moon fragment */}
+        <div className="absolute" style={{ 
+          width: "4.2%", 
+          height: "4.4%", 
+          top: "49.2%", 
+          left: "-79%", 
+          opacity: 0.8, 
+          background: "radial-gradient(circle at 45% 45%, #6e7073 25%, #52555a 55%, #3a3c42 85%)",
+          boxShadow: "inset -1px -1px 3px rgba(0,0,0,0.6), 0 0 4px rgba(200,200,255,0.35)",
+          clipPath: "polygon(20% 0%, 60% 10%, 90% 30%, 100% 60%, 80% 90%, 40% 100%, 10% 80%, 0% 40%)",
+          transform: "rotate(8deg)"
+        }}>
+          {/* Detailed surface texture */}
+          <div className="absolute w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='30' cy='30' r='10' fill='rgba(0,0,0,0.12)'/%3E%3Ccircle cx='70' cy='40' r='8' fill='rgba(0,0,0,0.08)'/%3E%3Ccircle cx='50' cy='70' r='15' fill='rgba(0,0,0,0.1)'/%3E%3Ccircle cx='20' cy='60' r='5' fill='rgba(0,0,0,0.06)'/%3E%3C/svg%3E")`,
+            clipPath: "inherit",
+            opacity: 0.75
+          }}></div>
+        </div>
+        
+        {/* Smaller moon fragment with sharp edge */}
+        <div className="absolute" style={{ 
+          width: "2.4%", 
+          height: "2.3%", 
+          top: "50.3%", 
+          left: "-55%", 
+          opacity: 0.75, 
+          background: "radial-gradient(circle at 30% 30%, #76797e 20%, #52555a 60%, #3a3c42 90%)",
+          boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.5), 0 0 2px rgba(200,200,255,0.25)",
+          clipPath: "polygon(30% 0%, 70% 10%, 100% 40%, 90% 70%, 60% 100%, 30% 90%, 0% 50%, 10% 20%)",
+          transform: "rotate(-12deg)"
+        }}></div>
+        
+        {/* Angular moon fragment with detailed surface */}
+        <div className="absolute" style={{ 
+          width: "3.2%", 
+          height: "2.8%", 
+          top: "49.1%", 
+          left: "93%", 
+          opacity: 0.8, 
+          background: "radial-gradient(circle at 40% 40%, #6b6e73 15%, #4d5056 55%, #36383e 85%)",
+          boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.5), 0 0 3px rgba(200,200,255,0.3)",
+          clipPath: "polygon(20% 0%, 80% 20%, 100% 50%, 80% 90%, 40% 100%, 10% 70%, 0% 30%)",
+          transform: "rotate(15deg)"
+        }}>
+          {/* Ridge line texture */}
+          <div className="absolute w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M20,20 L40,10 L60,30 L80,20 L70,50 L80,80 L50,90 L20,70 Z' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='0.5'/%3E%3C/svg%3E")`,
+            clipPath: "inherit",
+            opacity: 0.6
+          }}></div>
+        </div>
+        
+        {/* Medium moon chunk with sunset highlight */}
+        <div className="absolute" style={{ 
+          width: "2.7%", 
+          height: "2.9%", 
+          top: "48.9%", 
+          left: "25%", 
+          opacity: 0.75, 
+          background: "radial-gradient(circle at 60% 40%, #90807a 10%, #78706b 40%, #5a5450 75%)",
+          boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.5), 0 0 5px rgba(255,170,100,0.4)",
+          borderRadius: "60% 50% 70% 40% / 50% 60% 40% 70%",
+          transform: "rotate(28deg)"
+        }}>
+          {/* Surface highlight */}
+          <div className="absolute w-full h-full" style={{
+            background: "linear-gradient(130deg, rgba(255,200,150,0.3) 0%, transparent 60%)",
+            borderRadius: "inherit",
+            opacity: 0.8
+          }}></div>
+        </div>
+        
+        {/* Jagged moon fragment with sunset glow */}
+        <div className="absolute" style={{ 
+          width: "3.3%", 
+          height: "3%", 
+          top: "50.5%", 
+          left: "52%", 
+          opacity: 0.7, 
+          background: "radial-gradient(circle at 60% 40%, #96847a 10%, #7a6e66 40%, #5c5450 80%)",
+          boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.5), 0 0 6px rgba(255,170,100,0.45)",
+          clipPath: "polygon(10% 30%, 40% 0%, 70% 20%, 100% 40%, 80% 80%, 50% 100%, 20% 80%, 0% 50%)",
+          transform: "rotate(-20deg)"
+        }}>
+          {/* Warm highlight overlay */}
+          <div className="absolute w-full h-full" style={{
+            background: "linear-gradient(120deg, rgba(255,180,130,0.4) 0%, transparent 70%)",
+            clipPath: "inherit",
+            opacity: 0.9
+          }}></div>
+        </div>
+        
+        {/* Large irregular chunk with sunset detail */}
+        <div className="absolute" style={{ 
+          width: "4.1%", 
+          height: "3.8%", 
+          top: "48.5%", 
+          left: "-95%", 
+          opacity: 0.85, 
+          background: "radial-gradient(circle at 35% 35%, #6e7073 25%, #52555a 55%, #3a3c42 85%)",
+          boxShadow: "inset -1px -1px 3px rgba(0,0,0,0.6), 0 0 4px rgba(200,200,255,0.4)",
+          clipPath: "polygon(20% 0%, 50% 10%, 80% 0%, 100% 30%, 90% 60%, 100% 90%, 70% 100%, 40% 90%, 10% 100%, 0% 70%, 10% 30%)",
+          transform: "rotate(-5deg)"
+        }}>
+          {/* Crater detail */}
+          <div className="absolute w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='25' cy='25' r='12' fill='rgba(0,0,0,0.15)'/%3E%3Ccircle cx='65' cy='35' r='9' fill='rgba(0,0,0,0.1)'/%3E%3Ccircle cx='40' cy='70' r='15' fill='rgba(0,0,0,0.12)'/%3E%3Ccircle cx='75' cy='65' r='8' fill='rgba(0,0,0,0.08)'/%3E%3C/svg%3E")`,
+            clipPath: "inherit",
+            opacity: 0.75
+          }}></div>
+        </div>
+        
+        {/* Additional smaller moon fragments scattered among rings */}
+        <div className="absolute" style={{ 
+          width: "1.6%", 
+          height: "1.5%", 
+          top: "51.2%", 
+          left: "65%", 
+          opacity: 0.65, 
+          background: "radial-gradient(circle at 40% 40%, #76797e 20%, #52555a 60%, #3a3c42 90%)",
+          boxShadow: "inset -1px -1px 1px rgba(0,0,0,0.4), 0 0 2px rgba(200,200,255,0.25)",
+          borderRadius: "65% 35% 70% 30% / 40% 60% 40% 60%",
+          transform: "rotate(32deg)"
+        }}></div>
+        
+        <div className="absolute" style={{ 
+          width: "1.8%", 
+          height: "1.7%", 
+          top: "49.8%", 
+          left: "-65%", 
+          opacity: 0.7, 
+          background: "radial-gradient(circle at 35% 35%, #6e7073 25%, #52555a 60%, #3a3c42 90%)",
+          boxShadow: "inset -1px -1px 1px rgba(0,0,0,0.4), 0 0 2px rgba(200,200,255,0.25)",
+          clipPath: "polygon(30% 0%, 70% 20%, 100% 50%, 80% 90%, 30% 100%, 0% 60%, 10% 20%)",
+          transform: "rotate(-18deg)"
+        }}></div>
+        
+        <div className="absolute" style={{ 
+          width: "1.4%", 
+          height: "1.3%", 
+          top: "49.4%", 
+          left: "15%", 
+          opacity: 0.6, 
+          background: "radial-gradient(circle at 40% 40%, #76797e 20%, #52555a 60%, #3a3c42 90%)",
+          boxShadow: "inset -1px -1px 1px rgba(0,0,0,0.4), 0 0 2px rgba(200,200,255,0.2)",
+          borderRadius: "40% 60% 30% 70% / 60% 40% 70% 30%",
+          transform: "rotate(8deg)"
+        }}></div>
+        
+        {/* Realistic Earth's shadow cast on rings with atmospheric edge effects */}
         <div className="absolute" style={{
-          width: "180%",
-          height: "16vh",
-          top: "44%", 
-          left: "-38%",
-          background: "radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.3) 60%, transparent 90%)",
+          width: "190%",
+          height: "18vh",
+          top: "43%", 
+          left: "-41%",
+          background: "radial-gradient(ellipse at center, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 25%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 75%, transparent 95%)",
           transform: "translateY(-50%) rotate(15deg)",
           borderRadius: "50%",
-          opacity: 0.8,
+          opacity: 0.85,
           pointerEvents: "none",
-          filter: "blur(4px)"
+          filter: "blur(5px)"
+        }}></div>
+        
+        {/* Subtle blue atmospheric refraction at shadow edge */}
+        <div className="absolute" style={{
+          width: "200%",
+          height: "20vh",
+          top: "42%", 
+          left: "-45%",
+          background: "radial-gradient(ellipse at center, transparent 70%, rgba(70,130,200,0.03) 80%, rgba(70,130,200,0.06) 90%, transparent 100%)",
+          transform: "translateY(-50%) rotate(15deg)",
+          borderRadius: "50%",
+          opacity: 0.6,
+          pointerEvents: "none",
+          filter: "blur(8px)",
+          mixBlendMode: "screen"
         }}></div>
       </div>
       
