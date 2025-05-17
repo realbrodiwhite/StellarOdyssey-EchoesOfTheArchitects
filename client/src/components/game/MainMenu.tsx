@@ -114,119 +114,140 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </div>
       
-      {/* Saturn-like planet with intersecting rings */}
+      {/* Earth-like planet with moon debris rings */}
       <div className="absolute z-5" style={{ 
-        bottom: "15vh",
+        bottom: "10vh",
         left: "50%", 
         transform: "translateX(-50%)",
-        width: "50vh",
-        height: "50vh",
-        opacity: 0.4
+        width: "5vh",
+        height: "5vh",
+        opacity: 0.8
       }}>
-        {/* Earth-like planet body */}
+        {/* Realistic Earth-like planet body */}
         <div className="absolute rounded-full" style={{ 
           width: "100%", 
           height: "100%",
-          background: "radial-gradient(circle at 30% 30%, #1f6e9c 0%, #2a5d8c 40%, #0c3b5d 80%, #051c2e 100%)",
-          boxShadow: "inset -15px -15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(100,200,255,0.3)",
-          overflow: "hidden"
+          background: "radial-gradient(circle at 35% 35%, #2978a0 0%, #1c5985 30%, #0a3861 70%, #0a1933 100%)",
+          boxShadow: "inset -2px -2px 5px rgba(0,0,0,0.5), 0 0 3px rgba(100,200,255,0.4)"
         }}>
           {/* Continental details */}
           <div className="absolute" style={{
             width: "100%",
             height: "100%",
-            background: "radial-gradient(ellipse at 60% 40%, transparent 0%, transparent 30%, rgba(120,180,70,0.3) 31%, rgba(120,180,70,0.2) 45%, transparent 50%, transparent 100%), radial-gradient(ellipse at 30% 70%, transparent 0%, transparent 40%, rgba(120,180,70,0.3) 41%, rgba(120,180,70,0.2) 60%, transparent 65%, transparent 100%)",
-            filter: "blur(5px)"
+            background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='rgba(70,140,50,0.5)' d='M30,30 Q40,20 50,30 T70,30 Q75,40 65,50 T70,70 Q60,75 50,65 T30,70 Q25,60 35,50 T30,30 Z'/%3E%3C/svg%3E")`,
+            backgroundSize: "cover",
+            opacity: 0.7
           }}></div>
           
-          {/* Cloud cover */}
+          {/* Atmospheric glow */}
           <div className="absolute" style={{
-            width: "100%",
-            height: "100%",
-            background: "radial-gradient(ellipse at 30% 30%, transparent 0%, transparent 40%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.1) 60%, transparent 70%), radial-gradient(ellipse at 70% 60%, transparent 0%, transparent 40%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.1) 70%, transparent 75%)",
-            filter: "blur(8px)"
+            width: "110%", 
+            height: "110%",
+            top: "-5%",
+            left: "-5%",
+            background: "radial-gradient(circle at center, transparent 50%, rgba(100,180,255,0.1) 70%, rgba(100,180,255,0.2) 90%, rgba(100,180,255,0.1) 100%)"
           }}></div>
         </div>
         
-        {/* Ring system from moon debris - multiple rings at different angles */}
+        {/* Dramatic moon debris rings */}
         
-        {/* Main thick ring at 20 degrees */}
+        {/* First major ring - wider, more visible */}
         <div className="absolute" style={{
-          width: "170%",
-          height: "15px",
+          width: "250%",
+          height: "0.7vh",
           top: "50%",
-          left: "-35%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(180,180,180,0.1) 10%, rgba(180,180,180,0.3) 30%, rgba(180,180,180,0.6) 50%, rgba(180,180,180,0.3) 70%, rgba(180,180,180,0.1) 90%, transparent 100%)",
-          transform: "translateY(-50%) rotate(20deg)",
-          boxShadow: "0 0 8px rgba(200,200,200,0.2)",
-          borderRadius: "100%"
+          left: "-75%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(220,220,220,0.1) 10%, rgba(220,220,220,0.5) 20%, rgba(220,220,220,0.7) 50%, rgba(220,220,220,0.5) 80%, rgba(220,220,220,0.1) 90%, transparent 100%)",
+          boxShadow: "0 0 3px rgba(255,255,255,0.3)",
+          transform: "translateY(-50%) rotate(15deg) perspective(10px) rotateX(2deg)",
+          borderRadius: "50%"
         }}></div>
         
-        {/* Secondary thick ring at -15 degrees */}
+        {/* Second major ring - also wide and visible */}
         <div className="absolute" style={{
-          width: "180%",
-          height: "12px",
-          top: "50%",
-          left: "-40%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(190,190,190,0.1) 10%, rgba(190,190,190,0.4) 30%, rgba(190,190,190,0.5) 50%, rgba(190,190,190,0.4) 70%, rgba(190,190,190,0.1) 90%, transparent 100%)",
-          transform: "translateY(-50%) rotate(-15deg)",
-          boxShadow: "0 0 8px rgba(200,200,200,0.15)",
-          borderRadius: "100%"
-        }}></div>
-        
-        {/* Third thin ring at 35 degrees */}
-        <div className="absolute" style={{
-          width: "160%",
-          height: "5px",
-          top: "50%",
-          left: "-30%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(170,170,170,0.05) 20%, rgba(170,170,170,0.2) 50%, rgba(170,170,170,0.05) 80%, transparent 100%)",
-          transform: "translateY(-50%) rotate(35deg)",
-          boxShadow: "0 0 5px rgba(200,200,200,0.1)",
-          borderRadius: "100%"
-        }}></div>
-        
-        {/* Fourth thin ring at -30 degrees */}
-        <div className="absolute" style={{
-          width: "175%",
-          height: "4px",
+          width: "220%",
+          height: "0.6vh",
           top: "49%",
-          left: "-37.5%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,200,0.05) 20%, rgba(200,200,200,0.2) 50%, rgba(200,200,200,0.05) 80%, transparent 100%)",
-          transform: "translateY(-50%) rotate(-30deg)",
-          boxShadow: "0 0 4px rgba(200,200,200,0.1)",
-          borderRadius: "100%"
+          left: "-60%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,200,0.1) 10%, rgba(200,200,200,0.6) 30%, rgba(200,200,200,0.8) 50%, rgba(200,200,200,0.6) 70%, rgba(200,200,200,0.1) 90%, transparent 100%)",
+          boxShadow: "0 0 2px rgba(255,255,255,0.25)",
+          transform: "translateY(-50%) rotate(-20deg) perspective(8px) rotateX(-3deg)",
+          borderRadius: "50%"
         }}></div>
         
-        {/* Fifth very thin ring at 5 degrees */}
+        {/* Third ring - thinner, less visible */}
         <div className="absolute" style={{
-          width: "165%",
-          height: "2px",
-          top: "51%",
-          left: "-32.5%",
-          background: "linear-gradient(90deg, transparent 0%, rgba(210,210,210,0.05) 30%, rgba(210,210,210,0.15) 50%, rgba(210,210,210,0.05) 70%, transparent 100%)",
-          transform: "translateY(-50%) rotate(5deg)",
-          borderRadius: "100%"
+          width: "190%",
+          height: "0.2vh",
+          top: "50.5%",
+          left: "-45%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(180,180,180,0.05) 20%, rgba(180,180,180,0.2) 50%, rgba(180,180,180,0.05) 80%, transparent 100%)",
+          transform: "translateY(-50%) rotate(30deg)",
+          borderRadius: "50%"
         }}></div>
         
-        {/* First visible moon chunk */}
+        {/* Fourth ring - thin, angled differently */}
+        <div className="absolute" style={{
+          width: "280%",
+          height: "0.15vh",
+          top: "49%",
+          left: "-90%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(190,190,190,0.03) 20%, rgba(190,190,190,0.15) 50%, rgba(190,190,190,0.03) 80%, transparent 100%)",
+          transform: "translateY(-50%) rotate(-35deg)",
+          borderRadius: "50%"
+        }}></div>
+        
+        {/* Fifth ring - very thin, inner ring */}
+        <div className="absolute" style={{
+          width: "140%",
+          height: "0.1vh",
+          top: "50.2%",
+          left: "-20%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(200,200,200,0.02) 30%, rgba(200,200,200,0.1) 50%, rgba(200,200,200,0.02) 70%, transparent 100%)",
+          transform: "translateY(-50%) rotate(7deg)",
+          borderRadius: "50%"
+        }}></div>
+        
+        {/* Sixth ring - very thin, outer ring */}
+        <div className="absolute" style={{
+          width: "350%",
+          height: "0.08vh",
+          top: "49.8%",
+          left: "-125%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(160,160,160,0.01) 30%, rgba(160,160,160,0.08) 50%, rgba(160,160,160,0.01) 70%, transparent 100%)",
+          transform: "translateY(-50%) rotate(-5deg)",
+          borderRadius: "50%"
+        }}></div>
+        
+        {/* Seventh ring - dust ring */}
+        <div className="absolute" style={{
+          width: "400%",
+          height: "0.05vh",
+          top: "50.4%",
+          left: "-150%",
+          background: "linear-gradient(90deg, transparent 0%, rgba(150,150,150,0.01) 30%, rgba(150,150,150,0.04) 50%, rgba(150,150,150,0.01) 70%, transparent 100%)",
+          transform: "translateY(-50%) rotate(0deg)",
+          borderRadius: "50%"
+        }}></div>
+        
+        {/* First large moon chunk - embedded in first ring */}
         <div className="absolute rounded-full bg-gray-300" style={{
-          width: "8%",
-          height: "8%",
-          top: "35%",
-          left: "80%",
-          boxShadow: "inset -1px -1px 3px rgba(0,0,0,0.5)",
-          transform: "rotate(20deg)"
+          width: "15%",
+          height: "15%",
+          top: "42%",
+          right: "-120%",
+          boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 2px rgba(255,255,255,0.2)",
+          transform: "rotate(15deg)"
         }}></div>
         
-        {/* Second visible moon chunk */}
+        {/* Second large moon chunk - embedded in second ring */}
         <div className="absolute rounded-full bg-gray-400" style={{
-          width: "10%",
-          height: "10%",
-          top: "56%",
-          left: "-5%",
-          boxShadow: "inset -1px -1px 3px rgba(0,0,0,0.5)",
-          transform: "rotate(-15deg)"
+          width: "20%",
+          height: "20%",
+          bottom: "40%",
+          left: "-110%",
+          boxShadow: "inset -1px -1px 2px rgba(0,0,0,0.6), 0 0 2px rgba(255,255,255,0.2)",
+          transform: "rotate(-20deg)"
         }}></div>
       </div>
       
