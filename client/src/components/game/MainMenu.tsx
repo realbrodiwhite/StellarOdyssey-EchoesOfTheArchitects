@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { useAudio } from "@/lib/stores/useAudio";
 import { useGame } from "@/lib/stores/useGame";
 import { useCharacter } from "@/lib/stores/useCharacter";
-import PuzzleSelector from "./PuzzleSelector";
 import SaveLoadMenu from "./SaveLoadMenu";
 import Settings from "./Settings";
 
@@ -16,9 +15,9 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
   const { start } = useGame();
   const { character, resetCharacter } = useCharacter();
   const [showContinue, setShowContinue] = useState(false);
-  const [showPuzzleSelector, setShowPuzzleSelector] = useState(false);
   const [showSaveLoadMenu, setShowSaveLoadMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [activeButton, setActiveButton] = useState('newGame');
   
   // Check if there's a saved character to show load game option
   useEffect(() => {
@@ -69,25 +68,48 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
     console.log("Load Game button clicked");
     setShowSaveLoadMenu(true);
   };
+
+  // Create stars for background animation
+  const renderStars = () => {
+    return [...Array(Math.min(120, Math.max(40, Math.floor(window.innerWidth / 10))))].map((_, i) => (
+      <div
+        key={i}
+        className="absolute bg-white rounded-full"
+        style={{
+          width: `${Math.min(3, Math.max(1, window.innerWidth / 800))}px`,
+          height: `${Math.min(3, Math.max(1, window.innerWidth / 800))}px`,
+          top: `${Math.random() * 100}%`,
+          left: `${Math.random() * 100}%`,
+          opacity: Math.random() * 0.8 + 0.2,
+          animation: `twinkle ${Math.random() * 5 + 3}s infinite`
+        }}
+      />
+    ));
+  };
+
+  // Generate shooting stars animation
+  const renderShootingStars = () => {
+    return Array.from({ length: 5 }).map((_, i) => (
+      <div
+        key={i}
+        className="shooting-star"
+        style={{
+          height: `${Math.random() * 40 + 20}px`,
+          left: `${Math.random() * 80}%`,
+          top: `${Math.random() * 40}%`,
+          animationDelay: `${Math.random() * 10 + i * 3}s`,
+          animationDuration: `${Math.random() * 2 + 1}s`,
+        }}
+      />
+    ));
+  };
   
   return (
     <div className="h-screen w-full bg-black flex flex-col items-center justify-center relative overflow-hidden">
       {/* Stars background - responsive based on viewport size */}
       <div className="absolute inset-0 z-0">
-        {[...Array(Math.min(120, Math.max(40, Math.floor(window.innerWidth / 10))))].map((_, i) => (
-          <div
-            key={i}
-            className="absolute bg-white rounded-full"
-            style={{
-              width: `${Math.min(3, Math.max(1, window.innerWidth / 800))}px`,
-              height: `${Math.min(3, Math.max(1, window.innerWidth / 800))}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.8 + 0.2,
-              animation: `twinkle ${Math.random() * 5 + 3}s infinite`
-            }}
-          />
-        ))}
+        {renderStars()}
+        {renderShootingStars()}
       </div>
       
       {/* Game title */}
@@ -98,37 +120,62 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="flex flex-col items-center gap-10">
-          <div className="text-[4.875rem] sm:text-[5.85rem] md:text-[7.8rem] lg:text-[9.75rem] tall-thin-title"><span className="metallic-text">STELLAR</span><span className="forest-green-text">ODYSSEY</span></div>
+          <div className="text-[4.875rem] sm:text-[5.85rem] md:text-[7.8rem] lg:text-[9.75rem] tall-thin-title flex flex-col sm:flex-row">
+            <span className="metallic-text">POLARIS</span>
+            <span className="forest-green-text">ODYSSEY</span>
+          </div>
           <div className="text-[0.375rem] sm:text-[0.4875rem] md:text-[0.6rem] lg:text-[0.75rem] tracking-[2.7em] w-4/5 mx-auto text-center font-semibold shimmer-text">ECHOES OF THE ARCHITECTS</div>
         </div>
       </motion.div>
       
-
-      
       {/* Menu buttons with different colors */}
       <motion.div
-        className="flex flex-row gap-3 z-10 justify-center mt-6"
+        className="menu-buttons-container z-10 justify-center mt-12"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
       >
-        <div className="game-button primary whitespace-nowrap" onClick={handleNewGame}>
-          New Game
-        </div>
+        <motion.div 
+          className={`menu-button px-8 py-3 text-white text-xl w-64 text-center button-animation ${activeButton === 'newGame' ? 'active-button' : ''}`} 
+          onClick={handleNewGame}
+          onMouseEnter={() => setActiveButton('newGame')}
+          whileHover={{ 
+            scale: 1.05,
+            boxShadow: "0 0 15px rgba(100, 220, 255, 0.8)" 
+          }}
+          whileTap={{ scale: 0.95 }}
+        >
+          NEW GAME
+        </motion.div>
         
         {showContinue && (
-          <div className="game-button success whitespace-nowrap" onClick={handleLoadGame}>
-            Load Game
-          </div>
+          <motion.div 
+            className={`menu-button px-8 py-3 text-white text-xl w-64 text-center button-animation ${activeButton === 'loadGame' ? 'active-button' : ''}`} 
+            onClick={handleLoadGame}
+            onMouseEnter={() => setActiveButton('loadGame')}
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 0 15px rgba(100, 220, 255, 0.8)" 
+            }}
+            whileTap={{ scale: 0.95 }}
+          >
+            LOAD GAME
+          </motion.div>
         )}
         
-        <div className="game-button ghost whitespace-nowrap" onClick={() => setShowSettings(true)}>
-          Settings
-        </div>
+        <motion.div 
+          className={`menu-button px-8 py-3 text-white text-xl w-64 text-center button-animation ${activeButton === 'settings' ? 'active-button' : ''}`} 
+          onClick={() => setShowSettings(true)}
+          onMouseEnter={() => setActiveButton('settings')}
+          whileHover={{ 
+            scale: 1.05,
+            boxShadow: "0 0 15px rgba(100, 220, 255, 0.8)" 
+          }}
+          whileTap={{ scale: 0.95 }}
+        >
+          SETTINGS
+        </motion.div>
       </motion.div>
-      
-      {/* Modals */}
-      {showPuzzleSelector && <PuzzleSelector onClose={() => setShowPuzzleSelector(false)} />}
       
       {/* Save/Load Menu */}
       <SaveLoadMenu 

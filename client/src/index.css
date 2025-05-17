@@ -2,37 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Animation for title subtitle shimmering effect */
-@keyframes shimmer {
-  0% { color: rgba(156, 163, 175, 0.6); text-shadow: none; }
-  20% { color: rgba(209, 213, 219, 0.8); text-shadow: 0 0 5px rgba(255, 255, 255, 0.4); }
-  40% { color: rgba(243, 244, 246, 0.9); text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 12px rgba(59, 130, 246, 0.4); }
-  60% { color: rgb(255, 255, 255); text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 15px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4); }
-  80% { color: rgba(243, 244, 246, 0.9); text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 12px rgba(59, 130, 246, 0.4); }
-  100% { color: rgba(156, 163, 175, 0.6); text-shadow: none; }
+@font-face {
+  font-family: 'Stargaze';
+  src: url('/fonts/stargaze.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
-.shimmer-text {
-  animation: shimmer 8s ease-in-out infinite;
-  letter-spacing: 3em;
-  background-image: linear-gradient(90deg, transparent, transparent);
+@font-face {
+  font-family: 'Derelict';
+  src: url('/fonts/derelict.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
-.tall-thin-title {
-  font-family: "Arial Black", Gadget, sans-serif;
-  font-stretch: condensed;
-  font-weight: 900;
-  letter-spacing: 0.02em;
-  line-height: 0.95;
-  transform: scaleY(1.4) scaleX(0.75);
-  transform-origin: center;
-  white-space: nowrap;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+@font-face {
+  font-family: 'Lens';
+  src: url('/fonts/lens.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
-/* Futuristic space effect for STELLAR text */
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    white-space: nowrap;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Futuristic space effect for POLARIS text */
 .metallic-text {
-  font-family: "Orbitron", "Rajdhani", "Audiowide", "Arial Black", sans-serif;
+  font-family: "Stargaze", "Orbitron", "Arial Black", sans-serif;
   letter-spacing: 0.01em; /* Even tighter spacing between characters */
   font-style: italic;
   margin-right: 0.5em; /* Further increased spacing between words */
@@ -40,1758 +74,253 @@
     #ffffff 0%, 
     #a0e0ff 15%, 
     #80c0ff 30%, 
-    #4080ff 50%, 
-    #80c0ff 70%, 
-    #a0e0ff 85%, 
-    #ffffff 100%);
-  background-size: 100%;
-  background-clip: text;
+    #60a0ff 45%, 
+    #4080ff 60%, 
+    #2060ff 75%, 
+    #0040ff 90%, 
+    #0020ff 100%
+  );
   -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent; 
-  -moz-text-fill-color: transparent;
-  text-shadow: 
-    0 0 1px #fff,
-    0 0 2px #fff,
-    0 0 3px #0ff,
-    0 0 4px #0ff,
-    0 0 5px #0af,
-    0 0 6px #08f,
-    0 0 7px #06f;
-  filter: drop-shadow(0px 0px 2px rgba(0, 120, 255, 0.9));
-  transform: scaleY(1.1) scaleX(0.95);
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  z-index: 1;
 }
 
-/* Adventurous fantasy style for ODYSSEY text */
+/* Forest green effect for ODYSSEY text */
 .forest-green-text {
-  font-family: "Luminari", "Papyrus", "Trattatello", "Copperplate", "Georgia", serif;
+  font-family: "Derelict", "Audiowide", "Arial Black", sans-serif;
   letter-spacing: 0.05em;
-  color: #ff8c00;
+  background-image: linear-gradient(180deg, 
+    #ffffff 0%, 
+    #d0ffd0 15%, 
+    #a0ffa0 30%, 
+    #70ff70 45%, 
+    #50ef50 60%, 
+    #30cf30 75%, 
+    #10af10 90%, 
+    #008f00 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  z-index: 1;
   text-shadow: 
-    0 0 1px #fff,
-    0 0 2px #f80,
-    0 0 3px #840,
-    0 0 6px #420;
-  transform: scaleY(1.05) scaleX(1.02);
+    0 0 5px rgba(255, 255, 255, 0.1),
+    0 0 10px rgba(0, 255, 0, 0.15),
+    0 0 15px rgba(0, 255, 0, 0.1);
 }
 
-@layer base {
-  * {
-    @apply border-border;
+/* Subtitle text effect */
+.shimmer-text {
+  font-family: "Lens", "Orbitron", "Arial", sans-serif;
+  color: #a0a0a0;
+  letter-spacing: 2.7em; /* Slightly reduced letter spacing */
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  animation: shimmer 3s infinite alternate;
+  font-weight: 600;
+}
+
+@keyframes shimmer {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
   }
-
-  body {
-    @apply font-sans antialiased bg-background text-foreground;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    width: 100vw;
-    height: 100vh;
-    background-color: #000; /* Ensure a black background */
+  100% {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
   }
 }
 
-#root {
-  width: 100%;
-  height: 100%;
-  position: fixed;
+.tall-thin-title {
+  font-weight: 800;
+  line-height: 0.9;
 }
 
-canvas {
-  width: 100% !important;
-  height: 100% !important;
-  touch-action: none;
-}
-
-/* Game UI styles */
-/* Button effect for orbital animation */
-@keyframes orbitButton {
-  0% { transform: translateX(-10px) scale(0.98); }
-  50% { transform: translateX(5px) scale(1.02); }
-  100% { transform: translateX(-10px) scale(0.98); }
-}
-
-/* Star twinkle animation */
-@keyframes twinkling {
-  0% { opacity: 0.1; transform: scale(0.8); }
-  50% { opacity: 0.6; transform: scale(1.1); }
-  100% { opacity: 0.1; transform: scale(0.8); }
-}
-
-.game-button {
-  background-color: #2563eb;
-  color: white;
-  padding: clamp(4px, 1vh, 7px) clamp(8px, 2vw, 12px);
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
+.menu-button {
+  font-family: "Lens", "Orbitron", "Arial", sans-serif;
+  border-width: 2px;
+  border-style: solid;
+  border-image: linear-gradient(to right, transparent, #60a0ff, transparent) 1;
+  background: linear-gradient(to right, rgba(0, 30, 60, 0.1), rgba(0, 30, 60, 0.4), rgba(0, 30, 60, 0.1));
   transition: all 0.3s ease;
-  width: 100%;
-  max-width: 100%;
-  text-align: center;
-  margin: 6px 0;
-  font-size: clamp(10px, 2vw, 12px);
-  display: block;
-  animation: orbitButton 4s infinite;
-}
-
-.game-button:hover {
-  background-color: #1d4ed8;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Colored button variants */
-.game-button.primary {
-  background-color: #2563eb;
-  border: 2px solid #1d4ed8;
-  color: white;
-  animation-delay: 0s;
-}
-
-.game-button.success {
-  background-color: #10b981;
-  border: 2px solid #059669;
-  color: white;
-  animation-delay: 0.2s;
-}
-
-.game-button.outline {
-  background-color: transparent;
-  color: #f59e0b;
-  border: 2px solid #f59e0b;
-  animation-delay: 0.4s;
-}
-
-.game-button.outline:hover {
-  background-color: #f59e0b;
-  color: white;
-}
-
-.game-button.ghost {
-  background-color: transparent;
-  color: #ef4444;
-  border: 2px solid #ef4444;
-  animation-delay: 0.6s;
-}
-
-.game-button.ghost:hover {
-  background-color: #ef4444;
-  border-color: #ef4444;
-  color: white;
-}
-
-/* Space Scene Animation */
-.space-scene-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: relative;
   overflow: hidden;
-  background-color: #000;
-  z-index: 1000;
 }
 
-/* 3D Scene containers */
-.intro-scene-3d,
-.warp-scene-3d {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1001;
-}
-
-.stars-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw; /* Full viewport width */
-  height: 100vh; /* Full viewport height */
-  z-index: 1001;
-  background: linear-gradient(125deg, #000 0%, #000B18 40%, #001933 70%, #000B18 90%, #000 100%);
-  overflow: hidden;
-  perspective: 500px;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-/* Layer 1: Closest, brightest stars */
-.stars-background::before {
+.menu-button::before {
   content: '';
   position: absolute;
-  width: 200%;
-  height: 200%;
-  top: -50%;
-  left: -50%;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.9), rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.95), rgba(0, 0, 0, 0)),
-    radial-gradient(1.5px 1.5px at 90px 40px, rgba(240, 248, 255, 0.9), rgba(0, 0, 0, 0)),
-    radial-gradient(2.5px 2.5px at 160px 120px, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 230px 50px, rgba(255, 255, 255, 0.85), rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 270px 100px, rgba(230, 240, 255, 0.9), rgba(0, 0, 0, 0)),
-    radial-gradient(1.5px 1.5px at 330px 180px, rgba(255, 255, 255, 0.9), rgba(0, 0, 0, 0)),
-    radial-gradient(2px 2px at 400px 70px, rgba(210, 230, 255, 0.95), rgba(0, 0, 0, 0)),
-    radial-gradient(3px 3px at 460px 130px, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 520px 60px, rgba(255, 255, 255, 0.9), rgba(0, 0, 0, 0));
-  background-repeat: repeat;
-  background-size: 1000px 400px;
-  opacity: 0.7;
-  will-change: transform;
-  animation: twinkling 40s linear infinite, starsParallax 20s linear infinite;
-  transform: translateZ(-10px);
-}
-
-/* Layer 2: Medium distance stars */
-.stars-background::after {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  top: -50%;
-  left: -50%;
-  background-image: 
-    radial-gradient(1.5px 1.5px at 620px 40px, rgba(255, 255, 255, 0.8), rgba(0, 0, 0, 0)),
-    radial-gradient(1.2px 1.2px at 660px 90px, rgba(220, 235, 255, 0.85), rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 700px 150px, rgba(255, 255, 255, 0.75), rgba(0, 0, 0, 0)),
-    radial-gradient(1.8px 1.8px at 760px 30px, rgba(200, 220, 255, 0.9), rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 800px 110px, rgba(255, 255, 255, 0.8), rgba(0, 0, 0, 0)),
-    radial-gradient(1.4px 1.4px at 850px 60px, rgba(230, 240, 255, 0.85), rgba(0, 0, 0, 0)),
-    radial-gradient(1px 1px at 920px 170px, rgba(200, 215, 255, 0.7), rgba(0, 0, 0, 0)),
-    radial-gradient(1.2px 1.2px at 950px 40px, rgba(255, 255, 255, 0.75), rgba(0, 0, 0, 0)),
-    radial-gradient(1.6px 1.6px at 990px 100px, rgba(220, 230, 255, 0.85), rgba(0, 0, 0, 0));
-  background-repeat: repeat;
-  background-size: 1200px 600px;
-  opacity: 0.5;
-  will-change: transform;
-  animation: twinkling 60s linear infinite, starsMiddleParallax 40s linear infinite;
-  transform: translateZ(-50px);
-}
-
-/* Additional distant, small stars */
-.stars-layer-distant {
-  position: absolute;
-  width: 300%;
-  height: 300%;
-  top: -100%;
+  top: 0;
   left: -100%;
-  background-image: 
-    radial-gradient(0.8px 0.8px at 120px 220px, rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0)),
-    radial-gradient(0.6px 0.6px at 250px 150px, rgba(210, 220, 255, 0.5), rgba(0, 0, 0, 0)),
-    radial-gradient(0.7px 0.7px at 350px 250px, rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0)),
-    radial-gradient(0.5px 0.5px at 450px 320px, rgba(200, 210, 255, 0.5), rgba(0, 0, 0, 0)),
-    radial-gradient(0.6px 0.6px at 550px 180px, rgba(255, 255, 255, 0.45), rgba(0, 0, 0, 0)),
-    radial-gradient(0.4px 0.4px at 650px 300px, rgba(220, 225, 255, 0.5), rgba(0, 0, 0, 0)),
-    radial-gradient(0.7px 0.7px at 750px 220px, rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0)),
-    radial-gradient(0.5px 0.5px at 850px 280px, rgba(200, 210, 255, 0.45), rgba(0, 0, 0, 0)),
-    radial-gradient(0.6px 0.6px at 950px 200px, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0));
-  background-repeat: repeat;
-  background-size: 1500px 800px;
-  opacity: 0.4;
-  will-change: transform;
-  animation: twinkling 80s linear infinite, starsDistantParallax 25s ease-in-out infinite;
-  transform: translateZ(-100px);
-  z-index: 1001;
-  pointer-events: none;
-}
-
-@keyframes starsParallax {
-  0% {
-    transform: translateX(0) translateY(0) translateZ(-10px);
-  }
-  100% {
-    transform: translateX(-400px) translateY(-100px) translateZ(-10px);
-  }
-}
-
-@keyframes starsMiddleParallax {
-  0% {
-    transform: translateX(5%) translateY(3%) translateZ(-50px);
-  }
-  10% {
-    transform: translateX(2%) translateY(0%) translateZ(-50px);
-  }
-  20% {
-    transform: translateX(-2%) translateY(-2%) translateZ(-50px);
-  }
-  30% {
-    transform: translateX(-5%) translateY(-4%) translateZ(-50px);
-  }
-  40% {
-    transform: translateX(-7%) translateY(-2%) translateZ(-50px);
-  }
-  50% {
-    transform: translateX(-8%) translateY(1%) translateZ(-50px);
-  }
-  60% {
-    transform: translateX(-6%) translateY(3%) translateZ(-50px);
-  }
-  70% {
-    transform: translateX(-2%) translateY(4%) translateZ(-50px);
-  }
-  80% {
-    transform: translateX(2%) translateY(3%) translateZ(-50px);
-  }
-  90% {
-    transform: translateX(4%) translateY(1%) translateZ(-50px);
-  }
-  100% {
-    transform: translateX(5%) translateY(3%) translateZ(-50px);
-  }
-}
-
-@keyframes starsDistantParallax {
-  0% {
-    transform: translateX(3%) translateY(2%) translateZ(-100px);
-  }
-  10% {
-    transform: translateX(2%) translateY(0%) translateZ(-100px);
-  }
-  20% {
-    transform: translateX(0%) translateY(-1%) translateZ(-100px);
-  }
-  30% {
-    transform: translateX(-2%) translateY(-2%) translateZ(-100px);
-  }
-  40% {
-    transform: translateX(-3%) translateY(-1%) translateZ(-100px);
-  }
-  50% {
-    transform: translateX(-4%) translateY(0%) translateZ(-100px);
-  }
-  60% {
-    transform: translateX(-3%) translateY(1%) translateZ(-100px);
-  }
-  70% {
-    transform: translateX(-1%) translateY(2%) translateZ(-100px);
-  }
-  80% {
-    transform: translateX(1%) translateY(2%) translateZ(-100px);
-  }
-  90% {
-    transform: translateX(2%) translateY(1%) translateZ(-100px);
-  }
-  100% {
-    transform: translateX(3%) translateY(2%) translateZ(-100px);
-  }
-}
-
-@keyframes twinkling {
-  from { transform: translateY(0); }
-  to { transform: translateY(1000px); }
-}
-
-.planet-scene {
-  position: absolute;
   width: 100%;
-  height: 200%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.5s ease;
+}
+
+.menu-button:hover::before {
+  left: 100%;
+}
+
+.menu-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(0, 150, 255, 0.4);
+}
+
+.active-button {
+  animation: pulse 2s infinite;
+  border-image: linear-gradient(to right, transparent, #30cf30, transparent) 1;
+  background: linear-gradient(to right, rgba(0, 60, 0, 0.1), rgba(0, 60, 0, 0.4), rgba(0, 60, 0, 0.1));
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.4);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.space-background {
+  position: absolute;
+  top: 0;
   left: 0;
-  z-index: 1002;
-  transform: translate3d(0, -100%, 0);
-  will-change: transform;
-  animation: panDown 3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-}
-
-@keyframes panDown {
-  0% {
-    transform: translate3d(0, -100%, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.planet-gradient {
-  position: absolute;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, 
-    rgba(0,0,0,0) 0%,
-    rgba(0,0,0,0.8) 40%,
-    rgba(5,2,69,0.9) 60%,
-    rgba(16,4,128,1) 80%,
-    rgba(32,10,205,1) 100%);
+  background: radial-gradient(ellipse at center, #192133 0%, #090a0f 100%);
+  z-index: -1;
 }
 
-.planet {
-  position: absolute;
-  top: 70%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60vw;
-  height: 60vw;
-  background: radial-gradient(circle, 
-    rgba(91,33,182,1) 0%, 
-    rgba(50,19,129,1) 30%, 
-    rgba(20,9,86,1) 60%, 
-    rgba(6,3,54,1) 100%);
-  border-radius: 50%;
-  box-shadow: 
-    inset -20px -20px 50px rgba(0,0,0,0.5),
-    inset 20px 20px 50px rgba(255,255,255,0.2),
-    0 0 100px rgba(122,64,224,0.3);
-  opacity: 0;
-  animation: fadeIn 2s ease-in forwards 0.5s;
-  z-index: 1003;
-}
-
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-.orbit {
-  position: absolute;
-  top: 70%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80vw;
-  height: 20vw;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 50%;
-  opacity: 0;
-  animation: fadeIn 2s ease-in forwards 1s;
-  z-index: 1002;
-}
-
-.spaceship {
-  position: absolute;
-  top: 70%;
-  left: 20%;
-  width: 60px;
-  height: 30px;
-  background-color: #e6e6e6;
-  clip-path: polygon(0% 50%, 30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%);
-  transform: translate(-50%, -50%) rotate(15deg);
-  z-index: 1004;
-  opacity: 0;
-  animation: shipFlyIn 3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.5s;
-  will-change: transform, opacity;
-}
-
-@keyframes shipFlyIn {
-  0% {
-    transform: translate(-100vw, 100vh) rotate(30deg) scale(0.2);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(100vw, -20vh) rotate(0deg) scale(1);
-    opacity: 1;
-  }
-}
-
-.title-overlay {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1005;
-  text-align: center;
-  opacity: 0;
-  animation: titleFade 3s ease forwards 2s;
-}
-
-@keyframes titleFade {
-  0% { opacity: 0; transform: translate(-50%, -40%); }
-  100% { opacity: 1; transform: translate(-50%, -50%); }
-}
-
-.title-overlay h1 {
-  color: #fff;
-  font-size: 4rem;
-  font-weight: bold;
-  text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.3);
-  margin-bottom: 1rem;
-}
-
-.title-overlay p {
-  color: #d1d1f6;
-  font-size: 1.5rem;
-  max-width: 80%;
-  margin: 0 auto;
-}
-
-/* Warp transition animation */
-.warp-scene {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1002;
-}
-
-.warp-effect {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: max(200vw, 200vh); /* Use the larger of viewport width or height to ensure coverage */
-  height: max(200vw, 200vh);
-  background: radial-gradient(ellipse at center, 
-    rgba(33,13,134,0) 0%, 
-    rgba(33,13,134,0.2) 30%, 
-    rgba(63,25,196,0.5) 60%, 
-    rgba(130,80,255,0.8) 90%, 
-    rgba(148,100,255,1) 100%);
-  transform: translate(-50%, -50%) scale(0);
-  animation: warpSpeed 15s forwards;
-  z-index: 1002;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-
-@keyframes warpSpeed {
-  /* No warp effect initially - ship is approaching */
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  
-  /* No warp effect during initial ship approach */
-  65% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  
-  /* Subtle engine glow begins as thrusters engage */
-  68% {
-    transform: translate(-50%, -50%) scale(0.1);
-    opacity: 0.2;
-  }
-  
-  /* Engine glow intensifies as main engines engage */
-  70% {
-    transform: translate(-50%, -50%) scale(0.3);
-    opacity: 0.4;
-  }
-  
-  /* Rapid acceleration - blue effect grows dramatically */
-  75% {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0.7;
-  }
-  
-  /* Propulsion effects become highly visible as ship accelerates to warp */
-  80% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 0.85;
-  }
-  
-  /* Engine exhaust expands dramatically as ship reaches maximum velocity */
-  85% {
-    transform: translate(-50%, -50%) scale(1.8);
-    opacity: 0.9;
-  }
-  
-  /* Maximum engine burn creates intense blue distortion */
-  90% {
-    transform: translate(-50%, -50%) scale(2.5);
-    opacity: 0.8;
-  }
-  
-  /* Engine effects start to fade as ship moves away at very high speed */
-  95% {
-    transform: translate(-50%, -50%) scale(3);
-    opacity: 0.4;
-  }
-  
-  /* Effects dissipate completely */
-  100% {
-    transform: translate(-50%, -50%) scale(3.5);
-    opacity: 0;
-  }
-}
-
-.svg-ship-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(270px, 38vw); /* Slightly larger responsive width */
-  height: min(135px, 19vw); /* Maintain aspect ratio */
-  transform: translate(-50%, -50%) scale(0.7) perspective(800px);
-  z-index: 1004;
-  animation: shipWarpRealistic 20s forwards, shipRubberBand 28s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  will-change: transform, filter, opacity;
-  filter: drop-shadow(0 0 15px rgba(100, 180, 255, 0.8)) drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.5));
-  transform-origin: center center;
-  transition: transform 3s cubic-bezier(0.25, 1, 0.25, 1);
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  perspective-origin: center;
-}
-
-/* Main hull highlight effect */
-.svg-ship-container::before {
-  content: '';
-  position: absolute;
-  top: 28%;
-  left: 12%;
-  width: 45%;
-  height: 38%;
-  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0) 70%);
-  opacity: 0.35;
-  z-index: 1005;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  transform: rotate(-5deg) skew(-10deg);
-}
-
-/* Secondary hull highlight */
-.svg-ship-container::after {
-  content: '';
-  position: absolute;
-  top: 56%;
-  left: 32%;
-  width: 28%;
-  height: 25%;
-  background: radial-gradient(ellipse, rgba(220, 240, 255, 0.8) 0%, rgba(220, 240, 255, 0.1) 40%, rgba(220, 240, 255, 0) 70%);
-  opacity: 0.25;
-  z-index: 1005;
-  pointer-events: none;
-  mix-blend-mode: screen;
-}
-
-/* Engine glow effect */
-.engine-glow {
-  position: absolute;
-  bottom: 40%;
-  right: 5%;
-  width: 28%;
-  height: 28%;
-  background: radial-gradient(ellipse, rgba(50, 170, 255, 0.95) 0%, rgba(90, 180, 255, 0.6) 30%, rgba(100, 180, 255, 0) 80%);
-  opacity: 0.7;
-  z-index: 1006;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  filter: blur(2px);
-  animation: engineGlow 25s infinite, glowIntensityFlicker 0.4s infinite alternate, engineGlowExpansion 15s forwards;
-  transform-origin: center right;
-}
-
-/* Secondary engine glow */
-.engine-glow-secondary {
-  position: absolute;
-  bottom: 45%;
-  right: 3%;
-  width: 15%;
-  height: 18%;
-  background: radial-gradient(ellipse, rgba(200, 240, 255, 1) 0%, rgba(130, 210, 255, 0.7) 20%, rgba(100, 180, 255, 0) 70%);
-  opacity: 0.9;
-  z-index: 1007;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  filter: blur(1px);
-  animation: engineGlowSecondary 2.5s infinite alternate-reverse, secondaryGlowFlicker 0.2s infinite alternate;
-  transform-origin: center right;
-}
-
-/* Engine exhaust trail effect that gets more intense during warp */
-.engine-exhaust {
-  position: absolute;
-  top: 50%;
-  right: -10%;
-  width: 40%;
-  height: 30%;
-  transform: translateY(-50%);
-  background: linear-gradient(
-    to left, 
-    rgba(160, 230, 255, 0.95),
-    rgba(140, 220, 255, 0.8) 20%, 
-    rgba(120, 210, 255, 0.7) 40%, 
-    rgba(100, 200, 255, 0.5) 60%, 
-    rgba(80, 190, 255, 0.3) 80%,
-    rgba(60, 180, 255, 0) 100%
-  );
-  opacity: 0.2;
-  z-index: 1003;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  filter: blur(3px);
-  animation: engineExhaust 15s forwards, thrustFlicker 0.4s ease-in-out infinite alternate;
-  box-shadow: 0 0 20px rgba(130, 210, 255, 0.6);
-  border-radius: 0 0 30% 70%;
-}
-
-/* Outer engine exhaust - creates a wider, more diffuse effect */
-.engine-exhaust-outer {
-  position: absolute;
-  top: 50%;
-  right: -20%;
-  width: 60%;
-  height: 45%;
-  transform: translateY(-50%);
-  background: linear-gradient(
-    to left, 
-    rgba(140, 220, 255, 0.7),
-    rgba(120, 210, 255, 0.5) 20%, 
-    rgba(100, 200, 255, 0.3) 40%, 
-    rgba(80, 190, 255, 0.2) 60%, 
-    rgba(60, 180, 255, 0.1) 80%,
-    rgba(40, 170, 255, 0) 100%
-  );
-  opacity: 0.15;
-  z-index: 1002;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  filter: blur(6px);
-  animation: engineExhaustOuter 15s forwards, outerThrustFlicker 0.6s ease-in-out infinite alternate;
-  border-radius: 0 0 40% 60%;
-}
-
-/* Shield effect around the ship */
-.ship-shield-effect {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 130%;
-  height: 150%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(
-    ellipse,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(160, 230, 255, 0.03) 30%,
-    rgba(120, 210, 255, 0.02) 50%,
-    rgba(80, 190, 255, 0.01) 70%,
-    transparent 85%
-  );
-  border-radius: 50%;
-  z-index: 1001;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  filter: blur(8px);
-  opacity: 0;
-  animation: shieldPulse 4s ease-in-out infinite alternate;
-}
-
-@keyframes shipRubberBand {
-  /* Ship emerges from distant space - barely visible dot */
-  0% {
-    transform: translate(180%, 180%) scale(0.15) rotate(18deg) perspective(900px) rotateY(-18deg) rotateX(5deg);
-    filter: brightness(0.7) blur(1px);
-  }
-  
-  /* First glint of light as ship approaches from far distance */
-  2% {
-    transform: translate(160%, 165%) scale(0.18) rotate(17deg) perspective(900px) rotateY(-17deg) rotateX(4.5deg);
-    filter: brightness(0.75) blur(0.8px);
-  }
-  
-  /* Ship begins to take recognizable form from distance - smoother approach */
-  4% {
-    transform: translate(140%, 150%) scale(0.22) rotate(16deg) perspective(900px) rotateY(-15deg) rotateX(4deg);
-    filter: brightness(0.8) blur(0.6px);
-  }
-  
-  /* Ship definitely visible, entering from bottom-right with natural arc - smoother transition */
-  6% {
-    transform: translate(120%, 130%) scale(0.26) rotate(14deg) perspective(900px) rotateY(-14deg) rotateX(3deg);
-    filter: brightness(0.82) blur(0.5px);
-  }
-  
-  /* Ship begins proper entry, more gradual banking toward entry vector */
-  8% {
-    transform: translate(105%, 115%) scale(0.3) rotate(12deg) perspective(850px) rotateY(-13deg) rotateX(2.5deg);
-    filter: brightness(0.87) blur(0.4px);
-  }
-  
-  /* Ship approaches more smoothly - more fluid motion path */
-  10% {
-    transform: translate(85%, 100%) scale(0.35) rotate(10deg) perspective(850px) rotateY(-11deg) rotateX(2deg);
-    filter: brightness(0.92) blur(0.3px);
-  }
-  
-  /* Continues approach with slight banking - more deliberately smooth motion */
-  13% {
-    transform: translate(60%, 80%) scale(0.42) rotate(8deg) perspective(850px) rotateY(-9deg) rotateX(1.5deg);
-    filter: brightness(0.95);
-  }
-  
-  /* Ship gaining more presence on screen - smoother banking motion */
-  16% {
-    transform: translate(40%, 60%) scale(0.5) rotate(6deg) perspective(825px) rotateY(-6deg) rotateX(1deg);
-    filter: brightness(0.98);
-  }
-  
-  /* Approaching main screen area - more gradual leveling out */
-  18% {
-    transform: translate(20%, 40%) scale(0.58) rotate(4deg) perspective(825px) rotateY(-3deg) rotateX(0.5deg);
-    filter: brightness(1);
-  }
-  
-  /* Nearing center with fluid motion - less abrupt banking */
-  20% {
-    transform: translate(0%, 20%) scale(0.67) rotate(2deg) perspective(800px) rotateY(-1deg) rotateX(0deg);
-    filter: brightness(1.02);
-  }
-  
-  /* Close fly-by - smoother approach with gradual pitch change */
-  23% {
-    transform: translate(-15%, 0%) scale(0.8) rotate(0deg) perspective(800px) rotateY(0deg) rotateX(-2deg);
-    filter: brightness(1.04);
-  }
-  
-  /* Getting closer - more gradual approach to maximum size */
-  25% {
-    transform: translate(-20%, -10%) scale(0.9) rotate(-1deg) perspective(800px) rotateY(2deg) rotateX(-3deg);
-    filter: brightness(1.06);
-  }
-  
-  /* Smooth banking motion as ship moves past - less extreme motions */
-  28% {
-    transform: translate(-25%, -20%) scale(0.95) rotate(-2deg) perspective(800px) rotateY(4deg) rotateX(-4deg);
-    filter: brightness(1.08);
-  }
-  
-  /* Continuing banking motion as ship passes by */
-  32% {
-    transform: translate(-30%, -45%) scale(1.05) rotate(-5deg) perspective(800px) rotateY(12deg) rotateX(-8deg);
-  }
-  
-  /* Transitioning across - slight roll and pitch adjustments */
-  35% {
-    transform: translate(-40%, -50%) scale(1.1) rotate(-3deg) perspective(800px) rotateY(8deg) rotateX(-5deg);
-  }
-  
-  /* Crossing screen with dynamic movement - tilting and rolling */
-  45% {
-    transform: translate(-60%, -55%) scale(1.05) rotate(0deg) perspective(800px) rotateY(0deg) rotateX(0deg);
-  }
-  
-  /* Banking left as it approaches closest point */
-  55% {
-    transform: translate(-80%, -58%) scale(1.12) rotate(3deg) perspective(800px) rotateY(-8deg) rotateX(5deg);
-  }
-  
-  /* Maximum closest approach - dramatic bank and pitch */
-  60% {
-    transform: translate(-95%, -60%) scale(1.2) rotate(5deg) perspective(800px) rotateY(-15deg) rotateX(10deg);
-  }
-  
-  /* Beginning to pitch down as it moves away */
-  65% {
-    transform: translate(-110%, -45%) scale(1.1) rotate(8deg) perspective(800px) rotateY(-10deg) rotateX(-8deg);
-  }
-  
-  /* Nose diving as it moves away */
-  70% {
-    transform: translate(-125%, -20%) scale(0.9) rotate(10deg) perspective(800px) rotateY(-5deg) rotateX(-12deg);
-  }
-  
-  /* Ship diving out of frame top-left */
-  80% {
-    transform: translate(-150%, 0%) scale(0.7) rotate(12deg) perspective(800px) rotateY(0deg) rotateX(-15deg);
-  }
-  
-  /* Almost completely off-screen - pitched down severely */
-  90% {
-    transform: translate(-180%, 50%) scale(0.5) rotate(15deg) perspective(800px) rotateY(5deg) rotateX(-18deg);
-  }
-  
-  /* Completely off-screen */
-  95% {
-    transform: translate(-220%, 150%) scale(0.3) rotate(18deg) perspective(800px) rotateY(10deg) rotateX(-20deg);
-  }
-  
-  /* Loop back to start - transition offscreen to offscreen */
-  100% {
-    transform: translate(150%, 150%) scale(0.3) rotate(15deg) perspective(800px) rotateY(-15deg);
-  }
-}
-
-@keyframes engineGlow {
-  /* Ship entering from distance - dim glow */
-  0% {
-    opacity: 0.4;
-    transform: scale(0.75) translateX(-3px);
-    filter: blur(1.5px) brightness(0.8);
-  }
-  
-  /* Approaching - glow intensifies */
-  15% {
-    opacity: 0.5;
-    transform: scale(0.85) translateX(-2.5px);
-    filter: blur(2px) brightness(0.9);
-  }
-  
-  /* Regular distance - normal glow */
-  30% {
-    opacity: 0.6;
-    transform: scale(0.92) translateX(-2px);
-    filter: blur(2.2px) brightness(1);
-  }
-  
-  /* Close approach - intense glow */
-  60% {
-    opacity: 0.9;
-    transform: scale(1.1) translateX(0);
-    filter: blur(3px) brightness(1.2);
-  }
-  
-  /* Moving away - glow reduces */
-  75% {
-    opacity: 0.7;
-    transform: scale(0.98) translateX(-1px);
-    filter: blur(2.5px) brightness(1.1);
-  }
-  
-  /* Further distance - glow diminishes */
-  90% {
-    opacity: 0.5;
-    transform: scale(0.85) translateX(-2.5px);
-    filter: blur(2px) brightness(0.9);
-  }
-  
-  /* Furthest distance - minimal glow */
-  100% {
-    opacity: 0.4;
-    transform: scale(0.75) translateX(-3px);
-    filter: blur(1.5px) brightness(0.8);
-  }
-}
-
-@keyframes engineGlowExpansion {
-  /* Regular space flight - normal engine glow */
-  0% {
-    width: 28%;
-    height: 28%;
-    opacity: 0.7;
-    filter: blur(2px) brightness(0.95);
-  }
-  
-  /* Beginning acceleration - increased power */
-  50% {
-    width: 30%;
-    height: 30%;
-    opacity: 0.8;
-    filter: blur(3px) brightness(1.1);
-  }
-  
-  /* Pre-warp acceleration - significant power increase */
-  62% {
-    width: 35%;
-    height: 35%;
-    opacity: 0.85;
-    filter: blur(4px) brightness(1.3);
-  }
-  
-  /* Warp initiation - massive power surge */
-  70% {
-    width: 42%;
-    height: 42%;
-    opacity: 0.9;
-    filter: blur(5px) brightness(1.5);
-  }
-  
-  /* Full warp - extreme power output */
-  80% {
-    width: 55%;
-    height: 55%;
-    opacity: 0.95;
-    filter: blur(7px) brightness(1.7);
-  }
-  
-  /* Warp velocity reached - maximum power */
-  90% {
-    width: 70%;
-    height: 70%;
-    opacity: 1;
-    filter: blur(9px) brightness(1.9);
-  }
-  
-  /* Ship vanishes into warp - power beyond normal limits */
-  100% {
-    width: 85%;
-    height: 85%;
-    opacity: 0.8;
-    filter: blur(12px) brightness(2.1);
-  }
-}
-
-@keyframes glowIntensityFlicker {
-  0% {
-    opacity: 0.7;
-    filter: blur(2px) brightness(0.95); 
-  }
-  33% {
-    opacity: 0.85;
-    filter: blur(2.5px) brightness(1.1);
-  }
-  66% {
-    opacity: 0.75;
-    filter: blur(2.2px) brightness(1.0);
-  }
-  100% {
-    opacity: 0.9;
-    filter: blur(2.7px) brightness(1.15);
-  }
-}
-
-@keyframes thrustFlicker {
-  /* Ship entering from distance - smaller, cooler thrust */
-  0% {
-    opacity: 0.75;
-    width: 30%;
-    filter: blur(2px) brightness(0.8) hue-rotate(-8deg);
-  }
-  
-  /* Increasing as ship approaches */
-  15% {
-    opacity: 0.8;
-    width: 35%;
-    filter: blur(2.5px) brightness(0.9) hue-rotate(-5deg);
-  }
-  
-  /* Regular size as ship is in main viewing area */
-  30% {
-    opacity: 0.85;
-    width: 40%;
-    filter: blur(3px) brightness(1) hue-rotate(-2deg);
-  }
-  
-  /* Ship at closest approach - thrust at maximum */
-  60% {
-    opacity: 0.95;
-    width: 50%;
-    filter: blur(4px) brightness(1.2) hue-rotate(5deg);
-  }
-  
-  /* Ship starting to move away - thrust reducing */
-  75% {
-    opacity: 0.9;
-    width: 42%;
-    filter: blur(3.5px) brightness(1.1) hue-rotate(3deg);
-  }
-  
-  /* Ship getting farther - thrust smaller */
-  90% {
-    opacity: 0.8;
-    width: 35%;
-    filter: blur(2.5px) brightness(0.9) hue-rotate(-2deg);
-  }
-  
-  /* Ship at furthest distance before looping */
-  100% {
-    opacity: 0.75;
-    width: 30%;
-    filter: blur(2px) brightness(0.8) hue-rotate(-8deg);
-  }
-}
-
-@keyframes secondaryGlowFlicker {
-  0% {
-    opacity: 0.8;
-    filter: blur(1px) brightness(0.95);
-  }
-  33% {
-    opacity: 0.9;
-    filter: blur(1.2px) brightness(1.05);
-  }
-  66% {
-    opacity: 0.85;
-    filter: blur(1.1px) brightness(1);
-  }
-  100% {
-    opacity: 0.95;
-    filter: blur(1.3px) brightness(1.1);
-  }
-}
-
-/* New animations for enhanced ship effects */
-@keyframes engineExhaustOuter {
-  /* Regular space flight - subtle outer exhaust */
-  0% {
-    width: 60%;
-    height: 45%;
-    opacity: 0.15;
-    filter: blur(6px) brightness(0.95);
-    right: -20%;
-  }
-  
-  /* Beginning acceleration - slightly increased */
-  50% {
-    width: 65%;
-    height: 50%;
-    opacity: 0.18;
-    filter: blur(7px) brightness(1.05);
-    right: -22%;
-  }
-  
-  /* Pre-warp acceleration - growing larger */
-  62% {
-    width: 75%;
-    height: 55%;
-    opacity: 0.22;
-    filter: blur(8px) brightness(1.15);
-    right: -28%;
-  }
-  
-  /* Warp initiation - significant increase */
-  70% {
-    width: 90%;
-    height: 65%;
-    opacity: 0.28;
-    filter: blur(10px) brightness(1.3);
-    right: -35%;
-  }
-  
-  /* Full warp - dramatic outer glow */
-  80% {
-    width: 120%;
-    height: 85%;
-    opacity: 0.35;
-    filter: blur(13px) brightness(1.5);
-    right: -50%;
-  }
-  
-  /* Warp velocity reached - maximum effect */
-  90% {
-    width: 150%;
-    height: 100%;
-    opacity: 0.4;
-    filter: blur(18px) brightness(1.7);
-    right: -70%;
-  }
-  
-  /* Ship vanishes into warp - final surge */
-  100% {
-    width: 180%;
-    height: 120%;
-    opacity: 0.3;
-    filter: blur(22px) brightness(1.5);
-    right: -100%;
-  }
-}
-
-@keyframes outerThrustFlicker {
-  0% {
-    opacity: 0.12;
-    width: 58%;
-    filter: blur(6px) brightness(0.9) hue-rotate(-10deg);
-  }
-  
-  25% {
-    opacity: 0.15;
-    width: 60%;
-    filter: blur(6.5px) brightness(0.95) hue-rotate(-8deg);
-  }
-  
-  50% {
-    opacity: 0.18;
-    width: 62%;
-    filter: blur(7px) brightness(1) hue-rotate(-5deg);
-  }
-  
-  75% {
-    opacity: 0.16;
-    width: 61%;
-    filter: blur(6.8px) brightness(0.98) hue-rotate(-7deg);
-  }
-  
-  100% {
-    opacity: 0.19;
-    width: 63%;
-    filter: blur(7.2px) brightness(1.05) hue-rotate(-3deg);
-  }
-}
-
-@keyframes shieldPulse {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1);
-    filter: blur(8px) brightness(0.9);
-  }
-  
-  /* Shield starts to activate as ship accelerates */
-  50% {
-    opacity: 0.02;
-    transform: translate(-50%, -50%) scale(1.02);
-    filter: blur(9px) brightness(1);
-  }
-  
-  /* Shield strengthens when approaching warp */
-  70% {
-    opacity: 0.06;
-    transform: translate(-50%, -50%) scale(1.04);
-    filter: blur(10px) brightness(1.1);
-  }
-  
-  /* Shield at full strength during warp initiation */
-  85% {
-    opacity: 0.12;
-    transform: translate(-50%, -50%) scale(1.08);
-    filter: blur(12px) brightness(1.25) hue-rotate(-5deg);
-  }
-  
-  /* Shield maximum during warp flight */
-  100% {
-    opacity: 0.15;
-    transform: translate(-50%, -50%) scale(1.12);
-    filter: blur(15px) brightness(1.3) hue-rotate(-10deg);
-  }
-}
-
-@keyframes engineGlowSecondary {
-  0% {
-    opacity: 0.7;
-    transform: scale(0.9);
-    filter: blur(1px) brightness(0.95);
-  }
-  50% {
-    opacity: 0.85;
-    transform: scale(1.05);
-    filter: blur(1.5px) brightness(1.05);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.1);
-    filter: blur(2px) brightness(1.15);
-  }
-}
-
-@keyframes engineExhaust {
-  /* Initial flight - minimal thrust - cooler blue color */
-  0% {
-    opacity: 0.2;
-    width: 15%;
-    height: 20%;
-    filter: blur(2px) brightness(0.9) hue-rotate(15deg);
-    background: linear-gradient(
-      to left, 
-      rgba(140, 200, 255, 0.9),
-      rgba(120, 180, 255, 0.7) 30%, 
-      rgba(100, 160, 255, 0.5) 60%, 
-      rgba(80, 140, 255, 0) 100%
-    );
-  }
-  
-  /* Cruising in regular space - standard blue */
-  30% {
-    opacity: 0.4;
-    width: 25%;
-    height: 25%;
-    filter: blur(3px) brightness(1) hue-rotate(10deg);
-    background: linear-gradient(
-      to left, 
-      rgba(150, 210, 255, 0.9),
-      rgba(130, 190, 255, 0.7) 30%, 
-      rgba(110, 170, 255, 0.5) 60%, 
-      rgba(90, 150, 255, 0) 100%
-    );
-  }
-  
-  /* Beginning acceleration - thrust increases - brighter blue */
-  50% {
-    opacity: 0.6;
-    width: 40%;
-    height: 30%;
-    filter: blur(4px) brightness(1.1) hue-rotate(5deg);
-    background: linear-gradient(
-      to left, 
-      rgba(170, 225, 255, 0.95),
-      rgba(150, 210, 255, 0.8) 25%, 
-      rgba(130, 195, 255, 0.65) 50%, 
-      rgba(110, 180, 255, 0.5) 75%,
-      rgba(100, 160, 255, 0) 100%
-    );
-  }
-  
-  /* Pre-warp acceleration phase 1 - smoother transition */
-  56% {
-    opacity: 0.65;
-    width: 50%;
-    height: 33%;
-    filter: blur(4.5px) brightness(1.15) hue-rotate(0deg);
-    background: linear-gradient(
-      to left, 
-      rgba(180, 230, 255, 0.95),
-      rgba(160, 215, 255, 0.8) 25%, 
-      rgba(140, 200, 255, 0.65) 50%,
-      rgba(120, 185, 255, 0.5) 75%, 
-      rgba(110, 170, 255, 0) 100%
-    );
-  }
-  
-  /* Pre-warp acceleration phase 2 - thrust significantly increases - hotter blue */
-  62% {
-    opacity: 0.7;
-    width: 60%;
-    height: 35%;
-    filter: blur(5px) brightness(1.2) hue-rotate(-5deg);
-    background: linear-gradient(
-      to left, 
-      rgba(190, 235, 255, 0.95),
-      rgba(170, 225, 255, 0.85) 25%, 
-      rgba(150, 210, 255, 0.7) 50%,
-      rgba(130, 195, 255, 0.55) 75%, 
-      rgba(110, 170, 255, 0) 100%
-    );
-  }
-  
-  /* Pre-warp acceleration phase 3 - final preparation for warp jump */
-  66% {
-    opacity: 0.8;
-    width: 80%;
-    height: 40%;
-    filter: blur(6px) brightness(1.3) hue-rotate(-10deg) saturate(1.1);
-    background: linear-gradient(
-      to left, 
-      rgba(210, 240, 255, 0.97),
-      rgba(190, 230, 255, 0.9) 25%, 
-      rgba(170, 220, 255, 0.75) 50%,
-      rgba(150, 210, 255, 0.6) 75%, 
-      rgba(130, 190, 255, 0) 100%
-    );
-  }
-  
-  /* Warp initiation - massive thrust burst - intense blue-white with yellow-orange edge */
-  70% {
-    opacity: 0.9;
-    width: 150%;
-    height: 60%;
-    filter: blur(8px) brightness(1.5) hue-rotate(-15deg) saturate(1.3);
-    background: linear-gradient(
-      to left, 
-      rgba(255, 245, 215, 0.98),  /* Much hotter yellow-white core */
-      rgba(220, 240, 255, 0.9) 20%, 
-      rgba(180, 230, 255, 0.8) 40%,
-      rgba(140, 200, 255, 0.7) 60%, 
-      rgba(120, 180, 255, 0) 100%
-    );
-  }
-  
-  /* Full warp - extreme engine output - intense white-yellow core with blue edges */
-  80% {
-    opacity: 1;
-    width: 220%;
-    height: 80%;
-    filter: blur(12px) brightness(1.8) hue-rotate(-25deg) saturate(1.5);
-    background: linear-gradient(
-      to left, 
-      rgba(255, 250, 230, 1),  /* Almost pure white with yellow tint */
-      rgba(240, 245, 255, 0.95) 15%, 
-      rgba(200, 240, 255, 0.9) 30%,
-      rgba(160, 225, 255, 0.8) 50%, 
-      rgba(140, 215, 255, 0) 100%
-    );
-  }
-  
-  /* Warp velocity reached - blinding white-yellow core with massive exhaust plume */
-  90% {
-    opacity: 1;
-    width: 300%;
-    height: 100%;
-    filter: blur(15px) brightness(2) hue-rotate(-30deg) saturate(1.7);
-    background: linear-gradient(
-      to left, 
-      rgba(255, 255, 240, 1),  /* Pure white-hot core */
-      rgba(255, 250, 230, 0.98) 10%,
-      rgba(240, 245, 255, 0.95) 20%,
-      rgba(220, 240, 255, 0.9) 35%, 
-      rgba(200, 235, 255, 0.8) 50%,
-      rgba(180, 230, 255, 0.7) 70%,
-      rgba(160, 220, 255, 0) 100%
-    );
-  }
-  
-  /* Ship vanishes into warp - blinding white flash with massive energy discharge */
-  100% {
-    opacity: 0.85;
-    width: 400%;
-    height: 130%;
-    filter: blur(20px) brightness(2.5) hue-rotate(-35deg) saturate(2);
-    background: linear-gradient(
-      to left, 
-      rgba(255, 255, 255, 1),  /* Pure white core - max heat */
-      rgba(255, 255, 245, 0.98) 5%,
-      rgba(255, 250, 230, 0.95) 10%,
-      rgba(240, 245, 255, 0.9) 20%,
-      rgba(220, 240, 255, 0.85) 30%, 
-      rgba(200, 235, 255, 0.8) 45%,
-      rgba(180, 230, 255, 0.7) 60%,
-      rgba(160, 225, 255, 0.5) 75%,
-      rgba(140, 220, 255, 0.3) 85%,
-      rgba(120, 210, 255, 0) 100%
-    );
-    box-shadow: 0 0 100px rgba(200, 240, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.9);
-  }
-}
-
-.svg-spaceship {
-  width: 100%;
-  height: 100%;
-  display: block;
-  max-width: 100%;
-  object-fit: contain;
-  filter: contrast(1.2) saturate(1.15) brightness(1.05);
-}
-
-@keyframes shipWarpRealistic {
-  /* Ship starts from far bottom left off screen - tiny distant point of light */
-  0% {
-    transform: translate(-200%, 200%) scale(0.01) perspective(1300px) rotateY(-15deg) rotateX(-8deg);
-    opacity: 0;
-    filter: drop-shadow(0 0 3px rgba(80, 160, 255, 0.2)) blur(2px) brightness(0.7);
-  }
-  
-  /* First hint of ship approaching from bottom left - slight glimmer from engines */
-  1% {
-    transform: translate(-180%, 180%) scale(0.03) perspective(1300px) rotateY(-14deg) rotateX(-7deg);
-    opacity: 0.05;
-    filter: drop-shadow(0 0 4px rgba(90, 170, 255, 0.25)) blur(1.8px) brightness(0.75);
-  }
-  
-  /* Ship becomes just visible - still small dot with engine glow */
-  2% {
-    transform: translate(-160%, 150%) scale(0.06) perspective(1300px) rotateY(-12deg) rotateX(-6deg);
-    opacity: 0.15;
-    filter: drop-shadow(0 0 5px rgba(100, 180, 255, 0.3)) blur(1.5px) brightness(0.8);
-  }
-  
-  /* Ship begins to take recognizable form - moving from bottom left toward center */
-  3.5% {
-    transform: translate(-130%, 120%) scale(0.1) perspective(1250px) rotateY(-10deg) rotateX(-5deg);
-    opacity: 0.25;
-    filter: drop-shadow(0 0 5.5px rgba(100, 180, 255, 0.32)) blur(1.2px) brightness(0.85);
-  }
-  
-  /* Ship approaching center, growing larger */
-  5% {
-    transform: translate(-100%, 80%) scale(0.15) perspective(1220px) rotateY(-8deg) rotateX(-4deg);
-    opacity: 0.4;
-    filter: drop-shadow(0 0 6px rgba(100, 180, 255, 0.35)) blur(0.9px) brightness(0.9);
-  }
-  
-  /* Ship continues moving toward center */
-  7% {
-    transform: translate(-80%, 60%) scale(0.2) perspective(1200px) rotateY(-7deg) rotateX(-3deg);
-    opacity: 0.5;
-    filter: drop-shadow(0 0 7px rgba(100, 180, 255, 0.38)) blur(0.8px) brightness(0.92);
-  }
-  
-  /* Ship moves closer to center screen */
-  9% {
-    transform: translate(-60%, 40%) scale(0.25) perspective(1200px) rotateY(-6deg) rotateX(-2deg);
-    opacity: 0.6;
-    filter: drop-shadow(0 0 8px rgba(100, 180, 255, 0.4)) blur(0.7px) brightness(0.95);
-  }
-  
-  /* Ship getting closer to center */
-  12% {
-    transform: translate(-40%, 20%) scale(0.3) perspective(1200px) rotateY(-5deg) rotateX(-1deg);
-    opacity: 0.7;
-    filter: drop-shadow(0 0 9px rgba(100, 180, 255, 0.45)) blur(0.5px) brightness(0.98);
-  }
-  
-  /* Ship approaching center position with gentle maneuvering */
-  15% {
-    transform: translate(-20%, 10%) scale(0.35) perspective(1200px) rotateY(-3deg) rotateX(-0.5deg);
-    opacity: 0.8;
-    filter: drop-shadow(0 0 10px rgba(100, 180, 255, 0.5)) blur(0.2px) brightness(1);
-  }
-  
-  /* Ship almost at center position */
-  18% {
-    transform: translate(-10%, 5%) scale(0.4) perspective(1200px) rotateY(-1deg) rotateX(-0.2deg);
-    opacity: 0.9;
-    filter: drop-shadow(0 0 11px rgba(100, 180, 255, 0.55)) brightness(1.02);
-  }
-  
-  /* Ship arrives at center with final adjustment */
-  19% {
-    transform: translate(-5%, 2%) scale(0.45) perspective(1200px) rotateY(0deg) rotateX(0deg);
-    opacity: 0.95;
-    filter: drop-shadow(0 0 11.5px rgba(100, 180, 255, 0.58)) brightness(1.04);
-  }
-  
-  /* Ship reaches center position - detailed view */
-  20% {
-    transform: translate(0%, 0%) scale(0.5) perspective(1200px) rotateY(0deg) rotateX(0deg);
-    opacity: 1;
-    filter: drop-shadow(0 0 12px rgba(100, 180, 255, 0.6)) brightness(1.05);
-  }
-  
-  /* Ship holds at center for a moment before preparing for warp */
-  21% {
-    transform: translate(0%, 0%) scale(0.5) perspective(1200px) rotateY(0deg) rotateX(0deg);
-    filter: drop-shadow(0 0 12.5px rgba(103, 183, 255, 0.63)) brightness(1.06);
-  }
-  
-  /* Ship begins preparing for warp - subtle movement starting */
-  22% {
-    transform: translate(-2%, 0%) scale(0.5) perspective(1200px) rotateY(-1deg) rotateX(0deg);
-    filter: drop-shadow(0 0 13px rgba(105, 185, 255, 0.65)) brightness(1.07);
-  }
-  
-  /* Ship engines start powering up for warp acceleration */
-  24% {
-    transform: translate(-5%, 0%) scale(0.5) perspective(1200px) rotateY(-2deg) rotateX(0deg);
-    filter: drop-shadow(0 0 15px rgba(115, 195, 255, 0.7)) brightness(1.08);
-  }
-  
-  /* Ship begins accelerating to warp - starting to move left */
-  26% {
-    transform: translate(-10%, 0%) scale(0.52) perspective(1200px) rotateY(-3deg) rotateX(0deg);
-    filter: drop-shadow(0 0 18px rgba(130, 210, 255, 0.8)) brightness(1.1);
-  }
-  
-  /* Ship warp engines fully engaged - rapid acceleration begins - blue flash starts */
-  27% {
-    transform: translate(-20%, 0%) scale(0.55) perspective(1200px) rotateY(-5deg) rotateX(0deg);
-    filter: drop-shadow(0 0 25px rgba(150, 220, 255, 0.9)) brightness(1.2);
-  }
-  
-  /* Ship entering warp speed - blue flash at maximum - rapid movement to left */
-  28% {
-    transform: translate(-40%, 0%) scale(0.6) perspective(1200px) rotateY(-8deg) rotateX(0deg);
-    filter: drop-shadow(0 0 35px rgba(170, 230, 255, 1.0)) brightness(1.3);
-  }
-  
-  /* Ship at full warp speed - streaking to the left rapidly */
-  32% {
-    transform: translate(-80%, 0%) scale(0.65) perspective(1200px) rotateY(-10deg) rotateX(0deg);
-    filter: drop-shadow(0 0 40px rgba(190, 240, 255, 1.0)) brightness(1.4);
-  }
-  
-  /* Ship approaching extreme warp velocity - almost at edge of screen */
-  36% {
-    transform: translate(-120%, 0%) scale(0.7) perspective(1200px) rotateY(-12deg) rotateX(0deg);
-    filter: drop-shadow(0 0 50px rgba(210, 250, 255, 1.0)) brightness(1.5);
-  }
-  
-  /* Ship reaches maximum warp - nearly off screen to the left */
-  40% {
-    transform: translate(-160%, 0%) scale(0.75) perspective(1200px) rotateY(-15deg) rotateX(0deg);
-    filter: drop-shadow(0 0 60px rgba(220, 255, 255, 1.0)) brightness(1.6);
-  }
-  
-  /* Ship at final warp speed - blue flash starting to fade as ship vanishes */
-  43% {
-    transform: translate(-190%, 0%) scale(0.8) perspective(1200px) rotateY(-18deg) rotateX(0deg);
-    filter: drop-shadow(0 0 55px rgba(200, 240, 255, 0.95)) brightness(1.5);
-  }
-  
-  /* Ship nearly gone - just a streak of light remaining */
-  46% {
-    transform: translate(-220%, 0%) scale(0.85) perspective(1200px) rotateY(-20deg) rotateX(0deg);
-    filter: drop-shadow(0 0 45px rgba(180, 230, 255, 0.9)) brightness(1.4);
-  }
-  
-  /* Ship becomes just a blue streak - almost disappeared */
-  50% {
-    transform: translate(-250%, 0%) scale(0.9) perspective(1200px) rotateY(-22deg) rotateX(0deg);
-    filter: drop-shadow(0 0 35px rgba(160, 210, 255, 0.8)) brightness(1.3);
-  }
-  
-  /* Ship is basically gone - just a faint glow remains */
-  53% {
-    transform: translate(-280%, 0%) scale(0.95) perspective(1200px) rotateY(-24deg) rotateX(0deg);
-    filter: drop-shadow(0 0 25px rgba(140, 190, 255, 0.7)) brightness(1.2);
-    opacity: 0.7;
-  }
-  
-  /* Ship completely disappeared into warp space */
-  56% {
-    transform: translate(-300%, 0%) scale(1.0) perspective(1200px) rotateY(-25deg) rotateX(0deg);
-    filter: drop-shadow(0 0 15px rgba(120, 170, 255, 0.5)) brightness(1.1);
-    opacity: 0.4;
-  }
-  
-  /* Ship aligns for warp preparation - settling into position */
-  60% {
-    transform: translate(-36%, -50%) scale(0.85) perspective(1200px) rotateY(0deg) rotateX(0deg);
-    filter: drop-shadow(0 0 27px rgba(165, 243, 255, 0.92));
-  }
-  
-  /* Ship begins to engage main engines - start of warp preparation */
-  63% {
-    transform: translate(-40%, -50%) scale(0.84) perspective(1200px) rotateY(0deg) rotateX(0.5deg);
-    filter: drop-shadow(0 0 30px rgba(170, 245, 255, 0.94));
-  }
-  
-  /* Engine power increases - initial acceleration */
-  66% {
-    transform: translate(-50%, -50%) scale(0.83) perspective(1200px) rotateY(0deg) rotateX(0deg);
-    filter: drop-shadow(0 0 35px rgba(175, 247, 255, 0.96));
-  }
-  
-  /* Ship begins warp acceleration with blue effect intensifying */
-  70% {
-    transform: translate(-80%, -50%) scale(0.8) perspective(1200px) rotateY(0deg) rotateX(0deg);
-    filter: drop-shadow(0 0 40px rgba(180, 250, 255, 0.98));
-  }
-  
-  /* Rapid acceleration - much faster movement with stretch effect beginning */
-  74% {
-    transform: translate(-120%, -50%) scale(0.77) perspective(1200px) rotateY(0deg) rotateX(0deg) scaleX(1.2);
-    filter: drop-shadow(0 0 45px rgba(185, 252, 255, 1));
-  }
-  
-  /* Extreme acceleration - ship dramatically stretching as it streaks through space */
-  78% {
-    transform: translate(-160%, -50%) scale(0.73) perspective(1200px) rotateY(0deg) rotateX(0deg) scaleX(1.5);
-    filter: drop-shadow(0 0 50px rgba(190, 254, 255, 1));
-  }
-  
-  /* Ship reaches maximum velocity during warp with extreme stretch effect */
-  82% {
-    transform: translate(-200%, -50%) scale(0.68) perspective(1200px) rotateY(0deg) rotateX(0deg) scaleX(1.8);
-    filter: drop-shadow(0 0 65px rgba(195, 255, 255, 1));
-    opacity: 0.95;
-  }
-  
-  /* Ship at full warp speed - extreme velocity with dramatic stretching */
-  86% {
-    transform: translate(-240%, -50%) scale(0.58) perspective(1200px) rotateY(0deg) rotateX(0deg) scaleX(2.2);
-    filter: drop-shadow(0 0 80px rgba(200, 255, 255, 1));
-    opacity: 0.9;
-  }
-  
-  /* Ship continues at extreme speed - elongated with light trail effect, beginning to move more off-screen */
-  90% {
-    transform: translate(-300%, -50%) scale(0.45) perspective(1200px) rotateY(5deg) rotateX(-8deg) scaleX(2.6);
-    opacity: 0.7;
-    filter: drop-shadow(0 0 90px rgba(180, 245, 255, 0.85)) blur(1px);
-  }
-  
-  /* Ship elongation reaches maximum as it makes a dramatic exit - further off-screen */
-  94% {
-    transform: translate(-400%, -60%) scale(0.3) perspective(1200px) rotateY(8deg) rotateX(-12deg) scaleX(3);
-    opacity: 0.4;
-    filter: drop-shadow(0 0 100px rgba(160, 230, 255, 0.7)) blur(2px);
-  }
-  
-  /* Ship creates a final energy burst as it flies rapidly off-screen - dramatic exit motion */
-  97% {
-    transform: translate(-600%, -65%) scale(0.15) perspective(1200px) rotateY(15deg) rotateX(-20deg) scaleX(3.5);
-    opacity: 0.2;
-    filter: drop-shadow(0 0 120px rgba(140, 210, 255, 0.5)) blur(3px);
-  }
-  
-  /* Ship completely exits off-screen with final energy flash - fully leaving view area */
-  100% {
-    transform: translate(-1000%, -70%) scale(0.01) perspective(1200px) rotateY(20deg) rotateX(-25deg) scaleX(5);
-    opacity: 0;
-    filter: drop-shadow(0 0 200px rgba(120, 180, 255, 0)) blur(6px);
-  }
-}
-
-@keyframes shipWarp {
-  0% {
-    transform: translate(-50%, -50%) scale(0.5);
-  }
-  20% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  40% {
-    transform: translate(-50%, -50%) scale(1.2);
-  }
-  60% {
-    transform: translate(-50%, -50%) scale(1.5);
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(5);
-  }
-}
-
-.skip-message {
-  position: absolute;
-  bottom: max(10px, 2vh);
-  right: max(10px, 2vw);
-  color: #fff;
-  font-size: clamp(0.7rem, 1.5vw, 1rem);
-  opacity: 0.7;
-  z-index: 1006;
-  padding: clamp(5px, 1vw, 10px);
-  background-color: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-}
-
-/* Add animation for stars */
-@keyframes twinkle {
-  0% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 0.8;
-  }
-  100% {
-    opacity: 0.2;
-  }
-}
-
-.animated-stars {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1001;
-}
-
-.animated-star {
+.star {
   position: absolute;
   background-color: #ffffff;
   border-radius: 50%;
   opacity: 0.8;
-  animation: starFloat linear infinite;
+  animation: twinkle 3s infinite alternate;
 }
 
-@keyframes starFloat {
-  /* Stars appear stationary as ship approaches from distance */
-  0%, 20% {
-    transform: translateX(0px);
+@keyframes twinkle {
+  0% {
     opacity: 0.3;
   }
-  
-  /* Very slight parallax effect as ship moves through space */
-  30% {
-    opacity: 0.5;
-    transform: translateX(-20px);
-  }
-  
-  /* Gradual increase in parallax as ship movement continues */
-  40% {
-    opacity: 0.6;
-    transform: translateX(-40px);
-  }
-  
-  /* Stars maintain steady movement during ship hovering/maneuvering */
   50% {
-    opacity: 0.7;
-    transform: translateX(-60px);
-  }
-  
-  /* Slight increase in star movement as ship begins to orient for departure */
-  60% {
-    transform: translateX(-80px);
     opacity: 0.8;
   }
-  
-  /* Stars begin to move faster as ship engages thrusters */
-  70% {
-    transform: translateX(-120px);
-    opacity: 0.9;
-  }
-  
-  /* Increased star movement as ship accelerates */
-  80% {
-    transform: translateX(-180px);
-    opacity: 0.9;
-  }
-  
-  /* Stars stream by at consistent rate - realistic space travel */
-  90% {
-    transform: translateX(-250px);
-    opacity: 0.7;
-  }
-  
-  /* Stars continue consistent movement as ship disappears */
   100% {
-    transform: translateX(-300px);
-    opacity: 0.4;
+    opacity: 0.3;
+  }
+}
+
+.space-effects-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.space-planet {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(100, 200, 255, 0.2) 0%,
+    rgba(0, 30, 60, 0.1) 30%,
+    transparent 70%
+  );
+}
+
+.stars-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.nebula {
+  position: absolute;
+  opacity: 0.1;
+  filter: blur(10px);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(100, 100, 255, 0.5) 0%,
+    rgba(70, 0, 100, 0.2) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, white);
+  transform: rotate(45deg);
+  animation: shoot 2s ease-in;
+  opacity: 0;
+}
+
+@keyframes shoot {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(0) rotate(45deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(300px) translateY(300px) rotate(45deg);
+  }
+}
+
+.menu-buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem; /* Tripled the spacing between buttons */
+}
+
+.button-animation {
+  animation: slideInStagger 0.5s ease-out backwards;
+}
+
+@keyframes slideInStagger {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
