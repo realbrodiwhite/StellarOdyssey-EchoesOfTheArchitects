@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Animation for title subtitle shimmering effect */
+@keyframes shimmer {
+  0% { color: rgba(156, 163, 175, 0.6); text-shadow: none; }
+  20% { color: rgba(209, 213, 219, 0.8); text-shadow: 0 0 5px rgba(255, 255, 255, 0.4); }
+  40% { color: rgba(243, 244, 246, 0.9); text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 12px rgba(59, 130, 246, 0.4); }
+  60% { color: rgb(255, 255, 255); text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 15px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4); }
+  80% { color: rgba(243, 244, 246, 0.9); text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 12px rgba(59, 130, 246, 0.4); }
+  100% { color: rgba(156, 163, 175, 0.6); text-shadow: none; }
+}
+
+.shimmer-text {
+  animation: shimmer 8s ease-in-out infinite;
+  letter-spacing: 0.25em;
+  background-image: linear-gradient(90deg, transparent, transparent);
+}
+
 @layer base {
   * {
     @apply border-border;
