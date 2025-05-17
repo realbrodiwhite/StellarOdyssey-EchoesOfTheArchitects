@@ -106,10 +106,12 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
   
   return (
     <div className="h-screen w-full bg-black flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Stars background - responsive based on viewport size */}
-      <div className="absolute inset-0 z-0">
-        {renderStars()}
-        {renderShootingStars()}
+      {/* Stars background with rotation - responsive based on viewport size */}
+      <div className="absolute inset-0 z-0 star-field-container">
+        <div className="rotating-star-field">
+          {renderStars()}
+          {renderShootingStars()}
+        </div>
       </div>
       
       {/* Game title */}
