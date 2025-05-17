@@ -122,7 +122,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
               <span className="stellar-text" style={{ marginRight: "-0.15em" }}>STELLAR</span><span className="odyssey-text">ODYSSEY</span>
             </div>
           </div>
-          <div className="text-[0.6rem] sm:text-[0.8rem] md:text-[1rem] lg:text-[1.2rem] w-[100%] mx-auto text-center font-bold shimmer-text mt-0">ECHOES OF THE ARCHITECTS</div>
+          <div className="text-[0.6rem] sm:text-[0.8rem] md:text-[1rem] lg:text-[1.2rem] w-[120%] mx-auto text-center font-bold shimmer-text mt-0">ECHOES OF THE ARCHITECTS</div>
         </div>
       </div>
       
