@@ -14,7 +14,7 @@
 
 .shimmer-text {
   animation: shimmer 8s ease-in-out infinite;
-  letter-spacing: 1em;
+  letter-spacing: 2em;
   background-image: linear-gradient(90deg, transparent, transparent);
 }
 
