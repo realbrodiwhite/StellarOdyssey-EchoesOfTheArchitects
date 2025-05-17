@@ -126,12 +126,12 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
             </div>
             
             {/* Mobile version (two lines) with larger text */}
-            <div className="flex flex-col sm:hidden items-center justify-center text-[5rem] leading-tight">
+            <div className="flex flex-col sm:hidden items-center justify-center text-[5.5rem] md:text-[6rem] leading-[0.9] w-full px-3">
               <div className="stellar-text">STELLAR</div>
               <div className="odyssey-text">ODYSSEY</div>
             </div>
           </div>
-          <div className="text-[0.6rem] sm:text-[0.8rem] md:text-[1rem] lg:text-[1.2rem] w-[100%] mx-auto text-center font-bold shimmer-text mt-4">ECHOES OF THE ARCHITECTS</div>
+          <div className="text-[0.5rem] sm:text-[0.8rem] md:text-[1rem] lg:text-[1.2rem] w-[100%] mx-auto text-center font-bold shimmer-text mt-4">ECHOES OF THE ARCHITECTS</div>
         </div>
       </div>
       
