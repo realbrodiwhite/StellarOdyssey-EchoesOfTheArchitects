@@ -124,6 +124,103 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         opacity: 1,
         filter: "drop-shadow(0 0 18px rgba(120,180,255,0.4))"
       }}>
+        {/* Moon debris ring system - outer sparse ring */}
+        <div className="absolute moon-ring ring-outer" style={{
+          top: "50%",
+          left: "50%",
+          width: "160%",
+          height: "160%",
+          borderRadius: "50%",
+          border: "1px solid rgba(200, 200, 210, 0.15)",
+          transform: "translate(-50%, -50%) rotate(2deg)",
+          overflow: "visible",
+          animation: "ring-rotate 240s linear infinite"
+        }}></div>
+        
+        {/* Moon debris ring system - main dense ring with particle effects */}
+        <div className="absolute moon-ring ring-main" style={{
+          top: "50%",
+          left: "50%",
+          width: "140%",
+          height: "140%",
+          borderRadius: "50%",
+          border: "3px solid rgba(180, 180, 200, 0.25)",
+          boxShadow: "0 0 8px rgba(200, 200, 220, 0.1), inset 0 0 12px rgba(200, 200, 220, 0.1)",
+          transform: "translate(-50%, -50%) rotate(0deg)",
+          overflow: "visible",
+          animation: "ring-rotate 180s linear infinite",
+          position: "relative"
+        }}>
+          {/* Ring particles - main dense ring */}
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div 
+              key={`main-particle-${i}`}
+              className="absolute ring-particle" 
+              style={{
+                width: `${Math.random() * 2 + 1}px`,
+                height: `${Math.random() * 2 + 1}px`,
+                background: `rgba(${200 + Math.random() * 55}, ${200 + Math.random() * 55}, ${220 + Math.random() * 35}, ${0.5 + Math.random() * 0.5})`,
+                boxShadow: `0 0 ${Math.random() * 3}px rgba(255, 255, 255, 0.8)`,
+                borderRadius: "50%",
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                transform: `translate(-50%, -50%) rotate(${Math.random() * 360}deg)`,
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Moon debris ring system - inner ring with particles */}
+        <div className="absolute moon-ring ring-inner" style={{
+          top: "50%",
+          left: "50%",
+          width: "130%",
+          height: "130%",
+          borderRadius: "50%",
+          border: "2px solid rgba(220, 220, 235, 0.2)",
+          boxShadow: "0 0 5px rgba(220, 220, 235, 0.12)",
+          transform: "translate(-50%, -50%) rotate(-1deg)",
+          overflow: "visible",
+          animation: "ring-rotate-reverse 210s linear infinite",
+          position: "relative"
+        }}>
+          {/* Ring particles - inner ring */}
+          {Array.from({ length: 15 }).map((_, i) => (
+            <div 
+              key={`inner-particle-${i}`}
+              className="absolute ring-particle" 
+              style={{
+                width: `${Math.random() * 1.5 + 0.7}px`,
+                height: `${Math.random() * 1.5 + 0.7}px`,
+                background: `rgba(${220 + Math.random() * 35}, ${220 + Math.random() * 35}, ${235 + Math.random() * 20}, ${0.6 + Math.random() * 0.4})`,
+                boxShadow: `0 0 ${Math.random() * 2}px rgba(255, 255, 255, 0.9)`,
+                borderRadius: "50%",
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                transform: `translate(-50%, -50%) rotate(${Math.random() * 360}deg)`,
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Some larger debris fragments */}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div 
+            key={`large-debris-${i}`}
+            className="absolute moon-debris" 
+            style={{
+              width: `${Math.random() * 3 + 2}px`,
+              height: `${Math.random() * 3 + 2}px`,
+              background: `rgba(${180 + Math.random() * 75}, ${180 + Math.random() * 75}, ${200 + Math.random() * 55}, ${0.7 + Math.random() * 0.3})`,
+              boxShadow: `0 0 ${Math.random() * 4 + 2}px rgba(255, 255, 255, 0.8)`,
+              borderRadius: "50%",
+              top: `${15 + Math.random() * 70}%`,
+              left: `${15 + Math.random() * 70}%`,
+              transform: `translate(-50%, -50%) scale(${0.8 + Math.random() * 0.4})`,
+              animation: `float ${10 + Math.random() * 20}s infinite linear`
+            }}
+          />
+        ))}
         {/* High-detail realistic Earth body with 8K-like photo-realistic textures - now with darker nighttime appearance */}
         <div className="absolute rounded-full overflow-hidden" style={{ 
           width: "100%", 

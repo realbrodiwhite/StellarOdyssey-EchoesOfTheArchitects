@@ -25,6 +25,54 @@
 
 /* Remove these classes as they're now defined in the SpaceTransition component */
 
+/* Animations for Earth's moon debris rings */
+@keyframes ring-rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes ring-rotate-reverse {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+/* Animation for city lights twinkling */
+@keyframes cityLightsTwinkle {
+  0%, 100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Animation for floating debris */
+@keyframes float {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(-48%, -52%) scale(1.05) rotate(90deg);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1) rotate(180deg);
+  }
+  75% {
+    transform: translate(-52%, -48%) scale(0.95) rotate(270deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(360deg);
+  }
+}
+
 @layer base {
   :root {
     --background: 222.2 84% 4.9%;
