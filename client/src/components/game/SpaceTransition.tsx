@@ -323,8 +323,11 @@ const AnimatedShip = () => {
             Math.PI / 10 * (1 - easeIn) // banking
           );
           
-          // Scale: consistent
-          shipRef.current.scale.set(2.5, 2.5, 2.5);
+          // Scale: increase from small to large to simulate distance
+          const startScale = 0.5;
+          const endScale = 2.5;
+          const currentScale = startScale + easeIn * (endScale - startScale);
+          shipRef.current.scale.set(currentScale, currentScale, currentScale);
         } 
         else if (t < 0.6) {
           // Ship hovers in center for a moment
