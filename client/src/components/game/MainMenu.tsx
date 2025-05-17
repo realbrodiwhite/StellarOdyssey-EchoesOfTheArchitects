@@ -105,9 +105,9 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       
 
       
-      {/* Menu buttons - scaled to be half their original size with different colors */}
+      {/* Menu buttons - scaled to be one-third their original size with different colors */}
       <motion.div
-        className="flex flex-col sm:flex-row gap-3 sm:gap-4 z-10 justify-center mt-6 scale-50"
+        className="flex flex-row gap-2 z-10 justify-center mt-6 scale-[0.33]"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
