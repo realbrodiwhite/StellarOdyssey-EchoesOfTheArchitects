@@ -117,8 +117,8 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         className="font-bold text-white mb-8 sm:mb-10 md:mb-12 z-10 px-4 text-center"
       >
         <div className="flex flex-col items-center gap-2">
-          <div className="text-[3.5rem] sm:text-[4.5rem] md:text-[5.5rem] lg:text-[6.3rem] title-container flex flex-row items-center justify-center">
-            <span className="space-text">STELLAR</span><span className="forest-green-text">ODYSSEY</span>
+          <div className="text-[3.5rem] sm:text-[4.5rem] md:text-[5.5rem] lg:text-[6.3rem] title-container flex flex-row items-center justify-center whitespace-nowrap">
+            <span className="space-text">STELLAR</span><span className="forest-green-text" style={{marginLeft: "-0.05em"}}>ODYSSEY</span>
           </div>
           <div className="text-[0.6rem] sm:text-[0.8rem] md:text-[1rem] lg:text-[1.2rem] w-[100%] mx-auto text-center font-bold shimmer-text mt-0">ECHOES OF THE ARCHITECTS</div>
         </div>
