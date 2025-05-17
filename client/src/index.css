@@ -120,16 +120,55 @@
   text-transform: uppercase;
   position: relative;
   z-index: 1;
-  animation: shimmer 3s infinite alternate;
   font-weight: 600;
+  background: linear-gradient(
+    90deg,
+    rgba(160, 160, 160, 0.5) 0%,
+    rgba(230, 230, 230, 1) 25%,
+    rgba(200, 200, 200, 0.8) 50%,
+    rgba(160, 160, 160, 0.5) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmerEffect 4s linear infinite;
+  position: relative;
+  overflow: hidden;
 }
 
-@keyframes shimmer {
+.shimmer-text::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: reflectionMove 4s linear infinite;
+  transform: skewX(-20deg);
+}
+
+@keyframes shimmerEffect {
   0% {
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    background-position: 0% 50%;
   }
   100% {
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes reflectionMove {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
   }
 }
 
