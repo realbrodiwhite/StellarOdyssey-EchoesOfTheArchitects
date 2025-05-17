@@ -136,42 +136,25 @@
   color: #a0a0a0;
   letter-spacing: 1.2em; /* Doubled letter spacing */
   text-transform: uppercase;
-  position: relative;
-  z-index: 1;
   font-weight: 600;
   position: relative;
-  overflow: hidden;
+  z-index: 1;
+  animation: glowEffect 5s ease-in-out infinite alternate;
 }
 
-.shimmer-text::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 5%; /* Start at 5% */
-  width: 90%; /* Only use 90% of text width */
-  height: 20%; /* Smaller shimmer height, only at top */
-  background: linear-gradient(
-    90deg,
-    rgba(160, 160, 160, 0.5) 0%,
-    rgba(180, 180, 180, 0.7) 50%,
-    rgba(160, 160, 160, 0.5) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmerEffect 20s ease-in-out infinite alternate;
-  z-index: 2;
-}
-
-/* Animation keyframes defined below */
-
-@keyframes shimmerEffect {
+/* Animation keyframes for slow glow effect */
+@keyframes glowEffect {
   0% {
-    background-position: 0% 50%;
+    color: rgba(160, 160, 160, 0.7);
+    text-shadow: 0 0 5px rgba(180, 180, 180, 0.1);
   }
   50% {
-    background-position: 100% 50%;
+    color: rgba(200, 200, 200, 1);
+    text-shadow: 0 0 10px rgba(200, 200, 200, 0.5);
   }
   100% {
-    background-position: 0% 50%;
+    color: rgba(160, 160, 160, 0.7);
+    text-shadow: 0 0 5px rgba(180, 180, 180, 0.1);
   }
 }
 

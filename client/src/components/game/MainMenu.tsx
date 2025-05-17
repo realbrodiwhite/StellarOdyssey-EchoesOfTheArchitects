@@ -119,7 +119,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         <div className="flex flex-col items-center gap-2">
           <div className="text-[3.5rem] sm:text-[4.5rem] md:text-[5.5rem] lg:text-[6.3rem] title-container flex flex-row items-center justify-center whitespace-nowrap">
             <div className="flex items-center justify-center">
-              <span className="stellar-text" style={{ marginRight: "-0.15em" }}>STELLAR</span><span className="odyssey-text">ODYSSEY</span>
+              <span className="stellar-text">STELLAR</span><span className="odyssey-text">ODYSSEY</span>
             </div>
           </div>
           <div className="text-[0.6rem] sm:text-[0.8rem] md:text-[1rem] lg:text-[1.2rem] w-[100%] mx-auto text-center font-bold shimmer-text mt-0">ECHOES OF THE ARCHITECTS</div>
