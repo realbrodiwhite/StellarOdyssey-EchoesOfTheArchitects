@@ -19,12 +19,12 @@
 }
 
 .tall-thin-title {
-  font-family: 'Impact', 'Arial Narrow', sans-serif;
-  font-stretch: expanded;
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  line-height: 1.2;
-  transform: scaleY(1.9) scaleX(0.55);
+  font-family: "Arial Black", Gadget, sans-serif;
+  font-stretch: condensed;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+  transform: scaleY(1.4) scaleX(0.75);
   transform-origin: center;
   white-space: nowrap;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
