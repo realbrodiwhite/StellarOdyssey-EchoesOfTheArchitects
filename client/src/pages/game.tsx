@@ -13,6 +13,7 @@ import Puzzle from "../components/game/Puzzle";
 import SpaceTransition from "../components/game/SpaceTransition";
 import StarQuestManager from "../components/game/StarQuestManager";
 import GameProgressController from "../components/game/GameProgressController";
+import LoadingScreenTips from "../components/game/LoadingScreenTips";
 import { Controls } from "../lib/types";
 
 // Define controls for keyboard input
@@ -107,13 +108,30 @@ const Game = () => {
     }, 300);
   };
 
+  // State for loading context
+  const [loadingContext, setLoadingContext] = useState<'combat' | 'exploration' | 'puzzle' | 'story' | 'general'>('general');
+  
+  // Helper function to determine context based on previous and target state
+  const determineLoadingContext = (prevState: GameStateType, targetState: GameStateType): 'combat' | 'exploration' | 'puzzle' | 'story' | 'general' => {
+    if (targetState === 'combat') return 'combat';
+    if (targetState === 'puzzle') return 'puzzle';
+    if (targetState === 'game') return 'exploration';
+    // Default fallback
+    return 'general';
+  };
+  
   // Game component rendering based on game state
   const renderGameComponent = () => {
     switch (gameState) {
       case "loading":
-        return <div className="w-full h-full bg-black flex items-center justify-center text-white font-bold text-2xl">
-          Initializing Game...
-        </div>;
+        return <LoadingScreenTips 
+          context={loadingContext}
+          onComplete={() => {
+            console.log("Loading complete");
+            // Implement transition to target state
+          }}
+          minDisplayTime={5000}
+        />;
       
       case "transition":
         return <SpaceTransition 
