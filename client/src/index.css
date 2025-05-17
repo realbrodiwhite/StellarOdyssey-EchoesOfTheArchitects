@@ -123,16 +123,19 @@
   font-weight: 600;
   background: linear-gradient(
     90deg,
-    rgba(160, 160, 160, 0.5) 0%,
-    rgba(230, 230, 230, 1) 25%,
-    rgba(200, 200, 200, 0.8) 50%,
-    rgba(160, 160, 160, 0.5) 100%
+    rgba(160, 160, 160, 0.3) 0%,
+    rgba(160, 160, 160, 0.4) 15%,
+    rgba(230, 230, 230, 0.9) 35%,
+    rgba(200, 200, 200, 0.6) 50%,
+    rgba(230, 230, 230, 0.9) 65%,
+    rgba(160, 160, 160, 0.4) 85%,
+    rgba(160, 160, 160, 0.3) 100%
   );
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: shimmerEffect 4s linear infinite;
+  animation: shimmerEffect 6s ease-in-out infinite alternate;
   position: relative;
   overflow: hidden;
 }
@@ -142,33 +145,39 @@
   position: absolute;
   top: 0;
   left: -100%;
-  width: 50%;
+  width: 30%;
   height: 100%;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.25) 50%,
     transparent 100%
   );
-  animation: reflectionMove 4s linear infinite;
-  transform: skewX(-20deg);
+  animation: reflectionMove 8s ease-in-out infinite alternate;
+  transform: skewX(-15deg);
 }
 
 @keyframes shimmerEffect {
   0% {
     background-position: 0% 50%;
   }
+  50% {
+    background-position: 100% 50%;
+  }
   100% {
-    background-position: 200% 50%;
+    background-position: 0% 50%;
   }
 }
 
 @keyframes reflectionMove {
   0% {
-    left: -100%;
+    left: -30%;
+  }
+  50% {
+    left: 130%;
   }
   100% {
-    left: 200%;
+    left: -30%;
   }
 }
 
