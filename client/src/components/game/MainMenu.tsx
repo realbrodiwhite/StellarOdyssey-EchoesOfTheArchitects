@@ -114,22 +114,22 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </div>
       
-      {/* Earth-like planet with moon debris rings - moved to left and up */}
+      {/* Earth with destroyed moon debris rings */}
       <div className="absolute z-5" style={{ 
-        bottom: "30vh",
-        left: "30%", 
+        bottom: "35vh",
+        left: "28%", 
         transform: "translateX(-50%)",
-        width: "25vh",
-        height: "25vh",
+        width: "22vh",
+        height: "22vh",
         opacity: 1,
-        filter: "drop-shadow(0 0 15px rgba(120,180,255,0.3))"
+        filter: "drop-shadow(0 0 12px rgba(120,180,255,0.3))"
       }}>
         {/* Planet body */}
         <div className="absolute rounded-full" style={{ 
           width: "100%", 
           height: "100%",
-          background: "radial-gradient(circle at 35% 35%, #2978a0 0%, #1c5985 30%, #0a3861 70%, #0a1933 100%)",
-          boxShadow: "inset -2px -2px 5px rgba(0,0,0,0.5), 0 0 3px rgba(100,200,255,0.4)"
+          background: "radial-gradient(circle at 35% 35%, #4ba9e0 0%, #2978a0 25%, #1c5985 50%, #0a3861 75%, #051a33 100%)",
+          boxShadow: "inset -5px -5px 10px rgba(0,0,0,0.5), 0 0 5px rgba(100,200,255,0.4)"
         }}>
           {/* Continental details */}
           <div className="absolute" style={{
