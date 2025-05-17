@@ -23,6 +23,26 @@
   font-style: normal;
 }
 
+/* Custom font styles for title text */
+.jumper-font {
+  font-family: 'Polaris', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  display: block;
+  font-size: 1.2em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.awakening-font {
+  font-family: 'Derelict', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  display: block;
+  font-size: 1.5em;
+  letter-spacing: 0.05em;
+}
+
 @layer base {
   :root {
     --background: 222.2 84% 4.9%;

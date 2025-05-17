@@ -868,7 +868,11 @@ const SpaceTransition = ({ type, title = "Cosmic Odyssey", onComplete, skipEnabl
         
         {/* Title overlay that fades in */}
         <div className={`title-overlay ${showTitle ? 'active' : ''}`}>
-          <h1>{title}</h1>
+          <h1>
+            <span className="jumper-font">JUMPER</span>
+            <br />
+            <span className="awakening-font">AWAKENING</span>
+          </h1>
           <p>A space adventure awaits...</p>
         </div>
         
