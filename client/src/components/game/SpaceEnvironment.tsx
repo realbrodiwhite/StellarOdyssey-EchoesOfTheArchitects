@@ -96,114 +96,115 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
     
     switch (location.type) {
       case LocationType.Planet:
+        // Create nighttime atmosphere with lights visible across the planet
         // Check for planet description to determine type
         if (location.description.toLowerCase().includes("desert")) {
-          // Desert planet - warm orange/yellow lighting
-          ambIntensity = 0.5;
-          hemiIntensity = 0.2;
-          hemiColor = "#ffbb77";
-          hemiGroundColor = "#aa7744";
+          // Desert planet - warm orange/yellow lighting at night
+          ambIntensity = 0.2; // Reduced ambient for night
+          hemiIntensity = 0.15;
+          hemiColor = "#553322"; // Darker sky
+          hemiGroundColor = "#aa7744"; // Warm sand color
         } else if (location.description.toLowerCase().includes("ice") || 
                   location.description.toLowerCase().includes("arctic") || 
                   location.description.toLowerCase().includes("frozen")) {
-          // Ice planet - cool blue lighting
-          ambIntensity = 0.4;
-          hemiIntensity = 0.15;
-          hemiColor = "#aaccff";
-          hemiGroundColor = "#ffffff";
+          // Ice planet - cool blue lighting at night
+          ambIntensity = 0.2; // Lower ambient for night
+          hemiIntensity = 0.1;
+          hemiColor = "#223355"; // Dark blue sky
+          hemiGroundColor = "#aaccff"; // Blue ice reflection
         } else if (location.description.toLowerCase().includes("jungle") || 
                   location.description.toLowerCase().includes("forest")) {
-          // Jungle planet - green-tinted lighting
-          ambIntensity = 0.2;
-          hemiIntensity = 0.15;
-          hemiColor = "#88cc88";
-          hemiGroundColor = "#335533";
+          // Jungle planet - green-tinted lighting at night
+          ambIntensity = 0.15; // Very dark ambient for dense jungle
+          hemiIntensity = 0.1;
+          hemiColor = "#112222"; // Dark green-black sky
+          hemiGroundColor = "#225533"; // Dark green ground
         } else if (location.description.toLowerCase().includes("volcanic") || 
                   location.description.toLowerCase().includes("lava")) {
-          // Volcanic planet - red/orange lighting
-          ambIntensity = 0.5;
+          // Volcanic planet - red/orange lighting at night with glow
+          ambIntensity = 0.25; // Higher ambient due to lava glow
           hemiIntensity = 0.2;
-          hemiColor = "#ff7744";
-          hemiGroundColor = "#661100";
+          hemiColor = "#331111"; // Dark red sky
+          hemiGroundColor = "#cc4411"; // Glowing lava color
         } else if (location.description.toLowerCase().includes("ocean") || 
                   location.description.toLowerCase().includes("water")) {
-          // Ocean planet - deep blue lighting
-          ambIntensity = 0.35;
-          hemiIntensity = 0.15;
-          hemiColor = "#55aaff";
-          hemiGroundColor = "#00448a";
+          // Ocean planet - deep blue lighting at night
+          ambIntensity = 0.2;
+          hemiIntensity = 0.1;
+          hemiColor = "#112233"; // Dark blue night sky
+          hemiGroundColor = "#224466"; // Deep water at night
         } else {
-          // Default terrestrial planet settings - balanced lighting
-          ambIntensity = 0.4;
-          hemiIntensity = 0.15;
-          hemiColor = "#aaddff";
-          hemiGroundColor = "#779966";
+          // Default terrestrial planet at night - city lights visible
+          ambIntensity = 0.2; // Lower ambient for night
+          hemiIntensity = 0.1;
+          hemiColor = "#111133"; // Dark blue night sky
+          hemiGroundColor = "#334455"; // Dark ground with city lights glow
         }
         break;
 
       case LocationType.Space:
-        // Space - dark with stars visible
-        ambIntensity = 0.3;
-        hemiIntensity = 0.1;
-        hemiColor = "#88ccff";
-        hemiGroundColor = "#884466";
+        // Deep space - darker with brighter stars
+        ambIntensity = 0.15;
+        hemiIntensity = 0.05;
+        hemiColor = "#112244";
+        hemiGroundColor = "#221133";
         break;
 
       case LocationType.Station:
-        // Space station - artificial lighting
-        ambIntensity = 0.4;
-        hemiIntensity = 0.15;
-        hemiColor = "#ccccdd";
-        hemiGroundColor = "#555566";
+        // Space station at night - artificial lighting visible from windows
+        ambIntensity = 0.25;
+        hemiIntensity = 0.1;
+        hemiColor = "#223344";
+        hemiGroundColor = "#334455";
         break;
 
       case LocationType.Derelict:
-        // Abandoned/derelict - dark, eerie lighting
-        ambIntensity = 0.2;
+        // Abandoned/derelict - dark, eerie lighting with occasional flickering
+        ambIntensity = 0.1;
         hemiIntensity = 0.05;
-        hemiColor = "#445566";
-        hemiGroundColor = "#332244";
+        hemiColor = "#111122";
+        hemiGroundColor = "#221133";
         break;
 
       case LocationType.Anomaly:
-        // For anomalies, check for void energy
+        // For anomalies, check for void energy - enhanced for nighttime
         if (location.environmentEffects?.some(effect => effect.type === "voidEnergy")) {
-          // Void energy anomaly - purple/mystical lighting
-          ambIntensity = 0.25;
+          // Void energy anomaly - glowing purple/mystical lighting at night
+          ambIntensity = 0.15;
           hemiIntensity = 0.1;
-          hemiColor = "#9966cc";
-          hemiGroundColor = "#331144";
+          hemiColor = "#220033";
+          hemiGroundColor = "#440066";
         } else {
-          // Standard anomaly - strange balanced lighting
-          ambIntensity = 0.3;
-          hemiIntensity = 0.1;
-          hemiColor = "#aabbcc";
-          hemiGroundColor = "#334455";
+          // Standard anomaly - strange ethereal lighting at night
+          ambIntensity = 0.15;
+          hemiIntensity = 0.08;
+          hemiColor = "#112233";
+          hemiGroundColor = "#223344";
         }
         break;
 
       case LocationType.Ruins:
-        // Ancient ruins - warm, dusty lighting
-        ambIntensity = 0.25;
-        hemiIntensity = 0.1;
-        hemiColor = "#ddbb99";
-        hemiGroundColor = "#775544";
+        // Ancient ruins - mysterious nighttime lighting with glowing artifacts
+        ambIntensity = 0.1;
+        hemiIntensity = 0.08;
+        hemiColor = "#221100";
+        hemiGroundColor = "#442211";
         break;
 
       case LocationType.Settlement:
-        // Settlement - bright, welcoming lighting
-        ambIntensity = 0.4;
-        hemiIntensity = 0.15;
-        hemiColor = "#ccccdd";
-        hemiGroundColor = "#666677";
+        // Settlement at night - warm lights from windows and street lamps
+        ambIntensity = 0.2;
+        hemiIntensity = 0.1;
+        hemiColor = "#221122";
+        hemiGroundColor = "#443322";
         break;
 
       default:
-        // Default space lighting
-        ambIntensity = 0.3;
-        hemiIntensity = 0.1;
-        hemiColor = "#88ccff";
-        hemiGroundColor = "#884466";
+        // Default night space lighting
+        ambIntensity = 0.15;
+        hemiIntensity = 0.08;
+        hemiColor = "#112244";
+        hemiGroundColor = "#221133";
     }
     
     // Apply environment effects if present
@@ -477,10 +478,10 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
   return (
     <>
       {/* Custom contextual lighting setup for different planet types */}
-      {/* Main directional light (sun/star) */}
+      {/* Main directional light (moon/distant star) - dimmer for night */}
       <directionalLight 
         position={[10, 10, 5]} 
-        intensity={1.5} 
+        intensity={0.8} 
         castShadow 
         shadow-mapSize={[1024, 1024]}
         color={hemisphereColor}
@@ -489,7 +490,7 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
       {/* Fill light from opposite side */}
       <directionalLight 
         position={[-8, 5, -10]} 
-        intensity={0.3 * hemisphereIntensity} 
+        intensity={0.2 * hemisphereIntensity} 
         color={hemisphereGroundColor}
       />
       
@@ -500,6 +501,13 @@ const SpaceEnvironment = ({ onEnterCombat, onEnterPuzzle }: SpaceEnvironmentProp
         color={hemisphereColor} 
         groundColor={hemisphereGroundColor} 
       />
+      
+      {/* City/settlement lights visible from space */}
+      <pointLight position={[15, -2, 10]} intensity={0.6} distance={40} color="#ffbb55" />
+      <pointLight position={[-12, 0, 8]} intensity={0.4} distance={30} color="#aaddff" />
+      <pointLight position={[5, -3, -12]} intensity={0.5} distance={35} color="#ffddaa" />
+      <pointLight position={[-8, -2, -15]} intensity={0.3} distance={25} color="#eeffdd" />
+      <pointLight position={[0, -4, -5]} intensity={0.7} distance={50} color="#ffcc88" />
       
       {/* Background stars */}
       <Stars 
