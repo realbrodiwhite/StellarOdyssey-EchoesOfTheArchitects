@@ -16,32 +16,22 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
   const { setStage } = gameProgress;
   const { successSound, isMuted, playSuccess } = useAudio.getState();
 
-  // Text content for the intro scenes
+  // Text content for the intro scenes - limited to 3 concise slides
   const scenes = [
     {
-      text: "In the year 2157, humanity's expansion into the stars revealed ancient artifacts of mysterious origin.",
-      duration: 6000,
+      text: "The discovery of ancient alien artifacts in 2157 revealed that humanity is not alone. These 'Architect Relics' contain advanced technologies beyond our understanding.",
+      duration: 8000,
       voiceover: "intro_scene_1"
     },
     {
-      text: "The discovery of these 'Architect Relics' changed everything we thought we knew about our place in the universe.",
-      duration: 6000,
+      text: "Four factions now race to control these powerful relics across the galaxy. Their secrets could elevate or destroy civilization as we know it.",
+      duration: 8000,
       voiceover: "intro_scene_2"
     },
     {
-      text: "You are an elite operative of the Stellar Alliance, dispatched to the edge of known space to investigate a newly discovered artifact.",
-      duration: 7000,
+      text: "As an elite operative of the Stellar Alliance, you've been dispatched to investigate a newly discovered artifact. Your decisions will shape the future of humanity among the stars.",
+      duration: 8000,
       voiceover: "intro_scene_3"
-    },
-    {
-      text: "Your mission: to unravel the secrets of these ancient technologies before they fall into the wrong hands.",
-      duration: 6000,
-      voiceover: "intro_scene_4"
-    },
-    {
-      text: "What you discover may not only change the course of human history but reveal the true nature of our existence among the stars.",
-      duration: 7000,
-      voiceover: "intro_scene_5"
     }
   ];
 
@@ -122,43 +112,68 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-black text-white relative">
-      {/* Starfield background */}
+      {/* Starfield background with subtle parallax effect */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="stars-container"></div>
       </div>
       
-      {/* Scene model here - would be a 3D model of spaceship or relevant imagery */}
-      <div className="w-full h-3/4 flex items-center justify-center">
-        <div className="text-center p-6 relative z-10">
+      {/* Centered slide content with fade transitions */}
+      <div className="w-full max-w-4xl mx-auto px-6 flex items-center justify-center h-full relative z-10">
+        <motion.div
+          key={`scene-${currentScene}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="text-center"
+        >
           <motion.h2 
-            key={`scene-${currentScene}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className="text-3xl font-space-mono mb-8 leading-relaxed max-w-3xl"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-3xl sm:text-4xl font-bold mb-6 leading-relaxed"
           >
-            {scenes[currentScene].text}
+            {scenes[currentScene].text.split('.')[0]}
           </motion.h2>
-        </div>
+          
+          {scenes[currentScene].text.split('.').length > 1 && (
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed"
+            >
+              {scenes[currentScene].text.split('.').slice(1).join('.').trim()}
+            </motion.p>
+          )}
+        </motion.div>
       </div>
       
       {/* Skip button */}
       {showSkip && (
-        <div 
-          className="absolute bottom-8 right-8 px-4 py-2 bg-gray-800 bg-opacity-70 rounded cursor-pointer hover:bg-opacity-90 transition-all duration-200"
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="absolute bottom-8 right-8 px-5 py-2.5 bg-blue-900 bg-opacity-80 rounded-lg cursor-pointer hover:bg-blue-800 transition-all duration-200 shadow-lg border border-blue-700"
           onClick={handleSkip}
         >
           Skip Intro
-        </div>
+        </motion.div>
       )}
       
       {/* Progress indicator */}
-      <div className="absolute bottom-8 left-8 flex space-x-2">
+      <div className="absolute bottom-8 left-8 flex space-x-3">
         {scenes.map((_, index) => (
           <div 
             key={`indicator-${index}`} 
-            className={`w-2 h-2 rounded-full ${index === currentScene ? 'bg-white' : 'bg-gray-500'}`}
+            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+              index === currentScene 
+                ? 'bg-blue-400 w-5' 
+                : index < currentScene 
+                  ? 'bg-blue-700' 
+                  : 'bg-gray-700'
+            }`}
           ></div>
         ))}
       </div>
