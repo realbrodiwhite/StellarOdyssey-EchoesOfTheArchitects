@@ -116,12 +116,12 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       
       {/* Game title - styled like the reference image */}
       <div 
-        className="font-bold text-white mb-10 sm:mb-12 md:mb-16 z-10 px-4 text-center flex flex-col items-center w-full max-w-full"
+        className="font-bold text-white mb-10 sm:mb-12 md:mb-16 z-10 px-4 text-center flex flex-col items-center w-full max-w-full scale-[0.67] origin-top"
       >
-        <div className="title-container mx-auto text-center">
+        <div className="title-container mx-auto text-center py-8">
           <h1 className="stellar-font mx-auto">STELLAR</h1>
           <h1 className="stellar-font mx-auto">ODYSSEY</h1>
-          <p className="tagline-text mt-2 text-gray-300 text-sm md:text-base mx-auto">ECHOES OF THE ARCHITECTS</p>
+          <p className="tagline-text mt-8 text-gray-300 text-sm md:text-base mx-auto">ECHOES OF THE ARCHITECTS</p>
         </div>
         <p className="text-gray-400 text-xs mt-6 absolute bottom-12">Click anywhere to skip</p>
       </div>
