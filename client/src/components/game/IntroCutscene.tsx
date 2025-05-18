@@ -24,7 +24,7 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
       voiceover: "intro_scene_1"
     },
     {
-      text: "Various groups now race to control these powerful relics, with the Hegemony being the largest power in the galaxy. These artifacts could elevate or destroy civilization as we know it.",
+      text: "The Hegemony, which governs both the Core Galaxies and Outer Rim territories, has laid claim to a newly discovered region called The Far Reach, where powerful artifacts have been found.",
       duration: 8000,
       voiceover: "intro_scene_2"
     },
