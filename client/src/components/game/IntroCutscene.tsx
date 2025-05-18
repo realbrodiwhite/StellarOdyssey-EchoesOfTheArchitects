@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAudio } from '../../lib/stores/useAudio';
 import { motion } from 'framer-motion';
-import { useGameProgress } from '../../lib/stores/useGameProgress';
+import { useGameProgress, GameStage } from '../../lib/stores/useGameProgress';
 
 interface IntroCutsceneProps {
   onComplete: () => void;
@@ -13,9 +13,8 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
   const [showSkip, setShowSkip] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const gameProgress = useGameProgress();
-  const { setCurrentAct } = gameProgress;
-  const audio = useAudio.getState();
-  const { playSound } = audio;
+  const { setStage } = gameProgress;
+  const { successSound, isMuted, playSuccess } = useAudio.getState();
 
   // Text content for the intro scenes
   const scenes = [
@@ -78,12 +77,16 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
       return;
     }
     
-    // Try to play voiceover for current scene
-    const currentVoiceover = scenes[currentScene].voiceover;
-    playVoiceover(currentVoiceover)
-      .catch(error => {
-        console.error("Error loading voiceover:", error);
-      });
+    // Try to play sound for current scene transition
+    if (!isMuted) {
+      try {
+        // Play a subtle sound when transitioning between scenes
+        playSuccess();
+        console.log(`Playing sound for scene ${currentScene + 1}`);
+      } catch (error: any) {
+        console.error("Error playing scene transition sound:", error);
+      }
+    }
     
     // Advance to next scene after current scene duration
     const timer = setTimeout(() => {
@@ -91,7 +94,7 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
     }, scenes[currentScene].duration);
     
     return () => clearTimeout(timer);
-  }, [currentScene, isLoading, onComplete, playVoiceover, scenes]);
+  }, [currentScene, isLoading, onComplete, isMuted, playSuccess, scenes]);
 
   // Handle skip button click
   const handleSkip = () => {

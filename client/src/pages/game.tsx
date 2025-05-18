@@ -92,14 +92,14 @@ const Game = () => {
     // Set loading context to 'story' for the intro sequence
     setLoadingContext('story');
     
-    // Set the target state to transition after loading
-    setTargetGameState('transition');
+    // Go directly to the intro cutscene after loading
+    setTargetGameState('introCutscene');
     
-    // Go to loading screen first
+    // Start with loading screen first
     setGameState("loading");
     
-    // Configure the transition to happen after loading
-    setTransitionType("selection");
+    // Reset character in preparation for cutscene
+    start(); // This will set phase to "playing"
   };
 
   const handleTransitionComplete = () => {
@@ -136,6 +136,7 @@ const Game = () => {
     if (targetState === 'combat') return 'combat';
     if (targetState === 'puzzle') return 'puzzle';
     if (targetState === 'game') return 'exploration';
+    if (targetState === 'introCutscene') return 'story';
     // Default fallback
     return 'general';
   };
