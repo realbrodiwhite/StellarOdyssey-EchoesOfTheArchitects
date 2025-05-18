@@ -120,18 +120,58 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       >
         <div className="title-container mx-auto text-center">
           <div className="earth-container relative mx-auto mb-6">
-            <div className="earth-image w-24 h-24 rounded-full mx-auto overflow-hidden relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-800 via-blue-600 to-blue-900 rounded-full"></div>
+            <div className="earth-image w-20 h-20 rounded-full mx-auto overflow-hidden relative">
+              {/* Deep ocean base */}
+              <div className="absolute inset-0 bg-[#0077be] rounded-full"></div>
+              
+              {/* North America */}
+              <div className="absolute" style={{
+                top: '20%',
+                left: '30%',
+                width: '25%',
+                height: '20%',
+                backgroundColor: '#228B22',
+                clipPath: 'polygon(0% 0%, 80% 10%, 100% 50%, 80% 90%, 30% 100%, 0% 50%)',
+              }}></div>
+              
+              {/* South America */}
+              <div className="absolute" style={{
+                top: '43%',
+                left: '35%',
+                width: '15%',
+                height: '25%',
+                backgroundColor: '#228B22',
+                clipPath: 'polygon(30% 0%, 100% 20%, 80% 100%, 0% 80%)',
+              }}></div>
+              
+              {/* Africa */}
+              <div className="absolute" style={{
+                top: '30%',
+                left: '55%',
+                width: '20%',
+                height: '25%',
+                backgroundColor: '#228B22',
+                clipPath: 'polygon(0% 0%, 100% 0%, 90% 100%, 30% 100%)',
+              }}></div>
+              
+              {/* Europe */}
+              <div className="absolute" style={{
+                top: '20%',
+                left: '55%',
+                width: '15%',
+                height: '10%',
+                backgroundColor: '#228B22',
+                clipPath: 'polygon(0% 100%, 50% 0%, 100% 50%, 50% 100%)',
+              }}></div>
+              
+              {/* Cloud layer */}
               <div className="absolute inset-0" style={{
-                background: "radial-gradient(circle at 70% 50%, rgba(0,128,0,0.4) 10%, rgba(0,0,128,0) 60%), radial-gradient(circle at 30% 30%, rgba(0,128,0,0.4) 5%, rgba(0,0,128,0) 30%), radial-gradient(circle at 60% 70%, rgba(0,100,0,0.3) 5%, rgba(0,0,128,0) 25%)",
+                background: 'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 10%), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 15%), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 12%)',
               }}></div>
-              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black opacity-75 rounded-full"></div>
-              <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-yellow-100 to-transparent opacity-30"></div>
-              <div className="absolute w-full h-full opacity-20" style={{
-                background: "radial-gradient(circle at 50% 50%, transparent 30%, rgba(255,255,255,0.2) 32%, transparent 33%), radial-gradient(circle at 30% 40%, transparent 30%, rgba(255,255,255,0.15) 31%, transparent 32%), radial-gradient(circle at 70% 60%, transparent 30%, rgba(255,255,255,0.15) 31%, transparent 32%)",
-                backgroundSize: "12px 12px, 20px 20px, 16px 16px",
-              }}></div>
-              <div className="absolute inset-0 shadow-inner rounded-full"></div>
+              
+              {/* Sunlight effect */}
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black opacity-60 rounded-full"></div>
+              <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-yellow-100 to-transparent opacity-20"></div>
             </div>
           </div>
           <h1 className="stellar-font mx-auto" style={{fontSize: "6rem"}}>STELLAR</h1>
