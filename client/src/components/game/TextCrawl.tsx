@@ -21,31 +21,57 @@ const TextCrawl: React.FC<TextCrawlProps> = ({ title, text, onComplete }) => {
     return () => clearTimeout(timer);
   }, []);
   
-  // Auto-advance through slides
+  // Auto-advance through slides with better timing
   useEffect(() => {
     if (currentSlide >= text.length) {
-      // When we reach the end of slides, complete the intro
-      onComplete();
-      return;
+      // When we reach the end of slides, complete the intro with a short delay
+      // for better transition experience
+      const finalTimer = setTimeout(() => {
+        onComplete();
+      }, 1000);
+      return () => clearTimeout(finalTimer);
     }
     
     const timer = setTimeout(() => {
       setCurrentSlide(prev => prev + 1);
-    }, 8000); // 8 seconds per slide
+    }, 10000); // 10 seconds per slide for better readability
     
     return () => clearTimeout(timer);
   }, [currentSlide, text.length, onComplete]);
   
   return (
     <div className="relative w-full h-full overflow-hidden flex items-center justify-center bg-black">
-      {/* Star background */}
-      <div className="absolute inset-0 z-0">
+      {/* Enhanced star background */}
+      <div className="absolute inset-0 z-0 bg-black overflow-hidden">
         <div className="stars-container"></div>
+        
+        {/* Add a few shooting stars for visual interest */}
+        <div className="absolute w-8 h-0.5 bg-blue-200 opacity-0 animate-meteor" 
+             style={{ 
+               top: '15%', 
+               left: '10%', 
+               animationDelay: '3s',
+               transform: 'rotate(135deg)',
+               boxShadow: '0 0 15px 5px rgba(135, 206, 250, 0.4)'
+             }}>
+        </div>
+        <div className="absolute w-12 h-0.5 bg-blue-100 opacity-0 animate-meteor" 
+             style={{ 
+               top: '45%', 
+               left: '80%', 
+               animationDelay: '7s',
+               transform: 'rotate(315deg)',
+               boxShadow: '0 0 15px 5px rgba(135, 206, 250, 0.4)'
+             }}>
+        </div>
+        
+        {/* Add subtle nebula effect */}
+        <div className="absolute w-full h-full opacity-10 bg-gradient-to-tr from-indigo-900 via-transparent to-purple-900"></div>
       </div>
       
-      {/* Title */}
+      {/* Title with better styling */}
       <motion.h1
-        className="absolute top-16 text-[#FFD700] text-4xl md:text-5xl font-bold text-center z-10"
+        className="absolute top-8 sm:top-12 md:top-16 w-full px-4 text-[#FFD700] text-3xl sm:text-4xl md:text-5xl font-bold text-center z-10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
@@ -53,42 +79,44 @@ const TextCrawl: React.FC<TextCrawlProps> = ({ title, text, onComplete }) => {
         {title}
       </motion.h1>
       
-      {/* Content slides with fade transitions */}
-      <div className="w-full max-w-4xl mx-auto px-6 flex items-center justify-center h-full relative z-10">
-        {currentSlide < text.length && (
-          <motion.div
-            key={`slide-${currentSlide}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className="text-center"
-          >
-            <motion.p
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-xl md:text-2xl text-blue-300 max-w-2xl mx-auto leading-relaxed"
+      {/* Content slides with improved fade transitions */}
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-center h-full relative z-10">
+        <AnimatePresence mode="wait">
+          {currentSlide < text.length && (
+            <motion.div
+              key={`slide-${currentSlide}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2 }}
+              className="text-center max-w-full"
             >
-              {text[currentSlide]}
-            </motion.p>
-          </motion.div>
-        )}
+              <motion.p
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 1, delay: 0.3 }}
+                className="text-lg sm:text-xl md:text-2xl text-blue-300 max-w-3xl mx-auto leading-relaxed px-4"
+              >
+                {text[currentSlide]}
+              </motion.p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       
-      {/* Progress indicator */}
-      <div className="absolute bottom-8 left-8 flex space-x-3 z-10">
+      {/* Improved progress indicator */}
+      <div className="absolute bottom-8 left-0 right-0 flex justify-center space-x-4 z-10">
         {text.map((_, index) => (
-          <div 
-            key={`indicator-${index}`} 
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-              index === currentSlide 
-                ? 'bg-blue-400 w-5' 
-                : index < currentSlide 
-                  ? 'bg-blue-700' 
-                  : 'bg-gray-700'
-            }`}
-          ></div>
+          <motion.div 
+            key={`indicator-${index}`}
+            initial={{ opacity: 0.5, scale: 0.8 }}
+            animate={{ 
+              opacity: index === currentSlide ? 1 : 0.6,
+              scale: index === currentSlide ? 1 : 0.8,
+              backgroundColor: index <= currentSlide ? '#4299e1' : '#2d3748'
+            }}
+            className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-500`}
+          ></motion.div>
         ))}
       </div>
       
@@ -103,9 +131,9 @@ const TextCrawl: React.FC<TextCrawlProps> = ({ title, text, onComplete }) => {
           <Button 
             onClick={onComplete} 
             variant="outline" 
-            className="px-5 py-2.5 bg-blue-900 bg-opacity-80 rounded-lg cursor-pointer hover:bg-blue-800 transition-all duration-200 shadow-lg border border-blue-700"
+            className="px-4 py-2 bg-blue-900 bg-opacity-70 text-sm sm:text-base rounded-lg cursor-pointer hover:bg-blue-800 hover:bg-opacity-90 transition-all duration-200 shadow-lg border border-blue-700"
           >
-            Skip Intro
+            Skip
           </Button>
         </motion.div>
       )}
