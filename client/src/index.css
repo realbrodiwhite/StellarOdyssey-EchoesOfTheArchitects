@@ -61,7 +61,7 @@
 
 .tagline-text {
   font-family: sans-serif;
-  font-size: 1.2rem;
+  font-size: 0.84rem; /* 1.2rem * 0.70 = 0.84rem */
   letter-spacing: 0.1em;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
   color: #ffd700;
