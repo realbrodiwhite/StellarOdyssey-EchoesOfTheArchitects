@@ -177,14 +177,19 @@ const Game = () => {
       case "introCutscene":
         return <IntroCutscene 
           onComplete={() => {
-            console.log("Intro cutscene complete, starting first mission");
-            // When cutscene is complete, go directly to game
-            setGameState("game");
+            console.log("Intro cutscene complete, preparing transition to first mission");
+            // When cutscene is complete, use a delayed transition to game
+            setLoadingContext('exploration');
+            setTargetGameState('game');
+            // Add transition screen to prevent seeing game before it's ready
+            setGameState("loading");
           }}
           onSkip={() => {
-            console.log("Intro cutscene skipped, starting first mission");
-            // Same behavior when skipped - go directly to game 
-            setGameState("game");
+            console.log("Intro cutscene skipped, preparing transition to first mission");
+            // Same behavior when skipped - use loading screen as transition
+            setLoadingContext('exploration');
+            setTargetGameState('game');
+            setGameState("loading");
           }}
         />;
         
