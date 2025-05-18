@@ -5,7 +5,8 @@ import CompanionChat from './CompanionChat';
 import StarQuestManager from './StarQuestManager';
 import StoryRecord from './StoryRecord';
 import SpaceNavigation from './SpaceNavigation';
-import { Layers, AlertCircle, BarChart3, Zap, Award, Bot, Map, BookOpen, Navigation } from 'lucide-react';
+import CrewQuartersInterface from './CrewQuartersInterface';
+import { Layers, AlertCircle, BarChart3, Zap, Award, Bot, Map, BookOpen, Navigation, Users } from 'lucide-react';
 
 interface ForearmPadProps {
   onClose: () => void;
@@ -15,6 +16,7 @@ const ForearmPad: React.FC<ForearmPadProps> = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState<string>('status');
   const [showCompanionChat, setShowCompanionChat] = useState(false);
   const [showStoryRecord, setShowStoryRecord] = useState(false);
+  const [showCrewQuarters, setShowCrewQuarters] = useState(false);
   
   const { hasUnlockedCompanionAI, achievements } = useAchievements();
   
@@ -24,6 +26,7 @@ const ForearmPad: React.FC<ForearmPadProps> = ({ onClose }) => {
     { id: 'systems', label: 'Systems', icon: <Layers size={18} /> },
     { id: 'navigation', label: 'Navigation', icon: <Navigation size={18} /> },
     { id: 'missions', label: 'Missions', icon: <Map size={18} /> },
+    { id: 'crew', label: 'Crew', icon: <Users size={18} /> },
     { id: 'story', label: 'Story', icon: <BookOpen size={18} /> },
     { id: 'alerts', label: 'Alerts', icon: <AlertCircle size={18} /> },
     { id: 'achievements', label: 'Achievements', icon: <Award size={18} /> }

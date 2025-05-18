@@ -239,9 +239,26 @@ const CrewInteractionHub: React.FC<CrewInteractionHubProps> = ({
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {availableCompanions.map(companion => 
-                        renderCrewMemberCard(companion as PartyMember)
-                      )}
+                      {availableCompanions.map(companion => {
+                        // Convert Companion to PartyMember to satisfy type requirements
+                        const partyMember = {
+                          id: companion.id,
+                          name: companion.name,
+                          class: companion.specialization || "Crew Member", 
+                          description: companion.backstory,
+                          skills: [], 
+                          health: 100,
+                          maxHealth: 100,
+                          energy: 100,
+                          maxEnergy: 100,
+                          level: 1,
+                          experience: 0,
+                          inventory: [],
+                          abilities: [],
+                          gender: "Male",
+                        } as unknown as PartyMember;
+                        return renderCrewMemberCard(partyMember);
+                      })}
                     </div>
                   )}
                 </div>
