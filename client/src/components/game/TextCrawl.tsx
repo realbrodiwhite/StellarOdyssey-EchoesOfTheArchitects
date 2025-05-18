@@ -95,9 +95,9 @@ const TextCrawl: React.FC<TextCrawlProps> = ({ title, text, onComplete }) => {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 1, delay: 0.3 }}
-                className="text-blue-300 mx-auto px-4 sm:px-8 md:px-12"
+                className="text-blue-300 w-full mx-auto px-4 sm:px-6"
               >
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium leading-relaxed md:leading-loose max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium leading-relaxed break-words w-full max-w-[80vw] sm:max-w-[70vw] md:max-w-2xl mx-auto">
                   {text[currentSlide]}
                 </p>
               </motion.div>
