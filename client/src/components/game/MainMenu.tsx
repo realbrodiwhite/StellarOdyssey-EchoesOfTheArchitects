@@ -121,7 +121,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         <div className="title-container mx-auto text-center">
           <h1 className="stellar-font mx-auto">STELLAR</h1>
           <h1 className="stellar-font mx-auto">ODYSSEY</h1>
-          <p className="tagline-text mt-2 text-gray-300 text-sm md:text-base w-[85%] mx-auto overflow-hidden">ECHOES OF THE ARCHITECTS</p>
+          <p className="tagline-text mt-2 text-gray-300 text-sm md:text-base mx-auto">ECHOES OF THE ARCHITECTS</p>
         </div>
         <p className="text-gray-400 text-xs mt-6 absolute bottom-12">Click anywhere to skip</p>
       </div>

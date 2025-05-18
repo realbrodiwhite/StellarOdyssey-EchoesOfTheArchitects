@@ -74,7 +74,7 @@
 .tagline-text {
   font-family: 'Polaris', serif;
   font-size: 0.94rem;
-  letter-spacing: 1.2em; /* Adjusted to be approximately 95% of title width */
+  letter-spacing: 0.7em; /* Reduced spacing to prevent text cutoff */
   color: #ffd700;
   text-shadow: 0 0 10px #ff9900, 0 0 20px #ff6600;
   font-weight: 500;
