@@ -297,42 +297,73 @@ const Game = () => {
   // Black screen overlay for transitions
   const [showBlackScreen, setShowBlackScreen] = useState(false);
   
-  // Proper transition management to prevent flashes
+  // Simple transition management - show black screen briefly between all state changes
   useEffect(() => {
-    // First, immediately show black screen for any state change
+    // Show black screen immediately for any state change
     setShowBlackScreen(true);
     document.body.style.backgroundColor = "black";
     
-    // Then, after a short delay, proceed to the next state while keeping screen black
-    const transitionTimeout = setTimeout(() => {
-      // Keep black screen during certain transitions
-      if (gameState === "introCutscene" || isTransitioning) {
-        // Keep black background during these transitions
-        document.body.style.backgroundColor = "black";
-      } else {
-        // For other states, we can fade out the black screen after components are properly mounted
-        const fadeTimeout = setTimeout(() => {
-          setShowBlackScreen(false);
-        }, 300);
-        
-        return () => clearTimeout(fadeTimeout);
-      }
-    }, 100);
+    // Then after a delay, allow the new state to be visible
+    const blackScreenTimer = setTimeout(() => {
+      setShowBlackScreen(false);
+    }, 500); // Sufficient time for components to mount/unmount
     
-    return () => clearTimeout(transitionTimeout);
-  }, [gameState, isTransitioning]);
+    return () => clearTimeout(blackScreenTimer);
+  }, [gameState]);
   
-  // Use a single render approach to eliminate flashes
+  // Sequential render approach - either show black screen, intro cutscene, or game content
   const renderContent = () => {
-    // Return a black screen during transitions
+    // Show black overlay during transitions
     if (showBlackScreen) {
       return <div className="absolute inset-0 bg-black z-[100]"></div>;
     }
     
-    // Render the appropriate component based on state
+    // Special handling for intro cutscene as a standalone component
+    if (gameState === "introCutscene") {
+      return (
+        <div className="absolute inset-0 bg-black z-50">
+          <IntroCutscene 
+            onComplete={() => {
+              console.log("Intro cutscene complete, preparing transition to first mission");
+              // Show transition screen
+              setShowBlackScreen(true);
+              // Prevent multiple transitions
+              setIsTransitioning(true);
+              // Move to loading screen for the game
+              setLoadingContext('exploration');
+              setTargetGameState('game');
+              setGameState("loading");
+              
+              // After transition is complete, reset flag
+              setTimeout(() => {
+                setIsTransitioning(false);
+              }, 1000);
+            }}
+            onSkip={() => {
+              console.log("Intro cutscene skipped, preparing transition to first mission");
+              // Show transition screen
+              setShowBlackScreen(true);
+              // Prevent multiple transitions
+              setIsTransitioning(true);
+              // Move to loading screen for the game
+              setLoadingContext('exploration');
+              setTargetGameState('game');
+              setGameState("loading");
+              
+              // After transition is complete, reset flag
+              setTimeout(() => {
+                setIsTransitioning(false);
+              }, 1000);
+            }}
+          />
+        </div>
+      );
+    }
+    
+    // For all other states, render the normal game component
     return (
       <>
-        {renderGameComponent()}
+        {gameState !== "introCutscene" && renderGameComponent()}
         
         {/* Game progress and act flow controller - only visible during gameplay */}
         {gameState === 'game' && (
