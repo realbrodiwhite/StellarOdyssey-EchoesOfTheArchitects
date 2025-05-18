@@ -112,6 +112,7 @@ const Game = () => {
 
   // Target state tracking for loading screen
   const [targetGameState, setTargetGameState] = useState<GameStateType | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   
   const handleCharacterSelected = () => {
     console.log("Character selected, going to intro cutscene");
@@ -119,12 +120,9 @@ const Game = () => {
     // Start the game (sets phase to "playing")
     start();
     
-    // Begin loading the first mission in the background during the cutscene
-    setLoadingContext('exploration');
-    
     // Go directly to the intro cutscene (with redesigned slide format)
     setGameState("introCutscene");
-    console.log("Starting intro cutscene with character, loading first mission in background");
+    console.log("Starting intro cutscene with character");
   };
 
   // State for loading context
@@ -175,21 +173,40 @@ const Game = () => {
         return <CharacterSelection onSelect={handleCharacterSelected} />;
         
       case "introCutscene":
+        // Prevent multiple state transitions
+        if (isTransitioning) return (
+          <div className="w-full h-full bg-black"></div>
+        );
+        
         return <IntroCutscene 
           onComplete={() => {
             console.log("Intro cutscene complete, preparing transition to first mission");
+            // Prevent multiple transitions
+            setIsTransitioning(true);
             // When cutscene is complete, use a delayed transition to game
             setLoadingContext('exploration');
             setTargetGameState('game');
             // Add transition screen to prevent seeing game before it's ready
             setGameState("loading");
+            
+            // After transition is complete, reset flag
+            setTimeout(() => {
+              setIsTransitioning(false);
+            }, 1000);
           }}
           onSkip={() => {
             console.log("Intro cutscene skipped, preparing transition to first mission");
+            // Prevent multiple transitions
+            setIsTransitioning(true);
             // Same behavior when skipped - use loading screen as transition
             setLoadingContext('exploration');
             setTargetGameState('game');
             setGameState("loading");
+            
+            // After transition is complete, reset flag
+            setTimeout(() => {
+              setIsTransitioning(false);
+            }, 1000);
           }}
         />;
         

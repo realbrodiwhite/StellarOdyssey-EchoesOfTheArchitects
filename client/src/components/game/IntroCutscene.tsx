@@ -50,9 +50,8 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
       }, 2000);
     }, 2000);
     
-    // Set intro stage as starting point and initialize Act 1
+    // Set intro stage as starting point
     gameProgress.setStage(GameStage.Intro);
-    console.log("Starting game from Act 1");
     
     return () => clearTimeout(timer);
   }, [gameProgress]);
