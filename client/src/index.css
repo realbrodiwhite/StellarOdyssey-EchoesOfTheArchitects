@@ -70,7 +70,7 @@
 .tagline-text {
   font-family: 'Polaris', serif;
   font-size: 0.94rem;
-  letter-spacing: 0.7em; /* Doubled from 0.35em to 0.7em for much more dramatic spacing */
+  letter-spacing: 2.1em; /* Tripled from 0.7em to 2.1em for extremely wide spacing */
   color: #ffd700;
   text-shadow: 0 0 10px #ff9900, 0 0 20px #ff6600;
   font-weight: 500;
