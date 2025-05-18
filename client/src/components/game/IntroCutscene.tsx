@@ -24,12 +24,12 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
       voiceover: "intro_scene_1"
     },
     {
-      text: "Four factions now race to control these powerful relics across the galaxy. Their secrets could elevate or destroy civilization as we know it.",
+      text: "Various groups now race to control these powerful relics, with the Hegemony being the largest power in the galaxy. These artifacts could elevate or destroy civilization as we know it.",
       duration: 8000,
       voiceover: "intro_scene_2"
     },
     {
-      text: "As an elite operative of the Stellar Alliance, you've been dispatched to investigate a newly discovered artifact. Your decisions will shape the future of humanity among the stars.",
+      text: "As an elite operative, you've been dispatched to investigate a newly discovered artifact. Your decisions will shape the future of humanity among the stars.",
       duration: 8000,
       voiceover: "intro_scene_3"
     }
