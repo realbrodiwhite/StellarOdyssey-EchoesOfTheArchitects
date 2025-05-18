@@ -104,12 +104,19 @@ const ForearmPad: React.FC<ForearmPadProps> = ({ onClose }) => {
                 if (tab.id === 'companion') {
                   setShowCompanionChat(true);
                   setShowStoryRecord(false);
+                  setShowCrewQuarters(false);
                 } else if (tab.id === 'story') {
                   setShowStoryRecord(true);
                   setShowCompanionChat(false);
+                  setShowCrewQuarters(false);
+                } else if (tab.id === 'crew') {
+                  setShowCrewQuarters(true);
+                  setShowCompanionChat(false);
+                  setShowStoryRecord(false);
                 } else {
                   setShowCompanionChat(false);
                   setShowStoryRecord(false);
+                  setShowCrewQuarters(false);
                 }
               }}
               className={`flex items-center px-4 py-2 text-sm ${
@@ -224,6 +231,29 @@ const ForearmPad: React.FC<ForearmPadProps> = ({ onClose }) => {
           
           {showStoryRecord && (
             <StoryRecord onClose={() => setShowStoryRecord(false)} />
+          )}
+          
+          {/* Crew Tab */}
+          {activeTab === 'crew' && !showCrewQuarters && (
+            <div className="h-full">
+              <h3 className="text-blue-300 font-semibold mb-4">Crew Quarters</h3>
+              <p className="text-gray-300 mb-4">
+                Interact with your crew members, check their status, and manage relationships.
+              </p>
+              <button 
+                onClick={() => setShowCrewQuarters(true)}
+                className="w-full bg-blue-900 hover:bg-blue-800 text-white py-2 rounded-md transition"
+              >
+                Enter Crew Quarters
+              </button>
+            </div>
+          )}
+          
+          {showCrewQuarters && (
+            <CrewQuartersInterface 
+              onClose={() => setShowCrewQuarters(false)} 
+              location="ship_quarters" 
+            />
           )}
           
           {activeTab === 'alerts' && (
