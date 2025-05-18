@@ -119,8 +119,15 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         className="font-bold text-white mb-10 sm:mb-12 md:mb-16 z-10 px-4 text-center flex flex-col items-center w-full max-w-full"
       >
         <div className="title-container mx-auto text-center">
-          <h1 className="stellar-font mx-auto" style={{fontSize: "5.2rem"}}>STELLAR</h1>
-          <h1 className="stellar-font mx-auto">ODYSSEY</h1>
+          <div className="earth-container relative mx-auto mb-4">
+            <div className="earth-image w-32 h-32 rounded-full mx-auto overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-700 via-blue-500 to-blue-800 rounded-full"></div>
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black opacity-70 rounded-full"></div>
+              <div className="absolute w-full h-full rounded-full bg-[url('/textures/earth_clouds.png')] bg-cover opacity-70 mix-blend-screen"></div>
+            </div>
+          </div>
+          <h1 className="stellar-font mx-auto" style={{fontSize: "6rem"}}>STELLAR</h1>
+          <h1 className="stellar-font mx-auto" style={{fontSize: "7.75rem"}}>ODYSSEY</h1>
           <p className="tagline-text mt-2 text-gray-300 text-sm md:text-base mx-auto">ECHOES OF THE ARCHITECTS</p>
         </div>
       </div>
