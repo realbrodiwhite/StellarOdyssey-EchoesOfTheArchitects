@@ -91,11 +91,16 @@ const Game = () => {
   const handleStartGame = () => {
     console.log("New Game button clicked");
     
-    // Go directly to character selection screen
-    setGameState("character");
-    
-    // Reset character in preparation for selection
+    // Reset character with default values
     resetCharacter();
+    
+    // Start the game (sets phase to "playing")
+    start();
+    
+    // Go directly to intro cutscene, skipping character selection
+    setGameState("introCutscene");
+    
+    console.log("Starting intro cutscene directly from title screen");
   };
 
   const handleTransitionComplete = () => {
