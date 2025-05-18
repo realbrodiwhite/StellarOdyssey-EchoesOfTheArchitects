@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: 'SpaceAndAstronomy';
-  src: url('/fonts/space-and-astronomy/space-and-astronomy.ttf') format('truetype');
+  src: url('/fonts/space-astronomy/SpaceAndAstronomy-pZRD.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -34,16 +34,20 @@
 
 /* Stellar Odyssey title styling to match reference image */
 .stellar-font {
-  font-family: 'Derelict', 'Stargaze', sans-serif;
-  font-size: 5.2rem;
-  letter-spacing: 0.10em;
+  font-family: 'SpaceAndAstronomy', 'Stargaze', sans-serif;
+  font-size: 5.8rem;
+  letter-spacing: 0.05em;
   font-weight: 700;
   color: #ffffff;
   text-shadow: 0 0 15px #4a88ff, 0 0 25px #0055ff, 0 0 35px #0033aa;
   text-transform: uppercase;
   line-height: 1.1;
-  transform: scale(1, 1.1);
-  display: inline-block;
+  margin-bottom: 0.5rem;
+  
+  /* Responsive scaling for mobile */
+  @media (max-width: 768px) {
+    font-size: 3.8rem;
+  }
 }
 
 .tagline-text {
