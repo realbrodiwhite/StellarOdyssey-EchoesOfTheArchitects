@@ -477,11 +477,10 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
           <div className="flex-1 overflow-y-auto pr-0 lg:pr-4">
             <div className="flex justify-center w-full">
               <div className="grid gap-2 sm:gap-3" style={{ 
-                  gridTemplateColumns: `repeat(${Math.min(Math.ceil(Math.sqrt(uniqueClasses.length)), uniqueClasses.length <= 12 ? 4 : 6)}, minmax(0, 1fr))`,
+                  gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', 
+                  gridTemplateRows: 'repeat(4, minmax(0, 1fr))',
                   width: '100%',
-                  maxWidth: uniqueClasses.length <= 4 ? '600px' : 
-                             uniqueClasses.length <= 9 ? '800px' : 
-                             uniqueClasses.length <= 12 ? '1000px' : '100%'
+                  maxWidth: '900px'
                 }}>
                 {uniqueClasses && uniqueClasses.length > 0 ? (
                   uniqueClasses.map((characterClass, index) => {

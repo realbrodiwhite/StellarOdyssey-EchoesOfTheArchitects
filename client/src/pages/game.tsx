@@ -363,7 +363,7 @@ const Game = () => {
     // For all other states, render the normal game component
     return (
       <>
-        {gameState !== "introCutscene" && renderGameComponent()}
+        {renderGameComponent()}
         
         {/* Game progress and act flow controller - only visible during gameplay */}
         {gameState === 'game' && (
