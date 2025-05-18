@@ -43,7 +43,7 @@
 /* Stellar Odyssey title styling to match reference image */
 .stellar-font {
   font-family: 'SpaceAndAstronomy', 'Stargaze', sans-serif;
-  font-size: 7.8rem; /* Reduced from 8.64rem */
+  font-size: 8.64rem; /* Original size */
   letter-spacing: 0.05em;
   font-weight: 700;
   color: #ffffff;
