@@ -550,7 +550,7 @@
   position: absolute;
   width: 2px;
   background: linear-gradient(to bottom, transparent, white);
-  transform: rotate(135deg); /* Changed to 135deg to point bottom-right */
+  transform: rotate(315deg); /* Changed to 315deg (180° rotation from 135deg) */
   animation: shoot 2s ease-in;
   opacity: 0;
 }
@@ -558,7 +558,7 @@
 @keyframes shoot {
   0% {
     opacity: 0;
-    transform: translateX(0) translateY(0) rotate(135deg);
+    transform: translateX(0) translateY(0) rotate(315deg);
   }
   10% {
     opacity: 1;
@@ -568,7 +568,7 @@
   }
   100% {
     opacity: 0;
-    transform: translateX(300px) translateY(300px) rotate(135deg);
+    transform: translateX(300px) translateY(300px) rotate(315deg);
   }
 }
 
