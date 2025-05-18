@@ -114,99 +114,68 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         </div>
       </div>
       
-      {/* Game title */}
+      {/* Game title - styled like the reference image */}
       <div 
-        className="font-bold text-white mb-8 sm:mb-10 md:mb-12 z-10 px-4 text-center"
+        className="font-bold text-white mb-10 sm:mb-12 md:mb-16 z-10 px-4 text-center flex flex-col items-center"
       >
-        <h1 className="jumper-font">JUMPER</h1>
-        <h2 className="awakening-font">AWAKENING</h2>
+        <h1 className="stellar-font mb-1">STELLAR ODYSSEY</h1>
+        <p className="tagline-text mt-3 text-gray-300 text-sm md:text-base">A space adventure awaits...</p>
       </div>
       
-      {/* Menu - responsive design with centered content */}
-      <div className="z-10 bg-black bg-opacity-50 backdrop-blur-sm p-5 sm:p-8 rounded-lg border border-gray-800 w-[90%] max-w-md">
-        <div className="flex flex-col space-y-4">
-          {/* New Game button */}
-          <motion.button
-            className={`py-3 px-6 rounded-md text-lg font-medium transition-all ${
-              activeButton === 'newGame' 
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={handleNewGame}
-            onMouseEnter={() => setActiveButton('newGame')}
-          >
-            New Game
-          </motion.button>
-          
-          {/* Continue Game button - only show if a saved character exists */}
-          {showContinue && (
-            <motion.button
-              className={`py-3 px-6 rounded-md text-lg font-medium transition-all ${
-                activeButton === 'continue' 
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={handleLoadGame}
-              onMouseEnter={() => setActiveButton('continue')}
-            >
-              Continue
-            </motion.button>
-          )}
-          
-          {/* Load Game button */}
-          <motion.button
-            className={`py-3 px-6 rounded-md text-lg font-medium transition-all ${
-              activeButton === 'load' 
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={handleLoadGame}
-            onMouseEnter={() => setActiveButton('load')}
-          >
-            Load Game
-          </motion.button>
-          
-          {/* Settings button */}
-          <motion.button
-            className={`py-3 px-6 rounded-md text-lg font-medium transition-all ${
-              activeButton === 'settings' 
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => setShowSettings(true)}
-            onMouseEnter={() => setActiveButton('settings')}
-          >
-            Settings
-          </motion.button>
-        </div>
-        
-        {/* Sound toggle button */}
+      {/* Menu buttons - styled to match previous version */}
+      <div className="z-10 flex flex-col items-center space-y-4 mt-5">
+        {/* New Game button */}
         <motion.button
-          className="absolute top-3 right-3 text-gray-400 hover:text-white"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={toggleMute}
+          className="menu-button group"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleNewGame}
         >
-          {isMuted ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clipRule="evenodd" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-            </svg>
-          )}
+          <span className="button-glow"></span>
+          <span className="relative z-10 text-white text-xl font-semibold px-12 py-3">New Game</span>
+        </motion.button>
+        
+        {/* Load Game button */}
+        <motion.button
+          className="menu-button group"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleLoadGame}
+        >
+          <span className="button-glow"></span>
+          <span className="relative z-10 text-white text-xl font-semibold px-12 py-3">Load Game</span>
+        </motion.button>
+        
+        {/* Settings button */}
+        <motion.button
+          className="menu-button group"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setShowSettings(true)}
+        >
+          <span className="button-glow"></span>
+          <span className="relative z-10 text-white text-xl font-semibold px-12 py-3">Settings</span>
         </motion.button>
       </div>
+      
+      {/* Sound toggle button */}
+      <motion.button
+        className="absolute top-6 right-6 text-gray-400 hover:text-white"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={toggleMute}
+      >
+        {isMuted ? (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clipRule="evenodd" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          </svg>
+        )}
+      </motion.button>
       
       {/* Version number */}
       <div className="absolute bottom-4 right-4 text-gray-500 text-sm z-10">
@@ -219,10 +188,8 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
           <div className="bg-gray-900 rounded-lg w-[90%] max-w-2xl overflow-hidden">
             <SaveLoadMenu 
               onClose={() => setShowSaveLoadMenu(false)}
-              onLoadCharacter={() => {
-                setShowSaveLoadMenu(false);
-                onStart();
-              }}
+              isOpen={showSaveLoadMenu}
+              mode="load"
             />
           </div>
         </div>
@@ -232,7 +199,10 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       {showSettings && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black bg-opacity-75">
           <div className="bg-gray-900 rounded-lg w-[90%] max-w-lg overflow-hidden">
-            <Settings onClose={() => setShowSettings(false)} />
+            <Settings 
+              onClose={() => setShowSettings(false)}
+              isOpen={showSettings}
+            />
           </div>
         </div>
       )}
