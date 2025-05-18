@@ -119,11 +119,19 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
         className="font-bold text-white mb-10 sm:mb-12 md:mb-16 z-10 px-4 text-center flex flex-col items-center w-full max-w-full"
       >
         <div className="title-container mx-auto text-center">
-          <div className="earth-container relative mx-auto mb-4">
-            <div className="earth-image w-32 h-32 rounded-full mx-auto overflow-hidden relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-700 via-blue-500 to-blue-800 rounded-full"></div>
-              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black opacity-70 rounded-full"></div>
-              <div className="absolute w-full h-full rounded-full bg-[url('/textures/earth_clouds.png')] bg-cover opacity-70 mix-blend-screen"></div>
+          <div className="earth-container relative mx-auto mb-6">
+            <div className="earth-image w-24 h-24 rounded-full mx-auto overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-800 via-blue-600 to-blue-900 rounded-full"></div>
+              <div className="absolute inset-0" style={{
+                background: "radial-gradient(circle at 70% 50%, rgba(0,128,0,0.4) 10%, rgba(0,0,128,0) 60%), radial-gradient(circle at 30% 30%, rgba(0,128,0,0.4) 5%, rgba(0,0,128,0) 30%), radial-gradient(circle at 60% 70%, rgba(0,100,0,0.3) 5%, rgba(0,0,128,0) 25%)",
+              }}></div>
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black opacity-75 rounded-full"></div>
+              <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-yellow-100 to-transparent opacity-30"></div>
+              <div className="absolute w-full h-full opacity-20" style={{
+                background: "radial-gradient(circle at 50% 50%, transparent 30%, rgba(255,255,255,0.2) 32%, transparent 33%), radial-gradient(circle at 30% 40%, transparent 30%, rgba(255,255,255,0.15) 31%, transparent 32%), radial-gradient(circle at 70% 60%, transparent 30%, rgba(255,255,255,0.15) 31%, transparent 32%)",
+                backgroundSize: "12px 12px, 20px 20px, 16px 16px",
+              }}></div>
+              <div className="absolute inset-0 shadow-inner rounded-full"></div>
             </div>
           </div>
           <h1 className="stellar-font mx-auto" style={{fontSize: "6rem"}}>STELLAR</h1>
