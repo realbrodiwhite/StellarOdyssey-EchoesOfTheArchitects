@@ -84,8 +84,18 @@ const Game = () => {
   // Handlers for state transitions
   const handleStartGame = () => {
     console.log("New Game button clicked");
+    
+    // Set loading context to 'story' for the intro sequence
+    setLoadingContext('story');
+    
+    // Set the target state to transition after loading
+    setTargetGameState('transition');
+    
+    // Go to loading screen first
+    setGameState("loading");
+    
+    // Configure the transition to happen after loading
     setTransitionType("selection");
-    setGameState("transition");
   };
 
   const handleTransitionComplete = () => {
@@ -102,16 +112,16 @@ const Game = () => {
   const [targetGameState, setTargetGameState] = useState<GameStateType | null>(null);
   
   const handleCharacterSelected = () => {
-    console.log("Character selected, starting game");
+    console.log("Character selected, going to intro cutscene");
     start(); // This will set phase to "playing"
     
-    // Set loading context to exploration for initial game load
-    setLoadingContext('exploration');
+    // Set loading context to story for intro cutscene
+    setLoadingContext('story');
     
-    // Set the target state and transition to loading screen
-    setTargetGameState('game');
+    // Set the target state to intro cutscene
+    setTargetGameState('introCutscene');
     setGameState("loading");
-    console.log("Loading game with exploration context");
+    console.log("Loading intro cutscene with story context");
   };
 
   // State for loading context
@@ -144,7 +154,7 @@ const Game = () => {
               setGameState("game");
             }
           }}
-          minDisplayTime={5000}
+          minDisplayTime={3000} // Reduced loading time for better game flow
         />;
       
       case "transition":
@@ -159,6 +169,24 @@ const Game = () => {
         
       case "character":
         return <CharacterSelection onSelect={handleCharacterSelected} />;
+        
+      case "introCutscene":
+        return <IntroCutscene 
+          onComplete={() => {
+            console.log("Intro cutscene complete, loading first mission");
+            // When cutscene is complete or skipped, load the first mission
+            setLoadingContext('exploration');
+            setTargetGameState('game');
+            setGameState("loading");
+          }}
+          onSkip={() => {
+            console.log("Intro cutscene skipped, loading first mission");
+            // Same behavior when skipped
+            setLoadingContext('exploration');
+            setTargetGameState('game');
+            setGameState("loading");
+          }}
+        />;
         
       case "game":
         return (

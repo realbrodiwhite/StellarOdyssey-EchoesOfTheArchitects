@@ -61,7 +61,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
     // Play success sound for feedback
     const { playSuccess } = useAudio.getState();
     playSuccess();
-    onStart(); // Navigate to character selection
+    onStart(); // Signal to start the game process with loading first
   };
   
   const handleLoadGame = () => {
