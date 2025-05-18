@@ -1414,6 +1414,8 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
   
   // Generate interactable objects based on the current location
   const interactables = useMemo(() => {
+    // Make sure currentLocation is defined before accessing its properties
+    if (!currentLocation) return [];
     return generateInteractables(currentLocation.type);
   }, [currentLocation]);
   
@@ -1562,6 +1564,9 @@ const SpaceExploration = ({ onNavigate, onLand }: SpaceExplorationProps) => {
   
   // Render location-specific content
   const renderLocationContent = () => {
+    // Handle undefined currentLocation
+    if (!currentLocation) return null;
+    
     switch (currentLocation.type) {
       case LocationType.Planet:
         return (
