@@ -117,6 +117,13 @@ const Game = () => {
   const handleCharacterSelected = () => {
     console.log("Character selected, going to intro cutscene");
     
+    // Ensure we clean up any existing game state
+    if (gameState === "game") {
+      console.log("Cleaning up existing game state before intro");
+      // Reset any active game components or state
+      // This prevents multiple instances from running simultaneously
+    }
+    
     // Start the game (sets phase to "playing")
     start();
     

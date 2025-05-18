@@ -63,7 +63,15 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
     // If we reached the end of scenes, complete the cutscene
     if (currentScene >= scenes.length) {
       console.log("Intro cutscene complete");
-      onComplete();
+      
+      // Fade out with black screen before calling onComplete
+      document.body.style.backgroundColor = 'black';
+      
+      // Delay the transition to prevent multiple screens
+      setTimeout(() => {
+        onComplete();
+      }, 500);
+      
       return;
     }
     
@@ -89,11 +97,19 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
   // Handle skip button click
   const handleSkip = () => {
     console.log("Cutscene skipped, proceeding to first mission");
+    
+    // Fade out with black screen first
+    document.body.style.backgroundColor = 'black';
+    
     // Play a sound if not muted
     if (!isMuted) {
       playSuccess();
     }
-    onSkip();
+    
+    // Delay the transition slightly to ensure clean transition
+    setTimeout(() => {
+      onSkip();
+    }, 300);
   };
 
   if (isLoading) {
