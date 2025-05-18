@@ -297,46 +297,57 @@ const Game = () => {
   // Black screen overlay for transitions
   const [showBlackScreen, setShowBlackScreen] = useState(false);
   
-  // Update transition handling to avoid multiple screens
+  // Proper transition management to prevent flashes
   useEffect(() => {
-    if (gameState === "introCutscene" || isTransitioning) {
-      // Show black screen during transitions
-      setShowBlackScreen(true);
-      
-      // Set background color to black to avoid any flashing
-      document.body.style.backgroundColor = "black";
-    } else {
-      // Clear any lingering black screens after transition complete
-      setTimeout(() => {
-        setShowBlackScreen(false);
-      }, 200);
-    }
+    // First, immediately show black screen for any state change
+    setShowBlackScreen(true);
+    document.body.style.backgroundColor = "black";
+    
+    // Then, after a short delay, proceed to the next state while keeping screen black
+    const transitionTimeout = setTimeout(() => {
+      // Keep black screen during certain transitions
+      if (gameState === "introCutscene" || isTransitioning) {
+        // Keep black background during these transitions
+        document.body.style.backgroundColor = "black";
+      } else {
+        // For other states, we can fade out the black screen after components are properly mounted
+        const fadeTimeout = setTimeout(() => {
+          setShowBlackScreen(false);
+        }, 300);
+        
+        return () => clearTimeout(fadeTimeout);
+      }
+    }, 100);
+    
+    return () => clearTimeout(transitionTimeout);
   }, [gameState, isTransitioning]);
   
+  // Use a single render approach to eliminate flashes
+  const renderContent = () => {
+    // Return a black screen during transitions
+    if (showBlackScreen) {
+      return <div className="absolute inset-0 bg-black z-[100]"></div>;
+    }
+    
+    // Render the appropriate component based on state
+    return (
+      <>
+        {renderGameComponent()}
+        
+        {/* Game progress and act flow controller - only visible during gameplay */}
+        {gameState === 'game' && (
+          <div className="relative z-10">
+            <GameProgressController onComplete={handleProgressComplete} />
+            <StarQuestManager />
+          </div>
+        )}
+      </>
+    );
+  };
+  
   return (
-    <div className="w-full h-full bg-black relative">
-      {/* Main game component */}
-      <div className={gameState === "introCutscene" || isTransitioning ? "invisible" : "visible"}>
-        {gameState !== "introCutscene" && renderGameComponent()}
-      </div>
-      
-      {/* Intro cutscene in its own layer */}
-      <div className={gameState === "introCutscene" ? "absolute inset-0 z-50" : "hidden"}>
-        {gameState === "introCutscene" && renderGameComponent()}
-      </div>
-      
-      {/* Black screen overlay for transitions */}
-      {showBlackScreen && (
-        <div className="absolute inset-0 bg-black z-[100] transition-opacity duration-300"></div>
-      )}
-      
-      {/* Game progress and act flow controller */}
-      {gameState === 'game' && (
-        <div className="relative z-10">
-          <GameProgressController onComplete={handleProgressComplete} />
-          <StarQuestManager />
-        </div>
-      )}
+    <div className="w-full h-full bg-black overflow-hidden">
+      {renderContent()}
     </div>
   );
 };
