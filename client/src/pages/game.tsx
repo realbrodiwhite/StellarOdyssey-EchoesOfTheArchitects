@@ -1,4 +1,4 @@
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { KeyboardControls } from "@react-three/drei";
 import { useAudio } from "../lib/stores/useAudio";
@@ -294,16 +294,48 @@ const Game = () => {
     }
   };
   
+  // Black screen overlay for transitions
+  const [showBlackScreen, setShowBlackScreen] = useState(false);
+  
+  // Update transition handling to avoid multiple screens
+  useEffect(() => {
+    if (gameState === "introCutscene" || isTransitioning) {
+      // Show black screen during transitions
+      setShowBlackScreen(true);
+      
+      // Set background color to black to avoid any flashing
+      document.body.style.backgroundColor = "black";
+    } else {
+      // Clear any lingering black screens after transition complete
+      setTimeout(() => {
+        setShowBlackScreen(false);
+      }, 200);
+    }
+  }, [gameState, isTransitioning]);
+  
   return (
-    <div className="w-full h-full bg-black">
-      {renderGameComponent()}
+    <div className="w-full h-full bg-black relative">
+      {/* Main game component */}
+      <div className={gameState === "introCutscene" || isTransitioning ? "invisible" : "visible"}>
+        {gameState !== "introCutscene" && renderGameComponent()}
+      </div>
+      
+      {/* Intro cutscene in its own layer */}
+      <div className={gameState === "introCutscene" ? "absolute inset-0 z-50" : "hidden"}>
+        {gameState === "introCutscene" && renderGameComponent()}
+      </div>
+      
+      {/* Black screen overlay for transitions */}
+      {showBlackScreen && (
+        <div className="absolute inset-0 bg-black z-[100] transition-opacity duration-300"></div>
+      )}
       
       {/* Game progress and act flow controller */}
       {gameState === 'game' && (
-        <>
+        <div className="relative z-10">
           <GameProgressController onComplete={handleProgressComplete} />
           <StarQuestManager />
-        </>
+        </div>
       )}
     </div>
   );
