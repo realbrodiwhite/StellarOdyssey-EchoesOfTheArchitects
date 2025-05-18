@@ -26,6 +26,14 @@
 }
 
 @font-face {
+  font-family: 'Polaris';
+  src: url('/fonts/polaris.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Lens';
   src: url('/fonts/lens.ttf') format('truetype');
   font-weight: normal;
@@ -60,12 +68,13 @@
 }
 
 .tagline-text {
-  font-family: sans-serif;
-  font-size: 0.84rem; /* 1.2rem * 0.70 = 0.84rem */
-  letter-spacing: 0.1em;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+  font-family: 'Polaris', serif;
+  font-size: 0.94rem;
+  letter-spacing: 0.2em;
   color: #ffd700;
   text-shadow: 0 0 10px #ff9900, 0 0 20px #ff6600;
+  font-weight: 500;
+  text-transform: uppercase;
 }
 
 /* Responsive font sizes */
