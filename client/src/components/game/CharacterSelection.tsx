@@ -563,6 +563,29 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
         </div>
       </div>
       
+      {/* Sticky Continue Button - always visible */}
+      {selectedIndex !== null && (
+        <div className="fixed bottom-5 left-0 right-0 flex justify-center z-50">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Button 
+              variant="default" 
+              size="lg"
+              onClick={handleConfirmSelection}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl border border-blue-400 rounded-xl font-bold text-lg"
+            >
+              <div className="flex items-center">
+                <span>Continue</span>
+                <span className="ml-2 text-lg">→</span>
+              </div>
+            </Button>
+          </motion.div>
+        </div>
+      )}
+      
       {/* Character Detail Modal */}
       {modalCharacter !== null && getModalCharacter() && (
         <CharacterDetailModal 
