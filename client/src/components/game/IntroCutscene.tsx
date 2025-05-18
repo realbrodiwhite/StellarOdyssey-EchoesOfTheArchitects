@@ -98,7 +98,11 @@ const IntroCutscene = ({ onComplete, onSkip }: IntroCutsceneProps) => {
 
   // Handle skip button click
   const handleSkip = () => {
-    console.log("Cutscene skipped");
+    console.log("Cutscene skipped, proceeding to first mission");
+    // Play a sound if not muted
+    if (!isMuted) {
+      playSuccess();
+    }
     onSkip();
   };
 

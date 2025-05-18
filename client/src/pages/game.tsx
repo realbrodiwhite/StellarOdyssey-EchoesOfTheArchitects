@@ -4,6 +4,7 @@ import { KeyboardControls } from "@react-three/drei";
 import { useAudio } from "../lib/stores/useAudio";
 import { useGame, GameState as GameStateType } from "../lib/stores/useGame";
 import { useGameProgress, GameStage } from "../lib/stores/useGameProgress";
+import { useCharacter } from "../lib/stores/useCharacter";
 import MainMenu from "../components/game/MainMenu";
 import CharacterSelection from "../components/game/CharacterSelection";
 import SpaceEnvironment from "../components/game/SpaceEnvironment";
@@ -42,6 +43,7 @@ const Game = () => {
     setState: setGameState,
     start 
   } = useGame();
+  const { resetCharacter } = useCharacter();
   
   // Skip intro animation and go directly to menu
   useEffect(() => {
@@ -89,17 +91,11 @@ const Game = () => {
   const handleStartGame = () => {
     console.log("New Game button clicked");
     
-    // Set loading context to 'story' for the intro sequence
-    setLoadingContext('story');
+    // Go directly to character selection screen
+    setGameState("character");
     
-    // Go directly to the intro cutscene after loading
-    setTargetGameState('introCutscene');
-    
-    // Start with loading screen first
-    setGameState("loading");
-    
-    // Reset character in preparation for cutscene
-    start(); // This will set phase to "playing"
+    // Reset character in preparation for selection
+    resetCharacter();
   };
 
   const handleTransitionComplete = () => {
@@ -116,16 +112,17 @@ const Game = () => {
   const [targetGameState, setTargetGameState] = useState<GameStateType | null>(null);
   
   const handleCharacterSelected = () => {
-    console.log("Character selected, going to intro cutscene");
-    start(); // This will set phase to "playing"
+    console.log("Character selected, going directly to intro cutscene");
     
-    // Set loading context to story for intro cutscene
-    setLoadingContext('story');
+    // Start the game (sets phase to "playing")
+    start();
     
-    // Set the target state to intro cutscene
-    setTargetGameState('introCutscene');
-    setGameState("loading");
-    console.log("Loading intro cutscene with story context");
+    // Begin loading the first mission in the background during the cutscene
+    setLoadingContext('exploration');
+    
+    // Go directly to the intro cutscene
+    setGameState("introCutscene");
+    console.log("Starting intro cutscene and loading first mission in background");
   };
 
   // State for loading context
@@ -178,18 +175,14 @@ const Game = () => {
       case "introCutscene":
         return <IntroCutscene 
           onComplete={() => {
-            console.log("Intro cutscene complete, loading first mission");
-            // When cutscene is complete or skipped, load the first mission
-            setLoadingContext('exploration');
-            setTargetGameState('game');
-            setGameState("loading");
+            console.log("Intro cutscene complete, starting first mission");
+            // When cutscene is complete, go directly to game
+            setGameState("game");
           }}
           onSkip={() => {
-            console.log("Intro cutscene skipped, loading first mission");
-            // Same behavior when skipped
-            setLoadingContext('exploration');
-            setTargetGameState('game');
-            setGameState("loading");
+            console.log("Intro cutscene skipped, starting first mission");
+            // Same behavior when skipped - go directly to game 
+            setGameState("game");
           }}
         />;
         
