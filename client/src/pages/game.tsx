@@ -91,16 +91,13 @@ const Game = () => {
   const handleStartGame = () => {
     console.log("New Game button clicked");
     
-    // Reset character with default values
+    // Reset character in preparation for selection
     resetCharacter();
     
-    // Start the game (sets phase to "playing")
-    start();
+    // Go to character selection screen first
+    setGameState("character");
     
-    // Go directly to intro cutscene, skipping character selection
-    setGameState("introCutscene");
-    
-    console.log("Starting intro cutscene directly from title screen");
+    console.log("Going to character selection from title screen");
   };
 
   const handleTransitionComplete = () => {
@@ -117,7 +114,7 @@ const Game = () => {
   const [targetGameState, setTargetGameState] = useState<GameStateType | null>(null);
   
   const handleCharacterSelected = () => {
-    console.log("Character selected, going directly to intro cutscene");
+    console.log("Character selected, going to intro cutscene");
     
     // Start the game (sets phase to "playing")
     start();
@@ -125,9 +122,9 @@ const Game = () => {
     // Begin loading the first mission in the background during the cutscene
     setLoadingContext('exploration');
     
-    // Go directly to the intro cutscene
+    // Go directly to the intro cutscene (with redesigned slide format)
     setGameState("introCutscene");
-    console.log("Starting intro cutscene and loading first mission in background");
+    console.log("Starting intro cutscene with character, loading first mission in background");
   };
 
   // State for loading context
