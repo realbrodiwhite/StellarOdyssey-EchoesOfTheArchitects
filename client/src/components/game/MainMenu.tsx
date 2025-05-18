@@ -116,7 +116,7 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       
       {/* Game title - styled like the reference image */}
       <div 
-        className="font-bold text-white mb-10 sm:mb-12 md:mb-16 z-10 px-4 text-center flex flex-col items-center"
+        className="font-bold text-white mb-10 sm:mb-12 md:mb-16 z-10 px-4 text-center flex flex-col items-center w-full max-w-full"
       >
         <div className="title-container mx-auto text-center">
           <h1 className="stellar-font mx-auto">STELLAR</h1>
