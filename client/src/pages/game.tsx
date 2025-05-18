@@ -238,7 +238,7 @@ const Game = () => {
   };
   
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full bg-black">
       {renderGameComponent()}
       
       {/* Game progress and act flow controller */}
