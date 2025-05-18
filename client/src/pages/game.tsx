@@ -14,7 +14,11 @@ import SpaceTransition from "../components/game/SpaceTransition";
 import StarQuestManager from "../components/game/StarQuestManager";
 import GameProgressController from "../components/game/GameProgressController";
 import LoadingScreenTips from "../components/game/LoadingScreenTips";
+import IntroCutscene from "../components/game/IntroCutscene";
 import { Controls } from "../lib/types";
+
+// Extend the GameStateType to include our new states
+type ExtendedGameStateType = GameStateType | "introCutscene";
 
 // Define controls for keyboard input
 const keyboardControls = [

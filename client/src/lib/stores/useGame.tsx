@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
 export type GamePhase = "ready" | "playing" | "ended";
-export type GameState = "menu" | "transition" | "character" | "game" | "combat" | "puzzle" | "inventory" | "loading" | "navigation";
+export type GameState = "menu" | "transition" | "character" | "game" | "combat" | "puzzle" | "inventory" | "loading" | "navigation" | "introCutscene";
 export type GameMode = "exploration" | "flying" | "landed" | "dialogue";
 
 interface GameStore {
