@@ -39,13 +39,12 @@ const Game = () => {
     start 
   } = useGame();
   
-  // Show intro animation on initial load
+  // Skip intro animation and go directly to menu
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Start with transition state to show intro animation
-      setTransitionType("intro");
-      setGameState("transition");
-    }, 500);
+      // Skip transition and go directly to menu
+      setGameState("menu");
+    }, 100);
     
     return () => clearTimeout(timer);
   }, [setGameState]);
