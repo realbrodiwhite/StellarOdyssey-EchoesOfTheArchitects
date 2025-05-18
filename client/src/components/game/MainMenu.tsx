@@ -118,8 +118,9 @@ const MainMenu = ({ onStart }: MainMenuProps) => {
       <div 
         className="font-bold text-white mb-10 sm:mb-12 md:mb-16 z-10 px-4 text-center flex flex-col items-center"
       >
-        <h1 className="stellar-font mb-1">STELLAR ODYSSEY</h1>
-        <p className="tagline-text mt-3 text-gray-300 text-sm md:text-base">A space adventure awaits...</p>
+        <h1 className="stellar-font mb-3">STELLAR ODYSSEY</h1>
+        <p className="tagline-text mt-2 text-gray-300 text-sm md:text-base">Echoes of the Architects</p>
+        <p className="text-gray-400 text-xs mt-6 absolute bottom-12">Click anywhere to skip</p>
       </div>
       
       {/* Menu buttons - styled to match previous version */}
