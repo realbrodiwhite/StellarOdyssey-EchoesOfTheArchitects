@@ -103,20 +103,21 @@ const DynamicDialogueSystem: React.FC<DynamicDialogueSystemProps> = ({
     setSelectedOptions(prev => [...prev, option.id]);
     
     // Apply relationship effect if any
-    if (option.relationshipEffect && crewMember) {
-      setRelationshipChanges(prev => prev + option.relationshipEffect);
+    if (option.relationshipEffect !== undefined && crewMember) {
+      const effectValue = option.relationshipEffect;
+      setRelationshipChanges(prev => prev + effectValue);
       
-      if (option.relationshipEffect > 0) {
+      if (effectValue > 0) {
         recordInteraction(
           crewMember.id,
           `Positive dialogue choice: ${option.text}`,
-          option.relationshipEffect
+          effectValue
         );
-      } else if (option.relationshipEffect < 0) {
+      } else if (effectValue < 0) {
         recordInteraction(
           crewMember.id,
           `Negative dialogue choice: ${option.text}`,
-          option.relationshipEffect
+          effectValue
         );
       }
     }

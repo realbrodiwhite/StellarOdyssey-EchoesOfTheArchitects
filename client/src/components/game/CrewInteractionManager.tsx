@@ -27,7 +27,7 @@ const CrewInteractionManager: React.FC<CrewInteractionManagerProps> = ({
   currentLocation
 }) => {
   // Game progress state for story-dependent dialogues
-  const { getCurrentActNumber, getCurrentMissionNumber } = useGameProgress();
+  const { getCurrentActNumber } = useGameProgress();
   const gameProgress = getCurrentActNumber();
   
   // Relationship state 

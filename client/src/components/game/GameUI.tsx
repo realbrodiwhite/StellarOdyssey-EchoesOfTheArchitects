@@ -11,7 +11,8 @@ import {
   Menu,
   Save,
   Upload,
-  Users
+  Users,
+  MessageCircle
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
@@ -36,12 +37,13 @@ const GameUI = ({
   isSoundOn, 
   onReturnToMenu 
 }: GameUIProps) => {
-  const { selectedCharacter } = useCharacter();
+  const { character } = useCharacter();
   const [showInventory, setShowInventory] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
   const [showLoadMenu, setShowLoadMenu] = useState(false);
   const [showPartyManager, setShowPartyManager] = useState(false);
+  const [showCrewInteractions, setShowCrewInteractions] = useState(false);
   
   // Keyboard controls subscription
   const inventoryPressed = useKeyboardControls<Controls>(state => state.inventory);
