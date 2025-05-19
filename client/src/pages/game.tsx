@@ -16,6 +16,7 @@ import StarQuestManager from "../components/game/StarQuestManager";
 import GameProgressController from "../components/game/GameProgressController";
 import LoadingScreenTips from "../components/game/LoadingScreenTips";
 import IntroCutscene from "../components/game/IntroCutscene";
+import LoadingScreen from "../components/game/LoadingScreen";
 import { Controls } from "../lib/types";
 
 // Extend the GameStateType to include our new states
