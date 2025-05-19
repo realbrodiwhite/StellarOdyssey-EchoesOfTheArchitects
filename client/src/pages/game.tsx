@@ -316,29 +316,14 @@ const Game = () => {
   // Black screen overlay for transitions
   const [showBlackScreen, setShowBlackScreen] = useState(false);
   
-  // Simple transition management - show black screen briefly between all state changes
+  // Reset black screen to ensure it doesn't persist
   useEffect(() => {
-    // Show black screen immediately for any state change
-    setShowBlackScreen(true);
-    document.body.style.backgroundColor = "black";
-    
-    // Then after a delay, allow the new state to be visible
-    const blackScreenTimer = setTimeout(() => {
+    // When we reach character selection, main menu, or game state,
+    // ensure the black screen is turned off
+    if (gameState === "menu" || gameState === "character" || gameState === "game") {
       setShowBlackScreen(false);
-      
-      // Force another check after a longer delay to ensure black screen is gone
-      // This prevents the black screen from persisting due to race conditions
-      setTimeout(() => {
-        if (showBlackScreen) {
-          console.log("Forcing black screen removal after timeout");
-          setShowBlackScreen(false);
-        }
-      }, 1000);
-      
-    }, 500); // Sufficient time for components to mount/unmount
-    
-    return () => clearTimeout(blackScreenTimer);
-  }, [gameState, showBlackScreen]);
+    }
+  }, [gameState]);
   
   // Sequential render approach - either show black screen, intro cutscene, or game content
   const renderContent = () => {
