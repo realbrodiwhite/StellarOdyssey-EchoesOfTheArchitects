@@ -7,7 +7,7 @@ import { Badge } from '../ui/badge';
 import { Dialog, DialogContent } from '../ui/dialog';
 
 import { crewMembers, findCrewMemberById } from '@/lib/data/crewMembers';
-import { DialogueTree, findDialogueTree } from '@/lib/data/crewDialogueTrees';
+import { DialogueTree } from '@/lib/data/crewDialogueTrees';
 import { useCrewRelationships, initializeCrewRelationships, RelationshipType } from '@/lib/stores/useCrewRelationships';
 import { CompanionPersonality, RelationshipLevel } from '@/lib/stores/useCompanion';
 import { useGameProgress } from '@/lib/stores/useGameProgress';
@@ -21,6 +21,81 @@ interface CrewInteractionManagerProps {
 
 // Initialize crew relationships if not already done
 initializeCrewRelationships();
+
+// Sample dialogue tree for demonstration purposes
+function getSampleDialogueTree(): DialogueTree {
+  return {
+    id: "get-to-know-engineer",
+    title: "Getting to Know Your Engineer",
+    description: "Learn more about your engineer crew member's background and expertise.",
+    startNodeId: "engineer-intro",
+    nodes: [
+      {
+        id: "engineer-intro",
+        text: "Need something, Captain? I was just calibrating the propulsion systems. There's always something to tinker with on a ship like this.",
+        speakerId: "engineer",
+        type: DialogueType.Greeting,
+        options: [
+          {
+            id: "ask-background",
+            text: "How did you end up as an engineer in deep space?",
+            nextNodeId: "engineer-background"
+          },
+          {
+            id: "ask-expertise",
+            text: "What systems on the ship are you specialized in?",
+            nextNodeId: "engineer-expertise"
+          },
+          {
+            id: "end-convo",
+            text: "I should let you get back to work."
+          }
+        ]
+      },
+      {
+        id: "engineer-background",
+        text: "I grew up on a mining colony in the Antares sector. Not much to do there except learn how machines work or breathe rock dust. I chose the machines.",
+        speakerId: "engineer",
+        type: DialogueType.Lore,
+        options: [
+          {
+            id: "ask-family",
+            text: "Do you have family back in the Antares sector?",
+            relationshipEffect: 2,
+            nextNodeId: "engineer-intro"
+          },
+          {
+            id: "return-to-intro",
+            text: "Interesting background. Let me ask you something else.",
+            nextNodeId: "engineer-intro"
+          }
+        ]
+      },
+      {
+        id: "engineer-expertise",
+        text: "I'm what they call a systems integration specialist. Propulsion, power distribution, environmental controls - I make sure they all talk to each other properly.",
+        speakerId: "engineer",
+        type: DialogueType.Advice,
+        options: [
+          {
+            id: "praise-work",
+            text: "That's incredibly important work. Your expertise is valuable.",
+            relationshipEffect: 5,
+            nextNodeId: "engineer-intro"
+          },
+          {
+            id: "return-to-intro",
+            text: "Let me ask you something else.",
+            nextNodeId: "engineer-intro"
+          }
+        ]
+      }
+    ],
+    availability: {
+      requiredRelationship: RelationshipLevel.Neutral
+    }
+  };
+}
 
 const CrewInteractionManager: React.FC<CrewInteractionManagerProps> = ({ 
   onClose,
@@ -58,8 +133,8 @@ const CrewInteractionManager: React.FC<CrewInteractionManagerProps> = ({
       // - Previous dialogue history
       // - Crew member's personality
       
-      // For demo purposes, we'll load a simple dialogue
-      const sampleDialogue = findDialogueTree("get-to-know-engineer");
+      // Get a sample dialogue tree for demonstration
+      const sampleDialogue = getSampleDialogueTree();
       
       if (sampleDialogue) {
         setAvailableDialogues([sampleDialogue]);

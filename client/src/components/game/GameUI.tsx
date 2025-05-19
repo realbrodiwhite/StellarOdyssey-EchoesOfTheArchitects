@@ -22,6 +22,7 @@ import { Controls } from "@/lib/types";
 import Inventory from "./Inventory";
 import SaveLoadMenu from "./SaveLoadMenu";
 import SimplePartyManager from "./SimplePartyManager";
+import CrewInteractionManager from "./CrewInteractionManager";
 
 interface GameUIProps {
   onOpenInventory: () => void;
@@ -270,6 +271,16 @@ const GameUI = ({
       <AnimatePresence>
         {showPartyManager && (
           <SimplePartyManager onClose={() => setShowPartyManager(false)} />
+        )}
+      </AnimatePresence>
+      
+      {/* Crew Interactions modal */}
+      <AnimatePresence>
+        {showCrewInteractions && (
+          <CrewInteractionManager 
+            onClose={() => setShowCrewInteractions(false)}
+            currentLocation="Ship Bridge" 
+          />
         )}
       </AnimatePresence>
     </>
