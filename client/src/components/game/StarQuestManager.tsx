@@ -4,10 +4,14 @@ import StoryQuest from './StoryQuest';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import { Badge } from '../ui/badge';
+import { Dialog, DialogContent } from '../ui/dialog';
+import { motion, AnimatePresence } from 'framer-motion';
 import { StorylineTheme } from '@/lib/data/mission-pool';
 
 interface StarQuestManagerProps {
   onQuestComplete?: () => void;
+  onClose: () => void;
+  isOpen: boolean;
 }
 
 const StarQuestManager: React.FC<StarQuestManagerProps> = ({ onQuestComplete }) => {
