@@ -328,11 +328,11 @@ const Minimap = ({
     right: '20px',
     width: `${minimapSize}px`,
     height: `${minimapSize}px`,
-    backgroundColor: 'rgba(0, 20, 40, 0.7)',
-    border: '2px solid rgba(100, 180, 255, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    border: '2px solid rgba(150, 150, 150, 0.8)',
     borderRadius: '50%',
     overflow: 'hidden',
-    boxShadow: '0 0 10px rgba(0, 100, 200, 0.5)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
     zIndex: 1000
   };
   
