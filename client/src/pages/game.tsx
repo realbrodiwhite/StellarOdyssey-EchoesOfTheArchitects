@@ -128,9 +128,11 @@ const Game = () => {
     // Start the game (sets phase to "playing")
     start();
     
-    // Go directly to the intro cutscene (with redesigned slide format)
-    setGameState("introCutscene");
-    console.log("Starting intro cutscene with character");
+    // Show loading screen as transition before intro cutscene
+    setGameState("loading");
+    setLoadingContext("story");
+    setTargetGameState("introCutscene");
+    console.log("Starting loading screen before intro cutscene");
   };
 
   // State for loading context
@@ -150,6 +152,22 @@ const Game = () => {
   const renderGameComponent = () => {
     switch (gameState) {
       case "loading":
+        // If we're transitioning specifically from character selection to intro, use our new LoadingScreen
+        if (loadingContext === "story" && targetGameState === "introCutscene") {
+          return <LoadingScreen 
+            message="Initializing mission sequence..."
+            duration={3000}
+            onComplete={() => {
+              console.log("Character loading complete, transitioning to intro cutscene");
+              if (targetGameState) {
+                setGameState(targetGameState as GameStateType);
+                setTargetGameState(null);
+              }
+            }}
+          />;
+        }
+        
+        // Otherwise use the regular loading screen for other transitions
         return <LoadingScreenTips 
           context={loadingContext}
           onComplete={() => {
