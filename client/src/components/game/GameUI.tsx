@@ -37,7 +37,7 @@ const GameUI = ({
   isSoundOn, 
   onReturnToMenu 
 }: GameUIProps) => {
-  const { character } = useCharacter();
+  const character = useCharacter(state => state.character);
   const [showInventory, setShowInventory] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
@@ -69,7 +69,7 @@ const GameUI = ({
     }
   }, [menuPressed]);
   
-  if (!selectedCharacter) return null;
+  if (!character) return null;
   
   return (
     <>
@@ -79,7 +79,7 @@ const GameUI = ({
           {/* Character info */}
           <div className="bg-gray-900 bg-opacity-80 p-2 rounded-lg">
             <div className="text-white font-bold">
-              {selectedCharacter.class} (Lv. {selectedCharacter.level})
+              {character.class} (Lv. {character.level})
             </div>
           </div>
           
@@ -90,11 +90,11 @@ const GameUI = ({
               <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-red-500 rounded-full" 
-                  style={{ width: `${(selectedCharacter.health / selectedCharacter.maxHealth) * 100}%` }}
+                  style={{ width: `${(character.health / character.maxHealth) * 100}%` }}
                 />
               </div>
               <div className="text-xs text-white mt-1">
-                {selectedCharacter.health}/{selectedCharacter.maxHealth}
+                {character.health}/{character.maxHealth}
               </div>
             </div>
           </div>
@@ -106,11 +106,11 @@ const GameUI = ({
               <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-blue-400 rounded-full" 
-                  style={{ width: `${(selectedCharacter.energy / selectedCharacter.maxEnergy) * 100}%` }}
+                  style={{ width: `${(character.energy / character.maxEnergy) * 100}%` }}
                 />
               </div>
               <div className="text-xs text-white mt-1">
-                {selectedCharacter.energy}/{selectedCharacter.maxEnergy}
+                {character.energy}/{character.maxEnergy}
               </div>
             </div>
           </div>
@@ -133,6 +133,14 @@ const GameUI = ({
             onClick={() => setShowPartyManager(true)}
           >
             <Users size={12} />
+          </Button>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="bg-gray-800 bg-opacity-80 w-[24px] h-[24px] p-0.5"
+            onClick={() => setShowCrewInteractions(true)}
+          >
+            <MessageCircle size={12} />
           </Button>
           <Button 
             variant="outline" 
