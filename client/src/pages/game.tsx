@@ -12,7 +12,7 @@ import GameUI from "../components/game/GameUI";
 import Combat from "../components/game/Combat";
 import Puzzle from "../components/game/Puzzle";
 import SpaceTransition from "../components/game/SpaceTransition";
-import StarQuestManager from "../components/game/StarQuestManager";
+import MissionModal from "../components/game/MissionModal";
 import GameProgressController from "../components/game/GameProgressController";
 import LoadingScreenTips from "../components/game/LoadingScreenTips";
 import IntroCutscene from "../components/game/IntroCutscene";
@@ -388,7 +388,11 @@ const Game = () => {
         {gameState === 'game' && (
           <div className="relative z-10">
             <GameProgressController onComplete={handleProgressComplete} />
-            <StarQuestManager />
+            <MissionModal 
+              isOpen={false} 
+              onClose={() => {}} 
+              onQuestComplete={() => {}}
+            />
           </div>
         )}
       </>

@@ -170,15 +170,7 @@ const GameUI = ({
         </div>
       </div>
       
-      {/* Controls help - adaptive for desktop/mobile */}
-      <div className="fixed bottom-4 left-4 bg-gray-900 bg-opacity-80 p-2 rounded-lg z-20 text-xs md:text-sm max-w-[150px] md:max-w-none">
-        <div className="text-white font-semibold mb-0.5 md:mb-1 text-[10px] md:text-sm">Controls:</div>
-        <div className="text-gray-300 text-[10px] md:text-sm">WASD / Arrows: Move</div>
-        <div className="text-gray-300 text-[10px] md:text-sm">E / Space: Interact</div>
-        <div className="text-gray-300 text-[10px] md:text-sm">I: Inventory</div>
-        <div className="text-gray-300 text-[10px] md:text-sm">H: Hint</div>
-        <div className="text-gray-300 text-[10px] md:text-sm">ESC: Menu</div>
-      </div>
+      {/* No controls display on main screen - cleaner gameplay experience */}
       
       {/* Game menu modal */}
       <AnimatePresence>
@@ -230,6 +222,28 @@ const GameUI = ({
                 >
                   {isSoundOn ? "Mute Sound" : "Enable Sound"}
                 </Button>
+                
+                {/* Controls section in pause menu for easier access */}
+                <div className="mt-4 mb-3 p-3 bg-gray-700 rounded-lg">
+                  <h3 className="text-sm font-semibold text-white mb-2">Controls:</h3>
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
+                    <div className="text-gray-300">WASD / Arrows:</div>
+                    <div className="text-white">Move</div>
+                    
+                    <div className="text-gray-300">E / Space:</div>
+                    <div className="text-white">Interact</div>
+                    
+                    <div className="text-gray-300">I:</div>
+                    <div className="text-white">Inventory</div>
+                    
+                    <div className="text-gray-300">H:</div>
+                    <div className="text-white">Hint</div>
+                    
+                    <div className="text-gray-300">ESC:</div>
+                    <div className="text-white">Menu</div>
+                  </div>
+                </div>
+                
                 <Button variant="destructive" className="w-full" onClick={onReturnToMenu}>
                   Return to Main Menu
                 </Button>
