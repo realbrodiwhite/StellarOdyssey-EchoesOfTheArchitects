@@ -436,11 +436,11 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
         ))}
       </div>
       
-      {/* Main content layout with full-width cards */}
+      {/* Main content layout with sidebar */}
       <div className="w-full h-full flex flex-col max-h-screen z-10">
         {/* Header */}
         <motion.div
-          className="p-3 pb-0 flex flex-col items-center"
+          className="p-4 sm:p-5 flex flex-col items-center"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -449,111 +449,114 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
             Select Your Character
           </h1>
           
-          {/* Gender selection moved to the bottom overlay */}
+          {/* Gender Selection Tabs */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-3 w-full max-w-xs"
+          >
+            <Tabs 
+              defaultValue={Gender.Male} 
+              className="w-full"
+              onValueChange={(value) => handleGenderToggle(value as Gender)}
+            >
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value={Gender.Male} className="text-sm font-medium">
+                  Male
+                </TabsTrigger>
+                <TabsTrigger value={Gender.Female} className="text-sm font-medium">
+                  Female
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </motion.div>
         </motion.div>
         
-        {/* Full-width character cards grid */}
-        <div className="flex-1 overflow-hidden">
-          {/* Character cards grid - exactly 3x4 layout filling the screen */}
-          <div className="h-full overflow-y-auto pb-20">
-            <div className="grid grid-cols-3 grid-rows-4 gap-3 p-3">
-              {uniqueClasses && uniqueClasses.length > 0 ? (
-                uniqueClasses.map((characterClass, index) => {
-                  // Get the character of the selected gender for this class
-                  const characterGroup = charactersByClass[characterClass];
-                  const character = characterGroup && characterGroup[selectedGender] && characterGroup[selectedGender][0];
-                  
-                  if (!character) return null;
-                  
-                  return (
-                    <motion.div
-                      key={`${characterClass}-${selectedGender}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05, duration: 0.5 }}
-                    >
-                      <CharacterCard 
-                        character={character}
-                        isSelected={selectedIndex === index}
-                        onClick={() => handleCharacterSelect(index)}
-                        onViewDetails={(e) => handleCharacterDetails(e, index)}
-                      />
-                    </motion.div>
-                  );
-                })
-              ) : (
-                <div className="w-full text-center text-white col-span-full">
-                  <p>Loading character templates...</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Floating character preview if a character is selected */}
-      {selectedIndex !== null && (
-        <motion.div 
-          className="fixed right-4 top-28 w-96 bg-gray-900/90 rounded-lg border border-gray-800 shadow-xl overflow-hidden z-40"
-          style={{ height: 'calc(100vh - 250px)' }}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="h-full">
-            <CharacterPreview character={getSelectedTemplate()} />
-          </div>
-        </motion.div>
-      )}
-      
-      {/* Bottom overlay with gender and continue button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900/90 to-transparent pt-16 pb-6 px-6 z-50">
-        <div className="flex justify-between items-center">
-          {/* Gender selection on the left */}
-          <div className="flex items-center">
-            <div className="text-gray-300 font-medium mr-3">Gender:</div>
-            <div className="flex space-x-3">
-              <button 
-                className={`px-4 py-2 rounded-md transition-colors ${
-                  selectedGender === Gender.Male 
-                    ? 'bg-blue-700 text-white' 
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
-                onClick={() => handleGenderToggle(Gender.Male)}
-              >
-                Male
-              </button>
-              <button 
-                className={`px-4 py-2 rounded-md transition-colors ${
-                  selectedGender === Gender.Female 
-                    ? 'bg-blue-700 text-white' 
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
-                onClick={() => handleGenderToggle(Gender.Female)}
-              >
-                Female
-              </button>
+        {/* Main content with 3x4 grid and sidebar */}
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-4">
+          {/* Character cards grid - exactly 3x4 layout */}
+          <div className="flex-1 overflow-y-auto pr-0 lg:pr-4">
+            <div className="flex justify-center w-full">
+              <div className="grid grid-cols-3 grid-rows-4 gap-3" style={{ 
+                  width: '100%',
+                }}>
+                {uniqueClasses && uniqueClasses.length > 0 ? (
+                  uniqueClasses.map((characterClass, index) => {
+                    // Get the character of the selected gender for this class
+                    const characterGroup = charactersByClass[characterClass];
+                    const character = characterGroup && characterGroup[selectedGender] && characterGroup[selectedGender][0];
+                    
+                    if (!character) return null;
+                    
+                    return (
+                      <motion.div
+                        key={`${characterClass}-${selectedGender}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05, duration: 0.5 }}
+                      >
+                        <CharacterCard 
+                          character={character}
+                          isSelected={selectedIndex === index}
+                          onClick={() => handleCharacterSelect(index)}
+                          onViewDetails={(e) => handleCharacterDetails(e, index)}
+                        />
+                      </motion.div>
+                    );
+                  })
+                ) : (
+                  <div className="w-full text-center text-white col-span-full">
+                    <p>Loading character templates...</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           
-          {/* Continue button on the right */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: selectedIndex !== null ? 1 : 0.5, y: 0 }}
-            transition={{ duration: 0.5 }}
+          {/* Sidebar character preview */}
+          <motion.div 
+            className="lg:w-80 xl:w-96 bg-gray-900/80 rounded-lg border border-gray-800 shadow-xl overflow-hidden mt-4 lg:mt-0 flex flex-col"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Button 
-              variant="default" 
-              size="lg"
-              disabled={selectedIndex === null || !getSelectedTemplate()}
-              onClick={handleConfirmSelection}
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl border border-blue-400/30 rounded-xl font-bold text-lg"
-            >
-              <div className="flex items-center">
-                <span>Begin Adventure</span>
-                <span className="ml-2 text-lg">→</span>
-              </div>
-            </Button>
+            <div className="h-full">
+              <CharacterPreview character={getSelectedTemplate()} />
+            </div>
+            
+            {/* Confirmation button */}
+            <div className="p-3 border-t border-gray-800 bg-gray-900">
+              <Button 
+                variant="default" 
+                size="lg" 
+                disabled={selectedIndex === null || !getSelectedTemplate()}
+                onClick={handleConfirmSelection}
+                className={`w-full py-3 transition-all ${
+                  selectedIndex !== null 
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg' 
+                    : 'bg-gray-700'
+                }`}
+              >
+                {selectedIndex !== null ? (
+                  <div className="flex items-center justify-center">
+                    <span>Begin Adventure</span>
+                    <span className="ml-2">→</span>
+                  </div>
+                ) : 'Choose Your Path'}
+              </Button>
+              
+              {selectedIndex !== null && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="mt-2 text-gray-400 text-xs text-center"
+                >
+                  Press ENTER to continue
+                </motion.div>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>
