@@ -158,10 +158,7 @@ const EmergencyEncounter = ({ onComplete }: EmergencyEncounterProps) => {
         className={`absolute inset-0 bg-red-900 ${phase === "alarm" || phase === "warp-drop" ? "animate-pulse opacity-30" : "opacity-0"} transition-opacity duration-1000`} 
       />
       
-      {/* Combat background effect */}
-      <div 
-        className={`absolute inset-0 bg-blue-900 ${phase === "combat" ? "opacity-20" : "opacity-0"} transition-opacity duration-1000`} 
-      />
+      {/* Combat background effect - removed blue overlay */}
       
       {/* Explosion effects during combat */}
       {renderExplosions()}
