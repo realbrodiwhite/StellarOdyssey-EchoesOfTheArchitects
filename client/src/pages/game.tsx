@@ -325,10 +325,20 @@ const Game = () => {
     // Then after a delay, allow the new state to be visible
     const blackScreenTimer = setTimeout(() => {
       setShowBlackScreen(false);
+      
+      // Force another check after a longer delay to ensure black screen is gone
+      // This prevents the black screen from persisting due to race conditions
+      setTimeout(() => {
+        if (showBlackScreen) {
+          console.log("Forcing black screen removal after timeout");
+          setShowBlackScreen(false);
+        }
+      }, 1000);
+      
     }, 500); // Sufficient time for components to mount/unmount
     
     return () => clearTimeout(blackScreenTimer);
-  }, [gameState]);
+  }, [gameState, showBlackScreen]);
   
   // Sequential render approach - either show black screen, intro cutscene, or game content
   const renderContent = () => {
