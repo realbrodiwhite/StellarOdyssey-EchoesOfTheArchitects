@@ -63,46 +63,50 @@ const CharacterCard = ({
 }) => {
   return (
     <Card 
-      className={`cursor-pointer transition-all duration-200 overflow-hidden h-full ${
+      className={`cursor-pointer transition-all duration-200 overflow-hidden h-full flex flex-col ${
         isSelected
-          ? 'ring-2 ring-blue-500 bg-gray-800 transform scale-[1.02]' 
-          : 'hover:bg-gray-900 hover:ring-1 hover:ring-blue-300 bg-gray-950'
+          ? 'ring-2 ring-blue-500 bg-gray-800/90 transform scale-[1.02]' 
+          : 'hover:bg-gray-900 hover:ring-1 hover:ring-blue-300 bg-gray-950/90'
       }`}
       onClick={onClick}
     >
-      <div className="relative h-full flex flex-col">
+      <div className="relative flex-1 flex flex-col">
         {/* Character glow effect on selected */}
         {isSelected && (
           <div className="absolute -inset-0.5 bg-blue-500/20 animate-pulse rounded-lg z-0"></div>
         )}
         
-        <div className="p-3 relative z-10 flex flex-col h-full">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-bold text-white">{character.class}</h2>
+        <div className="p-2 sm:p-3 relative z-10 flex flex-col h-full">
+          {/* Header with class name */}
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="text-base sm:text-lg font-bold text-white">{character.class}</h2>
             {isSelected && (
-              <div className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded">Selected</div>
+              <div className="bg-blue-500 text-white text-[10px] sm:text-xs px-1 sm:px-2 py-0.5 rounded">
+                Selected
+              </div>
             )}
           </div>
           
-          <div className="h-1 w-16 bg-gradient-to-r from-blue-500 to-purple-500 mb-2"></div>
+          <div className="h-0.5 sm:h-1 w-12 sm:w-16 bg-gradient-to-r from-blue-500 to-purple-500 mb-1 sm:mb-2"></div>
           
-          <div className="bg-gradient-to-b from-gray-800/60 to-gray-900/60 p-2 rounded mb-3 flex-grow">
-            <p className="text-gray-300 text-sm line-clamp-2">{character.description.split('.')[0]}.</p>
+          {/* Description area (flex-grow to take available space) */}
+          <div className="bg-gradient-to-b from-gray-800/60 to-gray-900/60 p-1.5 sm:p-2 rounded mb-2 sm:mb-3 flex-grow">
+            <p className="text-gray-300 text-xs sm:text-sm line-clamp-2">{character.description.split('.')[0]}.</p>
           </div>
           
-          <div className="space-y-2">
-            {/* Top skills at a glance */}
+          {/* Skills area (fixed height) */}
+          <div className="space-y-1 sm:space-y-2 mb-auto">
             {character.skills
               .filter(skill => skill.level > 1)
               .slice(0, 2)
               .map(skill => (
-                <div key={skill.id} className="flex justify-between items-center bg-gray-800/50 p-1.5 rounded">
-                  <span className="text-gray-300 text-xs">{skill.name}</span>
-                  <div className="flex space-x-1">
+                <div key={skill.id} className="flex justify-between items-center bg-gray-800/50 p-1 sm:p-1.5 rounded">
+                  <span className="text-gray-300 text-[10px] sm:text-xs">{skill.name}</span>
+                  <div className="flex space-x-0.5 sm:space-x-1">
                     {[...Array(5)].map((_, i) => (
                       <div 
                         key={i}
-                        className={`w-1 h-2 rounded-sm ${
+                        className={`w-0.5 sm:w-1 h-1.5 sm:h-2 rounded-sm ${
                           i < skill.level ? getSkillTypeColor(skill.type).replace('text-', 'bg-') : 'bg-gray-700'
                         }`}
                       />
@@ -112,24 +116,26 @@ const CharacterCard = ({
               ))}
           </div>
             
-          <div className="mt-3 pt-2 border-t border-gray-800 grid grid-cols-2 gap-2">
-            <div className="bg-gray-800/80 p-2 rounded">
-              <div className="text-xs text-blue-400">Health</div>
-              <div className="text-sm font-bold text-white">
-                <span className="text-red-400 mr-1">❤</span> {character.health}
+          {/* Stats area (fixed height) */}
+          <div className="mt-1 pt-1 border-t border-gray-800 grid grid-cols-2 gap-1 sm:gap-2">
+            <div className="bg-gray-800/80 p-1 sm:p-2 rounded">
+              <div className="text-[9px] sm:text-xs text-blue-400">Health</div>
+              <div className="text-xs sm:text-sm font-bold text-white">
+                <span className="text-red-400 mr-0.5 sm:mr-1">❤</span> {character.health}
               </div>
             </div>
             
-            <div className="bg-gray-800/80 p-2 rounded">
-              <div className="text-xs text-blue-400">Energy</div>
-              <div className="text-sm font-bold text-white">
-                <span className="text-blue-400 mr-1">⚡</span> {character.energy}
+            <div className="bg-gray-800/80 p-1 sm:p-2 rounded">
+              <div className="text-[9px] sm:text-xs text-blue-400">Energy</div>
+              <div className="text-xs sm:text-sm font-bold text-white">
+                <span className="text-blue-400 mr-0.5 sm:mr-1">⚡</span> {character.energy}
               </div>
             </div>
           </div>
           
+          {/* Details button */}
           <button
-            className="mt-3 w-full text-center text-xs bg-blue-800/80 hover:bg-blue-700/80 text-white py-1.5 rounded transition-colors"
+            className="mt-1 sm:mt-2 w-full text-center text-[10px] sm:text-xs bg-blue-800/80 hover:bg-blue-700/80 text-white py-1 sm:py-1.5 rounded transition-colors"
             onClick={onViewDetails}
           >
             Details
@@ -474,12 +480,14 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({ onSelect }) => 
         </motion.div>
         
         {/* Main content with 3x4 grid and sidebar */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-4">
-          {/* Character cards grid - exactly 3x4 layout */}
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-2">
+          {/* Character cards grid - responsive 3x4 layout */}
           <div className="flex-1 overflow-y-auto pr-0 lg:pr-4">
-            <div className="flex justify-center w-full">
-              <div className="grid grid-cols-3 grid-rows-4 gap-3" style={{ 
+            <div className="w-full h-full">
+              <div className="grid grid-cols-3 gap-2 auto-rows-fr" style={{ 
                   width: '100%',
+                  gridTemplateRows: 'repeat(4, minmax(0, 1fr))',
+                  height: 'calc(100vh - 160px)'
                 }}>
                 {uniqueClasses && uniqueClasses.length > 0 ? (
                   uniqueClasses.map((characterClass, index) => {
